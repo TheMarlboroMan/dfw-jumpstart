@@ -1,0 +1,21 @@
+config:{
+	app:{
+		dummy:true
+	}, audio:{
+		audio_buffers:1024, audio_channels:16, audio_ratio:44100, audio_out:2, sound_volume:64, music_volume:64
+	}, input:{
+		down:[
+			0, 0, 81
+		], up:[
+			0, 0, 82
+		], right:[
+			0, 0, 79
+		], left:[
+			0, 0, 80
+		]
+	}, meta:{
+		v:1
+	}, video:{
+		double_buffer:1, window_h_px:500, window_h_logical:500, window_w_px:700, window_w_logical:700, window_title:"A test", window_show_cursor:true
+	}
+}

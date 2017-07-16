@@ -1,0 +1,2 @@
+#index	path
+#1	data/textures/example.png

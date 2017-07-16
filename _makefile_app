@@ -1,0 +1,78 @@
+################################################################################
+#Definitions...
+
+DIR_O=./objects/
+DIR_CLASS=./class/
+DIR_APP=./class/app/
+DIR_CONTROLLERS=./class/controllers/
+DIR_DFWIMPL=./class/dfwimpl/
+
+################################################################################
+# App dependencies.
+
+DEP_CONTROLLERS=\
+$(DIR_O)state_driver.o \
+$(DIR_O)test_controller.o \
+$(DIR_O)kernel_config.o \
+$(DIR_O)app_config.o \
+
+DEP_APP=\
+
+################################################################################
+#External dependencies...
+
+DEP_TOOLS=\
+$(DIR_O_TOOLS)text_reader.o \
+$(DIR_O_TOOLS)pair_file_parser.o\
+$(DIR_O_TOOLS)arg_manager.o \
+$(DIR_O_TOOLS)string_utils.o \
+$(DIR_O_TOOLS)file_utils.o \
+$(DIR_O_TOOLS)dnot_parser.o \
+$(DIR_O_TOOLS)dnot_token.o \
+$(DIR_O_TOOLS)ttf_manager.o \
+$(DIR_O_TOOLS)localization_base.o\
+$(DIR_O_TOOLS)sprite_table.o\
+$(DIR_O_TOOLS)animation_table.o 
+
+DEP_FRAMEWORK=\
+$(DIR_O_DFW)fw_audio.o \
+$(DIR_O_DFW)fw_input.o \
+$(DIR_O_DFW)fw_messages.o \
+$(DIR_O_DFW)fw_state_controller.o \
+$(DIR_O_DFW)fw_base_config.o \
+$(DIR_O_DFW)fw_kernel.o \
+$(DIR_O_DFW)fw_resource_loader.o \
+$(DIR_O_DFW)fw_state_driver_interface.o \
+
+################################################################################
+#Implementation of DFW...
+
+$(DIR_O)state_driver.o :\
+$(DIR_O)test_controller.o \
+$(DIR_DFWIMPL)state_driver.h \
+$(DIR_DFWIMPL)state_driver.cpp
+	$(CC) $(CFLAGS) $(INCLUDES) $(DIR_DFWIMPL)state_driver.cpp -o $(DIR_O)state_driver.o 
+
+$(DIR_O)kernel_config.o:\
+$(DIR_DFWIMPL)kernel_config.h \
+$(DIR_DFWIMPL)kernel_config.cpp
+	$(CC) $(CFLAGS) $(INCLUDES) $(DIR_DFWIMPL)kernel_config.cpp -o $(DIR_O)kernel_config.o
+
+$(DIR_O)app_config.o:\
+$(DIR_DFWIMPL)app_config.h \
+$(DIR_DFWIMPL)app_config.cpp
+	$(CC) $(CFLAGS) $(INCLUDES) $(DIR_DFWIMPL)app_config.cpp -o $(DIR_O)app_config.o
+
+################################################################################
+#Controllers...
+
+$(DIR_O)test_controller.o :\
+$(DIR_CONTROLLERS)test.h \
+$(DIR_CONTROLLERS)test.cpp
+	$(CC) $(CFLAGS) $(INCLUDES) $(DIR_CONTROLLERS)test.cpp -o $(DIR_O)test_controller.o 
+
+
+################################################################################
+#Class...
+
+################################################################################

@@ -1,0 +1,2 @@
+#index	path	transparency	rtrans	gtrans	btrans
+#1	data/surfaces/example.png	1	0	0	0

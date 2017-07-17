@@ -16,6 +16,7 @@
 //Controllers.
 #include "../controllers/states.h"
 #include "../controllers/test.h"
+#include "../controllers/console.h"
 
 namespace app
 {
@@ -44,6 +45,7 @@ class state_driver:
 	tools::ttf_manager				fonts;
 	
 	std::unique_ptr<controller_test>		c_test;
+	std::unique_ptr<controller_console>		c_console;
 };
 
 }

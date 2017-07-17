@@ -12,6 +12,8 @@ config:{
 			0, 0, 79
 		], left:[
 			0, 0, 80
+		], console_newline: [
+			0, 0, 40
 		]
 	}, meta:{
 		v:1

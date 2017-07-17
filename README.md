@@ -2,6 +2,8 @@
 
 The idea here is to have a very basic application so things can run with little copy and paste.
 
+There are two controllers here: a very simple console with four commands or so (first try to implement one) and a little game-like thing.
+
 ##Getting started:
 
 - Install dependencies and compile them (libdansdl2, dfw, herramientas_proyecto).
@@ -16,8 +18,23 @@ The idea here is to have a very basic application so things can run with little 
 
 ###Add new controllers:
 
+- Create your files in class/controllers. Use the _template.* files for your convenience.
+- Add the controller to _makefile_app. state_driver should depend on it. This is a good moment to try and see if it compiles.
+- Register the controller in state_driver.*. Perhaps in prepare_state() too.
+- Add the state to states.h, so it can be used from other controllers to request state changes.
+- Test the controller by changing the default state in state_driver's constructor.
+
 ###Add new input:
 
+- Add it to the enum in class/input.h.
+- Locate the sdl key mapping in SDL_keycode.h (locate SDK_scancode.h first, usually in /usr/include/SDL2).
+- Add this mapping to data/config/config.dnot in the "input" sequence. The first parameter is "type" (0 is keyboard), the second is device number and the third is the code.
+- Map it in kernel_config.cpp's get_input_pairs().
+- Use it in your code by referencing as indicated in class/input.h
+
+###Change application states (controllers).
+
+- Use set_state(state), as in set_state(state_main). Use a state defined in states.h
 
 ##Files and directory structure.
 
@@ -34,6 +51,7 @@ The most relevant files are.
 - /class/app: Your application classes go here.
 - /class/controllers: All your controllers go here.
 	- states.h : A simple enum with all states (controllers) for your application, shorthand commodities.
+	- _template.*: Example files, for copy+paste convenience :).
 - /class/dfwimpl: Implementation of dfw.
 	- app_config.h: modify get_file_path() if you wish to change your config file location.
 	- kernel_config.cpp: get_input_pairs() should be modified if you wish to add new inputs.
@@ -45,12 +63,7 @@ The most relevant files are.
 #TODO:
 	- Peek around all files. See if there's anything that can be streamlined.
 		- I Particularly dislike how many things you need to change to add a new input (kernel config, config file, input file). Not neccesarily wrong per se but cannot be automated further.
-	- Put this in a repo when working.
-	- Add examples of two controllers, so there can be changes.
-	- Add examples of fonts.
 	- Add examples of class logic.
 	- Add examples of sound.
 	- Add examples of music.
-	- Add examples of input.
 	- Add examples of rasterised resources.
-	- Add examples of input.

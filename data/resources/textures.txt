@@ -1,2 +1,3 @@
 #index	path
-#1	data/textures/example.png
+1	data/textures/img1.png
+2	data/textures/img2.jpg

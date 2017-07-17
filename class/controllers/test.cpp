@@ -18,11 +18,6 @@ controller_test::controller_test(ldt::log& plog, ldv::resource_manager& /*vm*/, 
 
 }
 
-void controller_test::preloop(dfw::input& /*input*/, float /*delta*/, int /*fps*/)
-{
-
-}
-
 void controller_test::loop(dfw::input& input, float /*delta*/)
 {
 	if(input().is_exit_signal() || input.is_input_down(input_app::escape))
@@ -34,11 +29,6 @@ void controller_test::loop(dfw::input& input, float /*delta*/)
 //	if(input.is_input_down(input_app::pause)) paused=!paused;
 
 	
-}
-
-void controller_test::postloop(dfw::input& /*input*/, float /*delta*/, int /*fps*/)
-{
-
 }
 
 void controller_test::draw(ldv::screen& screen)
@@ -53,12 +43,12 @@ void controller_test::draw(ldv::screen& screen)
 	box2.draw(screen);
 }
 
-void controller_test::awake()
+void controller_test::awake(dfw::input& /*input*/)
 {
 
 }
 
-void controller_test::slumber()
+void controller_test::slumber(dfw::input& /*input*/)
 {
 
 }

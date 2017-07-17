@@ -1,4 +1,3 @@
 #font size	path
-ad-mono	16	data/fonts/ad-mono.ttf
-ad-mono	12	data/fonts/ad-mono.ttf
+consola-mono	16	data/fonts/ConsolaMono.ttf
 

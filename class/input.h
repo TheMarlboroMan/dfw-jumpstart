@@ -14,7 +14,8 @@ up,
 down,
 left,
 right,
-console_newline
+console_newline,
+console_backspace
 };
 
 };

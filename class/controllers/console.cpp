@@ -31,12 +31,14 @@ void controller_console::loop(dfw::input& input, float delta)
 		return;
 	}
 
+	//TODO: This seems to ALWAYS be active. Fix it. Should only get it when there are actual presses.
 	if(input().is_event_text())
 	{
+		std::cout<<input().get_text_input()<<std::endl;
+
+		//Arguably this could be hard coded to SDLK_RETURN or something like that.
 		if(input.is_input_down(input_app::console_newline))
 		{
-			current_command=input().get_text_input();
-			current_command.pop_back();
 			history.push_back(current_command);
 			if(history.size() > 10) history.erase(std::begin(history), std::begin(history)+1);
 	
@@ -58,17 +60,21 @@ void controller_console::loop(dfw::input& input, float delta)
 				history.push_back("Syntax error: "+current_command+" not recognised. Try help");
 			}
 
-			current_command="";
-			input().clear_text_input(); 
+			current_command.clear();
+		}
+		else if(input.is_input_down(input_app::console_backspace))
+		{
+			current_command.pop_back();
 		}
 		else
 		{
-			current_command=input().get_text_input();
-			if(current_command.size() > 30) 
+			if(current_command.size() < 30) 
 			{
-				current_command=current_command.substr(0, 30);
+				current_command+=input().get_text_input();
 			}
 		}
+
+		input().clear_text_input(); 
 	}
 }
 

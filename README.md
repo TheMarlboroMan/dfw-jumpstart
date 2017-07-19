@@ -1,6 +1,6 @@
 #Basic framework.
 
-The idea here is to have a very basic application so things can run with little copy and paste.
+The idea here is to have a very basic application so things can run with little copy and paste. It will also include a few features I tend to forget about.
 
 There are two controllers here: a very simple console with four commands or so (first try to implement one) and a little game-like thing.
 
@@ -36,6 +36,10 @@ There are two controllers here: a very simple console with four commands or so (
 
 - Use set_state(state), as in set_state(state_main). Use a state defined in states.h
 
+###Implement text input.
+
+- Take a look at the console controller. It is wise not to use the dli::sdl_input (implemented by dfw::input) buffer, but to build your own so you can keep control. Backspace and enter can be controlled, as seen.
+
 ##Files and directory structure.
 
 The most relevant files are.
@@ -61,9 +65,9 @@ The most relevant files are.
 - /data/resources: all static resource files (music, sounds, textures...). # denotes a comment. Examples are included. Surfaces are not likely to be used, textures are the new thing instead.
 
 #TODO:
-	- Peek around all files. See if there's anything that can be streamlined.
-		- I Particularly dislike how many things you need to change to add a new input (kernel config, config file, input file). Not neccesarily wrong per se but cannot be automated further.
 	- Add examples of class logic.
 	- Add examples of sound.
 	- Add examples of music.
 	- Add examples of rasterised resources.
+	- Add example of menu.
+	- Add example of localisation.

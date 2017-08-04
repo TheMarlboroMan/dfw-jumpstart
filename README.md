@@ -36,9 +36,31 @@ There are two controllers here: a very simple console with four commands or so (
 
 - Use set_state(state), as in set_state(state_main). Use a state defined in states.h
 
+###Understanding "loop", "preloop", "postloop" and application step.
+
+This is the main application flow:
+
+- Do common step (virtual function for your own state driver).
+- Do common input (virtual function for your own state driver).
+- Preloop of your state (input has yet not looped, thus there are not events accessible).
+- Begin consuming loop time:
+	- Loop the input (now there are events... this is actually sdl_input::loop).
+	- Loop the state. (this is the main loop of your state).
+	- Audio queue.
+	- Evaluate possible state change. Break out of this loop if needed.
+- If change state
+	- Confirm state change.
+- If not change state
+	- Postloop of your state (the loop 
+	- Draw state.
+
 ###Implement text input.
 
-- Take a look at the console controller. It is wise not to use the dli::sdl_input (implemented by dfw::input) buffer, but to build your own so you can keep control. Backspace and enter can be controlled, as seen.
+Take a look at the console controller. 
+
+It is wise not to use the dli::sdl_input (implemented by dfw::input) buffer, but to build your own so you can keep control. A simple std::string will do.
+
+Control characters (backspace, enter...) do not translate to input, and must be controlled individually as keydown presses. Again, the console controller provides an example.
 
 ##Files and directory structure.
 

@@ -31,50 +31,47 @@ void controller_console::loop(dfw::input& input, float delta)
 		return;
 	}
 
-	//TODO: This seems to ALWAYS be active. Fix it. Should only get it when there are actual presses.
+	//Keyboard control... Newline (enter) and backspace are controlled separatedly 
+	//from text and do not trigger text inputs.
+
 	if(input().is_event_text())
 	{
-		std::cout<<input().get_text_input()<<std::endl;
-
-		//Arguably this could be hard coded to SDLK_RETURN or something like that.
-		if(input.is_input_down(input_app::console_newline))
+		if(current_command.size() < 30) 
 		{
-			history.push_back(current_command);
-			if(history.size() > 10) history.erase(std::begin(history), std::begin(history)+1);
-	
-			if(current_command=="clear") history.clear();
-			else if(current_command=="help") history.push_back("clear, bgcolor:, fgcolor:, exit");
-			else if(current_command=="exit") set_state(state_main);
-			else if(current_command.substr(0, 8)=="bgcolor:") 
-			{
-				try {do_color_change("bgcolor", bgc_r, bgc_g, bgc_b);}
-				catch(std::exception& e) {history.push_back("Syntax: bgcolor:[r,g,b] "+std::string(e.what()));}
-			}
-			else if(current_command.substr(0, 8)=="fgcolor:") 
-			{
-				try {do_color_change("fgcolor", fgc_r, fgc_g, fgc_b);}
-				catch(std::exception& e) {history.push_back("Syntax: fgcolor:[r,g,b] "+std::string(e.what()));}
-			}
-			else 
-			{
-				history.push_back("Syntax error: "+current_command+" not recognised. Try help");
-			}
-
-			current_command.clear();
+			current_command+=input().get_text_input();
 		}
-		else if(input.is_input_down(input_app::console_backspace))
-		{
-			current_command.pop_back();
-		}
-		else
-		{
-			if(current_command.size() < 30) 
-			{
-				current_command+=input().get_text_input();
-			}
-		}
-
 		input().clear_text_input(); 
+	}
+	else if(input.is_input_down(input_app::console_newline))
+	{
+		//A history of commands is kept up to 10 lines. 
+		history.push_back(current_command);
+		if(history.size() > 10) history.erase(std::begin(history), std::begin(history)+1);
+	
+		//This is pretty much stupid... A list of commands and their results.
+		if(current_command=="clear") history.clear();
+		else if(current_command=="help") history.push_back("clear, bgcolor:, fgcolor:, exit");
+		else if(current_command=="exit") set_state(state_main);
+		else if(current_command.substr(0, 8)=="bgcolor:") 
+		{
+			try {do_color_change("bgcolor", bgc_r, bgc_g, bgc_b);}
+			catch(std::exception& e) {history.push_back("Syntax: bgcolor:[r,g,b] "+std::string(e.what()));}
+		}
+		else if(current_command.substr(0, 8)=="fgcolor:") 
+		{
+			try {do_color_change("fgcolor", fgc_r, fgc_g, fgc_b);}
+			catch(std::exception& e) {history.push_back("Syntax: fgcolor:[r,g,b] "+std::string(e.what()));}
+		}
+		else 
+		{
+			history.push_back("Syntax error: "+current_command+" not recognised. Try help");
+		}
+
+		current_command.clear();
+	}
+	else if(input.is_input_down(input_app::console_backspace))
+	{
+		if(current_command.size()) current_command.pop_back();
 	}
 }
 

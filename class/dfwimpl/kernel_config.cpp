@@ -77,7 +77,8 @@ std::vector<dfw::input_pair> kernel_config::get_input_pairs() const
 		{input_app::right, 	config.token_from_path_input("right")},
 		{input_app::up, 	config.token_from_path_input("up")},
 		{input_app::down, 	config.token_from_path_input("down")},
-		{input_app::console_newline, 	config.token_from_path_input("console_newline")}
+		{input_app::console_newline, 	config.token_from_path_input("console_newline")},
+		{input_app::console_backspace, 	config.token_from_path_input("console_backspace")}
 	};
 
 	std::vector<input_pair> res{input_pair{input_pair::types::keyboard, input_app::escape, SDL_SCANCODE_ESCAPE, 0}};

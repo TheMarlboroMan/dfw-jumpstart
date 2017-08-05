@@ -107,6 +107,8 @@ The most relevant files are.
 - /data/config/config.dnot: main configuration file. New inputs must be registered here.
 - /data/resources: all static resource files (music, sounds, textures...). # denotes a comment. Examples are included. Surfaces are not likely to be used, textures are the new thing instead.
 
+The organisation of the class and controller files is non prescriptive. As far as you are concerned you can have all your controllers, application classes and implementation of the framework on the root directory and everything will be allright.
+
 #TODO:
 	- Check what happens if you do LOTS AND LOTS of logic... Does it slowdown or skip. Update the "loop", "preloop", "postloop" section.
 	- Add examples of class logic.

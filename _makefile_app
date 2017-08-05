@@ -18,6 +18,9 @@ $(DIR_O)controller_test.o \
 $(DIR_O)controller_console.o \
 
 DEP_APP=\
+$(DIR_O)spatiable.o \
+$(DIR_O)drawable.o \
+$(DIR_O)tile_decoration.o \
 
 ################################################################################
 #External dependencies...
@@ -80,5 +83,23 @@ $(DIR_CONTROLLERS)console.cpp
 
 ################################################################################
 #Class...
+
+$(DIR_O)tile_decoration.o :\
+$(DIR_O)drawable.o \
+$(DIR_APP)tile_decoration.h \
+$(DIR_APP)tile_decoration.cpp
+	$(CC) $(CFLAGS) $(INCLUDES) $(DIR_APP)tile_decoration.cpp -o $(DIR_O)tile_decoration.o
+
+#Interfaces
+
+$(DIR_O)spatiable.o :\
+$(DIR_APP)spatiable.h \
+$(DIR_APP)spatiable.cpp
+	$(CC) $(CFLAGS) $(INCLUDES) $(DIR_APP)spatiable.cpp -o $(DIR_O)spatiable.o
+
+$(DIR_O)drawable.o :\
+$(DIR_APP)drawable.h \
+$(DIR_APP)drawable.cpp
+	$(CC) $(CFLAGS) $(INCLUDES) $(DIR_APP)drawable.cpp -o $(DIR_O)drawable.o
 
 ################################################################################

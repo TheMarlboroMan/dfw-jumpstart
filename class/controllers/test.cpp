@@ -31,7 +31,7 @@ void controller_test::loop(dfw::input& input, float /*delta*/)
 	
 }
 
-void controller_test::draw(ldv::screen& screen)
+void controller_test::draw(ldv::screen& screen, int /*fps*/)
 {
 	screen.clear(ldv::rgba8(0, 255, 255, 255));
 	

@@ -29,7 +29,7 @@ class controller_test:
 	virtual void 				preloop(dfw::input&, float, int) {}
 	virtual void 				loop(dfw::input& input, float delta);
 	virtual void 				postloop(dfw::input&, float, int) {}
-	virtual void 				draw(ldv::screen& screen);
+	virtual void 				draw(ldv::screen& screen, int);
 	virtual void 				awake(dfw::input& input);
 	virtual void 				slumber(dfw::input& input);
 	virtual bool				can_leave_state() const;

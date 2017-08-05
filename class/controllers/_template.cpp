@@ -38,7 +38,7 @@ void controller_template::postloop(dfw::input& /*input*/, float /*delta*/, int /
 
 }
 
-void controller_template::draw(ldv::screen& screen)
+void controller_template::draw(ldv::screen& screen, int /*fps*/)
 {
 	screen.clear(ldv::rgba8(0, 255, 255, 255));
 }

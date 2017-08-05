@@ -75,7 +75,7 @@ void controller_console::loop(dfw::input& input, float delta)
 	}
 }
 
-void controller_console::draw(ldv::screen& screen)
+void controller_console::draw(ldv::screen& screen, int fps)
 {
 	screen.clear(ldv::rgba8(bgc_r, bgc_g, bgc_b, 0));
 

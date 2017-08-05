@@ -16,6 +16,8 @@ There are two controllers here: a very simple console with four commands or so (
 
 ##Howto
 
+Here are a few things that need to be done in a regular basis.
+
 ###Add new controllers:
 
 - Create your files in class/controllers. Use the _template.* files for your convenience.
@@ -27,16 +29,17 @@ There are two controllers here: a very simple console with four commands or so (
 ###Add new input:
 
 - Add it to the enum in class/input.h.
-- Locate the sdl key mapping in SDL_keycode.h (locate SDK_scancode.h first, usually in /usr/include/SDL2).
+- In case you need a keyboard input, locate the sdl key mapping in SDL_keycode.h (locate SDK_scancode.h first, usually in /usr/include/SDL2).
 - Add this mapping to data/config/config.dnot in the "input" sequence. The first parameter is "type" (0 is keyboard), the second is device number and the third is the code.
 - Map it in kernel_config.cpp's get_input_pairs().
-- Use it in your code by referencing as indicated in class/input.h
+- Use it in your code by referencing as indicated in class/input.h: 
+	- if(input.is_input_[down|pressed|up](input_app::your_input_here)) {...}
 
 ###Change application states (controllers).
 
-- Use set_state(state), as in set_state(state_main). Use a state defined in states.h
+- From the controller code use set_state(state), as in set_state(state_main). Use a state defined in states.h. 
 
-###Understanding "loop", "preloop", "postloop" and application step.
+###Use "loop", "preloop", "postloop" and application step.
 
 This is the main application flow:
 
@@ -51,16 +54,34 @@ This is the main application flow:
 - If change state
 	- Confirm state change.
 - If not change state
-	- Postloop of your state (the loop 
+	- Postloop of your state. 
 	- Draw state.
+
+Thus:
+
+- Preloop happens once before loop time is consumed.
+- Postloop happens right before drawing the state.
+- Controller loop happens X times, as much as needed to fill 0.01 seconds of logic.
+	- This time is measured by a ldt::fps_counter, property of the kernel. 
+	- The value "delta_step" on the kernel represents the 0.01 seconds of logic.
+	- Once 0.01 seconds of logic are run, the screen is refreshed.
+	- If the application can't catch up with this timestep, the display will appear to skip, but logic will execute... If display and logic take too long, this will accumulate and eventually freeze :(.
+
 
 ###Implement text input.
 
-Take a look at the console controller. 
+Getting the text input to work properly can be tricky, but it is actually easy. Two important things:
 
-It is wise not to use the dli::sdl_input (implemented by dfw::input) buffer, but to build your own so you can keep control. A simple std::string will do.
+- It is wise not to use the dli::sdl_input (implemented by dfw::input) buffer, but to build your own so you can keep control. A simple std::string will do.
+- Control characters (backspace, enter...) do not translate to input, and must be controlled individually as keydown presses.
 
-Control characters (backspace, enter...) do not translate to input, and must be controlled individually as keydown presses. Again, the console controller provides an example.
+The "console" controller includes a full working example, which goes like this:
+
+- On awakening: start text input (input().start_text_input();) and clear previous contents (this last part just in case).
+- On loop:
+	- Check text events if(input().is_event_text()) and add input().get_text_input() to the buffer.
+	- Check non text events that are text related (backspace, enter) as regular key down events. Act upon the buffer.
+- On sleeping: stop the text input (input().stop_text_input();) so it does not affect other controllers.
 
 ##Files and directory structure.
 
@@ -87,6 +108,7 @@ The most relevant files are.
 - /data/resources: all static resource files (music, sounds, textures...). # denotes a comment. Examples are included. Surfaces are not likely to be used, textures are the new thing instead.
 
 #TODO:
+	- Check what happens if you do LOTS AND LOTS of logic... Does it slowdown or skip. Update the "loop", "preloop", "postloop" section.
 	- Add examples of class logic.
 	- Add examples of sound.
 	- Add examples of music.

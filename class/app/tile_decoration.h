@@ -10,6 +10,14 @@ class tile_decoration:
 	public app_interfaces::drawable
 {
 	//////////////
+	//public class interface.
+	
+	public:
+
+	tile_decoration(int x, int y, int tile_id, int tileset_resource_id, int alpha);
+
+
+	//////////////
 	//drawable
 
 	public:
@@ -17,13 +25,7 @@ class tile_decoration:
 	virtual float		get_ordering_x() const;
 	virtual float		get_ordering_y() const;
 	virtual bool		is_in_camera(const ldv::rect&) const;
-
-	//////////////
-	//public class interface.
-	
-	public:
-
-	tile_decoration(int x, int y, int tile_id, int tileset_resource_id, int alpha);
+	virtual void		draw(ldv::screen&, const ldv::camera&, app::draw_struct&, const app::shared_resources&) const;
 
 	private:
 

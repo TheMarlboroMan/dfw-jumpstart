@@ -6,7 +6,7 @@ DEBUG=-g
 
 #These are either old or plain stupid :P.
 #OTHER_WARNING_FLAGS=-Wno-deprecated -Wfloat-equal
-WARNING_FLAGS=-Wall -Wextra -Wundef -Wcast-align -Wwrite-strings -Wlogical-op -Wmissing-declarations -Wredundant-decls -Wshadow -Woverloaded-virtual
+WARNING_FLAGS=-Wall -Wextra -Wundef -Wcast-align -Wwrite-strings -Wlogical-op -Wmissing-declarations -Wredundant-decls -Wshadow -Woverloaded-virtual -Wfatal-errors
 
 FLAGS_BASE=$(WARNING_FLAGS) $(OTHER_WARNING_FLAGS) $(DISABLE_ASSERT) -ansi -pedantic -std=c++11
 CFLAGS=-c $(DEBUG) $(OPTIMIZATION) $(FLAGS_BASE)

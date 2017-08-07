@@ -7,9 +7,6 @@
 //Framework
 #include <class/state_driver_interface.h>
 
-//Tools
-#include <class/ttf_manager.h>
-
 //local.
 #include "app_config.h"
 
@@ -17,6 +14,9 @@
 #include "../controllers/states.h"
 #include "../controllers/test.h"
 #include "../controllers/console.h"
+
+//Specific app_config
+#include "../app/shared_resources.h"
 
 namespace app
 {
@@ -35,16 +35,14 @@ class state_driver:
 
 	private:
 
-	void						prepare_video(dfw::kernel& kernel);
-	void						register_controllers(dfw::kernel& kernel);
-	void						register_fonts();
+	void						prepare_video(dfw::kernel&);
+	void						register_controllers(dfw::kernel&);
 	void 						virtualize_input(dfw::input& input);
 
 	app::app_config&				config;
 	ldt::log&					log;
 
-	tools::ttf_manager				fonts;
-	
+	std::unique_ptr<shared_resources>		s_resources;
 	std::unique_ptr<controller_test>		c_test;
 	std::unique_ptr<controller_console>		c_console;
 };

@@ -17,6 +17,9 @@
 //local
 #include "states.h"
 
+//app
+#include "../app/shared_resources.h"
+
 namespace app
 {
 
@@ -25,7 +28,7 @@ class controller_console:
 {
 	public:
 
-						controller_console(ldt::log&, const tools::ttf_manager&, const ldv::resource_manager&);
+						controller_console(shared_resources&);
 	virtual void 				preloop(dfw::input&, float, int) {}
 	virtual void 				loop(dfw::input& input, float delta);
 	virtual void 				postloop(dfw::input&, float, int) {}
@@ -39,9 +42,7 @@ class controller_console:
 	void					do_color_change(const std::string&, int&, int&, int&);
 
 	//references...
-	ldt::log&					log;
-	const tools::ttf_manager&			ttf_man;
-	const ldv::resource_manager& 			res_man;
+	shared_resources&				s_resources;
 
 	//properties
 	std::string					current_command;

@@ -26,3 +26,12 @@ bool tile_decoration::is_in_camera(const ldv::rect& c_rect) const
 {
 	return drawable_box.collides_with(c_rect);
 }
+
+void tile_decoration::draw(ldv::screen& scr, const ldv::camera& cam, app::draw_struct& ds, const app::shared_resources& sr) const
+{
+	//TODO... Get the corresponding box from the tileset, loaded in shared resources.
+
+	//Imprint data upon bmp.
+
+	//Draw the shit.
+}

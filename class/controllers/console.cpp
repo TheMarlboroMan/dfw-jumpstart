@@ -12,8 +12,8 @@
 
 using namespace app;
 
-controller_console::controller_console(ldt::log& plog, const tools::ttf_manager& pttf_man, const ldv::resource_manager& rm)
-	:log(plog), ttf_man(pttf_man), res_man(rm),
+controller_console::controller_console(shared_resources& sr)
+	:s_resources(sr),
 	current_command(),
 	bgc_r(32), bgc_g(32), bgc_b(32), fgc_r(255), fgc_g(255), fgc_b(255), time(0.f)
 {
@@ -75,46 +75,21 @@ void controller_console::loop(dfw::input& input, float delta)
 	}
 }
 
-void controller_console::draw(ldv::screen& screen, int fps)
+void controller_console::draw(ldv::screen& screen, int /*fps*/)
 {
 	screen.clear(ldv::rgba8(bgc_r, bgc_g, bgc_b, 0));
-
-	//A few stupid bitmaps.. Just to see how they work, with alpha, colorize and so on.
-/*
-	ldv::bitmap_representation img1(res_man.get_texture(2), {400,0,200,100}, {0,0,1000,665});
-	img1.draw(screen);
-
-	ldv::bitmap_representation img2(res_man.get_texture(2), {400,100,200,100}, {0,0,1000,665});
-	img2.set_alpha(128);
-	img2.set_blend(ldv::representation::blends::alpha);
-	img2.draw(screen);
-
-	ldv::bitmap_representation img3(res_man.get_texture(1), {400,200,200,100}, {0,0,456,376});
-	img3.set_colorize(ldv::rgb8(255,0,0));
-	img3.draw(screen);
-
-	ldv::bitmap_representation img4(res_man.get_texture(1), {400,300,200,100}, {0,0,456,376});
-	img4.set_colorize(ldv::rgb8(0,255,0));
-	img4.set_alpha(128);
-	img4.set_blend(ldv::representation::blends::alpha);
-	img4.draw(screen);
-
-	ldv::bitmap_representation img5(res_man.get_texture(1), {400,400,200,100}, {0,0,456,376});
-	img5.set_colorize(ldv::rgb8(0,0,255));
-	img5.set_alpha(128);
-	img5.set_blend(ldv::representation::blends::alpha);
-	img5.draw(screen);
-*/
 
 	std::string history_text;
 	for(auto& s: history) history_text+=s+"\n";
 	
+
+	auto& font=s_resources.get_ttf_manager().get("consola-mono", 16);
 	auto fgcolor=ldv::rgba8(fgc_r, fgc_g, fgc_b, 255);
-	ldv::ttf_representation txt_history(ttf_man.get("consola-mono", 16), fgcolor, history_text);
+	ldv::ttf_representation txt_history(font, fgcolor, history_text);
 	txt_history.set_alpha(128);
 	txt_history.draw(screen);
 
-	ldv::ttf_representation txt_command(ttf_man.get("consola-mono", 16), fgcolor, ">"+current_command);
+	ldv::ttf_representation txt_command(font, fgcolor, ">"+current_command);
 	txt_command.go_to(0, 450);
 	txt_command.draw(screen);
 	

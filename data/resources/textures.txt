@@ -1,4 +1,4 @@
 #index	path
-1	data/textures/img1.png
-2	data/textures/img2.jpg
+1	data/textures/scifitiles-sheet-alt.png
+2	data/textures/shadows-sheet.png
 3	data/textures/sheet.png

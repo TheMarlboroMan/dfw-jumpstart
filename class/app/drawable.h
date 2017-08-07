@@ -1,6 +1,8 @@
 #ifndef DRAWABLE_H
 #define DRAWABLE_H
 
+#include "draw_struct.h"
+#include "shared_resources.h"
 #include <video/rect/rect.h>
 
 namespace app_interfaces
@@ -15,9 +17,7 @@ class drawable
 	virtual float		get_ordering_x() const=0;
 	virtual float		get_ordering_y() const=0;
 	virtual bool		is_in_camera(const ldv::rect&) const=0;
-
-	//TODO: We need, of course, a pure "draw" function that will receive
-	//the screen, tilesets and shit.
+	virtual void		draw(ldv::screen&, const ldv::camera&, app::draw_struct&, const app::shared_resources&) const=0;
 };
 
 //Standalone function to see if a drawable must be drawn before another.

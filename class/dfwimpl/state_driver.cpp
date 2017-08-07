@@ -15,17 +15,26 @@ state_driver::state_driver(dfw::kernel& kernel, app::app_config& c)
 	:state_driver_interface(t_states::state_console, std::function<bool(int)>([](int v){return v > state_min && v < state_max;})),
 	config(c), log(kernel.get_log())
 {
+	log<<"init state driver building: preparing video..."<<std::endl;
 	prepare_video(kernel);
-	register_fonts();
+
+	log<<"preparing shared resources..."<<std::endl;
+	s_resources.reset(
+		new shared_resources(
+			kernel.get_video_resource_manager(),
+			log));
+
+	log<<"registering controllers..."<<std::endl;
 	register_controllers(kernel);
+
+	log<<"virtualizing input..."<<std::endl;
 	virtualize_input(kernel.get_input());
-	
+
 	log<<"state driver fully constructed"<<std::endl;
 }
 
 void state_driver::prepare_video(dfw::kernel& kernel)
 {
-	log<<"preparing app video configuration..."<<std::endl;
 	auto& screen=kernel.get_screen();
 
 	int wf=config.int_from_path("config:video:window_w_logical"),
@@ -37,12 +46,10 @@ void state_driver::prepare_video(dfw::kernel& kernel)
 	screen.set_logical_size(wl, hl);
 }
 
-void state_driver::register_controllers(dfw::kernel& kernel)
+void state_driver::register_controllers(dfw::kernel& /*kernel*/)
 {
-	log<<"registering controllers..."<<std::endl;
-
-	c_test.reset(new controller_test(log, kernel.get_video_resource_manager(), fonts));
-	c_console.reset(new controller_console(log, fonts, kernel.get_video_resource_manager()));
+	c_test.reset(new controller_test(*s_resources));
+	c_console.reset(new controller_console(*s_resources));
 
 	register_controller(t_states::state_main, *c_test);
 	register_controller(t_states::state_console, *c_console);
@@ -82,25 +89,4 @@ void state_driver::virtualize_input(dfw::input& input)
 		input().virtualize_joystick_axis(i, 15000);
 		log<<"Joystick virtualized "<<i<<std::endl;
 	}
-}
-
-void state_driver::register_fonts()
-{	
-	log<<"registering fonts..."<<std::endl;
-
-	using namespace tools;
-
-	auto v=explode_lines_from_file("data/resources/fonts.txt");
-	for(const auto& l : v)
-	{
-		auto p=explode(l, '\t');
-		if(p.size()!=3)
-		{
-			throw std::runtime_error("unable to parse font file: 3 parameters expected");
-		}
-		else
-		{
-			fonts.insert(p[0], std::atoi( p[1].c_str() ), p[2] );
-		}
-	}	
 }

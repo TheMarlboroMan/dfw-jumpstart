@@ -1,0 +1,12 @@
+v:1
+pantalla_completa:0
+modo_hardware:1
+doble_buffer:1
+pantalla_anyformat:1
+volumen_audio:64
+volumen_musica:64
+audio_ratio:44100
+audio_salidas:2
+audio_buffers:1024
+audio_canales:8
+idioma:0

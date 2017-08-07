@@ -1,6 +1,6 @@
 #include "room.h"
 
-#include "texture_defs.h"
+#include "display_defs.h"
 
 #include <class/dnot_parser.h>
 
@@ -48,22 +48,22 @@ void room::load(const std::string& fn)
 		//TODO:
 
 		//Lambda to push tiles...
-		auto push_tile=[](const tools::dnot_token& i, std::vector<tile_decoration>& tiles, int res_id, int alpha)
+		auto push_tile=[](const tools::dnot_token& i, std::vector<tile_decoration>& tiles, int tset_id, int res_id, int alpha)
 		{
 			int x=i["x"], y=i["y"], id=i["t"];
 			tiles.push_back(
-				tile_decoration(x, y, id, res_id, alpha));
+				tile_decoration(x, y, id, tset_id, res_id, alpha));
 		};
 
 		//Second item is the background.
 		if(layers.size() >= 2)
 			for(auto& i : layers[1]["data"].get_vector())
-				push_tile(i, floor_tiles, texture_defs::bgtiles, bgtiles_alpha);
+				push_tile(i, floor_tiles, tileset_defs::background, texture_defs::bgtiles, bgtiles_alpha);
 
 		//Third item is the shadow layer.
 		if(layers.size() >= 3)
 			for(auto& i : layers[2]["data"].get_vector())
-				push_tile(i, shadow_tiles, texture_defs::shadowtiles, shadowtiles_alpha);
+				push_tile(i, shadow_tiles, tileset_defs::shadows, texture_defs::shadowtiles, shadowtiles_alpha);
 	}
 	catch(std::exception& e)
 	{

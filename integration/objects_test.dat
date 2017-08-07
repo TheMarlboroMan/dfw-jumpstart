@@ -1,0 +1,5 @@
+1	Small object	32	32	64,64,64
+	bearing	1
+	speed	32
+2	Large object	64	64	128,128,64
+	tag	0

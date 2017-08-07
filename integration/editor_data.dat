@@ -1,0 +1,7 @@
+#Tilesets
+T	../dfw-jumpstart/data/app_data/scifitiles-sheet-alt.dat	#	|	../dfw-jumpstart/data/textures/scifitiles-sheet-alt.png
+T	../dfw-jumpstart/integration/basic-logic-sheet.dat	#	|	../dfw-jumpstart/integration/basic-logic-sheet.png	0	0	0	0
+T	../dfw-jumpstart/data/app_data/shadows-sheet.dat	#	|	../dfw-jumpstart/data/textures/shadows-sheet.png
+#Object sets
+O	../dfw-jumpstart/integration/objects_test.dat
+O	../dfw-jumpstart/integration/objects_game.dat

@@ -14,7 +14,7 @@ class tile_decoration:
 	
 	public:
 
-	tile_decoration(int x, int y, int tile_id, int tileset_resource_id, int alpha);
+	tile_decoration(int, int, int, int, int, int);
 
 
 	//////////////
@@ -34,6 +34,7 @@ class tile_decoration:
 	int			x,
 				y,		//This is in game space... Grid space is useless now.
 				tile_id,
+				tileset_id,
 				tileset_resource_id,
 				alpha;
 	ldv::rect		drawable_box;

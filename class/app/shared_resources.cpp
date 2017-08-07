@@ -35,7 +35,14 @@ void shared_resources::register_fonts()
 
 void shared_resources::register_tilesets()
 {
-	//TODO: Most likely we'll like to have many sprite tables...
-
-	throw std::runtime_error("register_tilesets is not yet implemented");
+	try
+	{
+		tilesheets.push_back({"data/app_data/scifitiles-sheet-alt.dat"});
+		tilesheets.push_back({"data/app_data/shadows-sheet.dat"});
+	}
+	catch(std::exception& e)
+	{
+		log<<"unable to load all tilesets"<<std::endl;
+		throw e;
+	}
 }

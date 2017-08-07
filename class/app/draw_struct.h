@@ -79,7 +79,7 @@ struct draw_struct
 	void 							set_location(ldv::rect r) {rep_bmp.set_location(r);}
 	void 							set_set_invert_horizontal_bitmap(bool v) {rep_bmp.set_invert_horizontal(v);}
 	void 							set_set_invert_vertical_bitmap(bool v) {rep_bmp.set_invert_vertical(v);}
-	void 							set_texture(ldv::texture& r) {rep_bmp.set_texture(r);}
+	void 							set_texture(const ldv::texture& r) {rep_bmp.set_texture(r);}
 
 	///////////////////////////////////
 	// Propiedades

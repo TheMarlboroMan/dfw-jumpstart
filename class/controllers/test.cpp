@@ -41,20 +41,15 @@ void controller_test::draw(ldv::screen& screen, int /*fps*/)
 {
 	screen.clear(ldv::rgba8(0, 0, 0, 0));
 	
-	//First layer...
 	const auto& dc=game_room.get_drawables();
 
+	//First layer...
 	for(const auto& d: dc.background)
 	{
 		d->draw(screen, game_camera, game_draw_struct, s_resources);
 	}
 
-	ldv::box_representation box1(ldv::polygon_representation::type::line, ldv::rect{10,10,40,40}, ldv::rgba_color{255, 0, 0, 255});
-	box1.draw(screen);
-
-	ldv::box_representation box2(ldv::polygon_representation::type::fill, ldv::rect{40,40,40,40}, ldv::rgba8(0, 0, 0, 16));
-	box2.set_blend(ldv::representation::blends::alpha);
-	box2.draw(screen);
+	//Second layer: game objects... this has to be ordered...
 }
 
 void controller_test::awake(dfw::input& /*input*/)

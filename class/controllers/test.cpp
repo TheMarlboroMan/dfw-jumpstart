@@ -16,7 +16,10 @@ try
 	:s_resources(sr),
 	game_camera{{0,0,700,500},{0,0}} //This means that the camera always gets a 700x500 box, even with a larger window.
 {
+
+	//The thing starts at map01, terminus_id 0.
 	game_room.load("map01.dat");
+	game_player.center_on(game_room.get_entrance_by_id(0));
 }
 catch(std::exception& e)
 {
@@ -50,6 +53,8 @@ void controller_test::draw(ldv::screen& screen, int /*fps*/)
 	}
 
 	//Second layer: game objects... this has to be ordered...
+	//TODO: Get the vector from the room, add the player, order, draw.
+	game_player.draw(screen, game_camera, game_draw_struct, s_resources);
 }
 
 void controller_test::awake(dfw::input& /*input*/)

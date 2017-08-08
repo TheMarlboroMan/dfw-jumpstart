@@ -5,8 +5,12 @@
 #include <vector>
 #include <string>
 
+//Tools
+#include <class/dnot_token.h>
+
 //App
 #include "tile_decoration.h"
+#include "room_connection.h"
 
 namespace app
 {
@@ -28,6 +32,7 @@ class room
 	//This should use RVO, so no problem with superfluous copies.
 	room_drawable_collection	get_drawables() const;
 	void				load(const std::string&);
+	const room_entrance&		get_entrance_by_id(int) const;
 	
 	private:
 
@@ -35,13 +40,18 @@ class room
 					shadowtiles_alpha=128;
 
 	void				clear();
+	void				build_room_object(const tools::dnot_token&);
 
-	//TODO: We'll also need a clean function.
 	//TODO: We'll need collision functions.
 
 //	TODO: This gotta be a 2d matrix. std::vector<game_tile>		logic_tiles;
 	std::vector<tile_decoration>	floor_tiles;
 	std::vector<tile_decoration>	shadow_tiles;
+	std::vector<room_entrance>	entrances;
+	std::vector<room_exit>		exits;
+
+	//TODO: Logic objects: switches...
+	//TODO: Logic objects: game obstacles.
 };
 
 }

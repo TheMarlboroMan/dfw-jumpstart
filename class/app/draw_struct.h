@@ -35,6 +35,8 @@ struct draw_struct
 								draw_struct();
 								~draw_struct();
 
+	//////////
+	//Generics
 	void							go_to(ldv::point p) {rep->go_to(p);}
 	ldv::rect 						get_view_position() const {return rep->get_view_position();}
 	void 							set_type(types t);
@@ -47,23 +49,28 @@ struct draw_struct
 	void							set_external(ldv::representation&);
 
 	///////////////////
-	// Metodos para manipular el grupo de representaciones...
-
+	//Group representation manipulation...
 	void 							insert_in_group(ldv::representation * r);
 
 	////////////////////
-	//Métodos para manipular la representación de puntos.
-
+	//Point manipulation...
 	void 							insert_point(ldv::point p) {rep_points.insert(p);}
 
 	////////////////////
-	//Métodos para manipular la representación de líneas.
+	//Primitive generics...
+	void							set_primitive_fill(ldv::polygon_representation::type f);
 
+	////////////////////
+	//Manipulation of box representation...
+	void							set_box_dimensions(int x, int y) {rep_box.set_dimensions(x,y);}
+	void							set_box_location(const ldv::rect& r) {rep_box.set_location(r);}
+
+	////////////////////
+	//Manipulation of lines...
 	void 							set_line(ldv::point p1, ldv::point p2) {rep_line.set_points(p1.x, p1.y, p2.x, p2.y);}
 
 	////////////////////
-	//Methods for polygon manipulation...
-	void							set_polygon_fill(ldv::polygon_representation::type f) {rep_polygon.set_filltype(f);}
+	//Polygon manipulation...
 	void							set_polygon_points(const std::vector<ldv::point>& p) {rep_polygon.set_points(p);}
 
 

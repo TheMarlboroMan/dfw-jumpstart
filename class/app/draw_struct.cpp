@@ -101,3 +101,9 @@ void draw_struct::set_external(ldv::representation& p_rep)
 	type=types::external;
 	rep=&p_rep;
 }
+
+void draw_struct::set_primitive_fill(ldv::polygon_representation::type f)
+{
+	rep_polygon.set_filltype(f);
+	rep_box.set_filltype(f);
+}

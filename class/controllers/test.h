@@ -17,6 +17,7 @@
 #include "../app/room.h"
 #include "../app/shared_resources.h"
 #include "../app/draw_struct.h"
+#include "../app/player.h"
 /*
 class game_tile:
 	public spatiable,
@@ -55,6 +56,7 @@ class controller_test:
 	ldv::camera					game_camera;
 	room						game_room;
 	draw_struct					game_draw_struct;
+	player						game_player;
 };
 
 }

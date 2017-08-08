@@ -88,8 +88,10 @@ class spatiable
 	static bool			is_right_of(const t_box& una, const t_box& otra) {return una.origin.x >= otra.origin.x+otra.w;}
 	static bool			is_inside_of(const t_box& una, const t_box& otra) {return una.inside(otra);}
 
+	void				center_on(const spatiable&);
+	void				center_on(t_point);
 	void 				set_position(const spatiable& e);
-	void 				set_position(float x, float y);
+	void 				set_position(t_point);
 	t_box 				get_box_displaced(float x, float y) const;
 
 	////////////////////////////

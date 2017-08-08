@@ -22,13 +22,13 @@ spatiable::t_box spatiable::get_box_displaced(float x, float y) const
 
 void spatiable::set_position(const spatiable& e)
 {
-	set_position(e.get_spatiable_x(), e.get_spatiable_y());
+	set_position({e.get_spatiable_x(), e.get_spatiable_y()});
 }
 
-void spatiable::set_position(float x, float y)
+void spatiable::set_position(t_point p)
 {
-	set_box_x(x);
-	set_box_y(y);
+	set_box_x(p.x);
+	set_box_y(p.y);
 }
 
 ldt::vector_2d_screen<float> spatiable::screen_vector_for(const spatiable& a, const spatiable& b) const
@@ -59,4 +59,16 @@ ldt::vector_2d_cartesian<float> spatiable::cartesian_vector_for(const spatiable&
 float spatiable::cartesian_angle_for(const spatiable& a, const spatiable& b) const
 {
 	return cartesian_vector_for(a, b).angle_deg();
+}
+
+void spatiable::center_on(const spatiable& s)
+{
+	center_on({s.get_spatiable_cx(), s.get_spatiable_cy()});
+}
+
+void spatiable::center_on(t_point p)
+{
+	float x=p.x-(get_spatiable_w()/2),
+		y=p.y-(get_spatiable_h()/2);
+	set_position({x, y});
 }

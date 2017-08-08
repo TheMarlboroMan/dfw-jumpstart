@@ -1,8 +1,14 @@
 #include "room.h"
 
+//Std
+#include <algorithm>
+
+//Local
 #include "display_defs.h"
 
+//Tools
 #include <class/dnot_parser.h>
+#include <templates/compatibility_patches.h>
 
 using namespace app;
 
@@ -42,9 +48,10 @@ void room::load(const std::string& fn)
 		std::string filename="data/app_data/maps/"+fn;
 		auto root=tools::dnot_parse_file(filename);
 
-		auto layers=root["data"]["layers"].get_vector();
+		//First, layers...
+		const auto& layers=root["data"]["layers"].get_vector();
 
-		//First item is the logic sheet.
+		//First item is the logic layer.
 		//TODO:
 
 		//Lambda to push tiles...
@@ -64,10 +71,58 @@ void room::load(const std::string& fn)
 		if(layers.size() >= 3)
 			for(auto& i : layers[2]["data"].get_vector())
 				push_tile(i, shadow_tiles, tileset_defs::shadows, texture_defs::shadowtiles, shadowtiles_alpha);
+
+		//Next, object layers...
+		const auto& logic=root["data"]["logic"].get_vector();
+
+		//First layer is a lot of room objects...
+		if(logic.size() >= 1)
+		{
+			for(const auto& i: logic[0]["data"].get_vector())
+				build_room_object(i);
+		}
 	}
 	catch(std::exception& e)
 	{
 		throw std::runtime_error("Unable to load "+fn+": "+e.what());
+	}
+}
+
+//This is sort of a factory... The kind of thing we could delegate to another
+//class...
+
+void room::build_room_object(const tools::dnot_token& tok)
+{
+	try
+	{
+		//Caution: all properties are expressed as strings in the map format.
+		auto ifs=[](const tools::dnot_token& t) -> int
+		{
+			return std::atoi(t.get_string().c_str());
+		};
+
+		switch(tok["t"].get_int())
+		{
+			case 1: //Entrance
+				entrances.push_back({
+					app_interfaces::spatiable::t_point(tok["x"].get_int(), tok["y"].get_int()),
+					ifs(tok["p"]["bearing"]),
+					ifs(tok["p"]["terminus_id"])
+					});
+
+			break;
+			case 2: //Exit
+				exits.push_back({
+					app_interfaces::spatiable::t_box(tok["x"].get_int(), tok["y"].get_int(), tok["w"].get_int(), tok["h"].get_int()),
+					tok["p"]["destination_map"],
+					ifs(tok["p"]["terminus_id"])
+					});
+			break;
+		}
+	}
+	catch(std::exception& e)
+	{
+		throw std::runtime_error(std::string("Unable to build object of type ")+compat::to_string(tok["t"].get_int())+std::string(":")+e.what());
 	}
 }
 
@@ -77,7 +132,22 @@ void room::clear()
 {
 	//TODO: Clear all the other things.
 
+	entrances.clear();
+	exits.clear();
 	floor_tiles.clear();
 	shadow_tiles.clear();
 
+}
+
+const room_entrance& room::get_entrance_by_id(int id) const
+{
+	auto res=std::find_if(std::begin(entrances), std::end(entrances),
+		[id](const room_entrance& re) {return re.get_terminus_id()==id;});
+
+	if(res==std::end(entrances))
+	{
+		throw std::runtime_error("Unable to find terminus id "+compat::to_string(id));
+	}
+
+	return *res;
 }

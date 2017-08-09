@@ -61,16 +61,16 @@ Thus:
 
 - Preloop happens once before loop time is consumed.
 - Postloop happens right before drawing the state.
-- Controller loop happens X times, as much as needed to fill 0.01 seconds of logic.
+- Controller loop happens X times, as much as needed to fill N seconds of logic.
 	- This time is measured by a ldt::fps_counter, property of the kernel. 
 	- The value "delta_step" on the kernel represents the 0.01 seconds of logic.
-	- Once 0.01 seconds of logic are run, the screen is refreshed.
-	- If the application can't catch up with this timestep, the display will appear to skip, but logic will execute... If display and logic take too long, this will accumulate and eventually freeze :(.
-
+	- Once N seconds of logic are run, the screen is refreshed.
+	- The loop repeats with N being the time the screen took to refresh or a maximum value set in state_driver::get_max_timestep().
+	
 
 ###Implement text input.
 
-Getting the text input to work properly can be tricky, but it is actually easy. Two important things:
+Getting the text input to work properly seems tricky but it is actually easy. Two important things:
 
 - It is wise not to use the dli::sdl_input (implemented by dfw::input) buffer, but to build your own so you can keep control. A simple std::string will do.
 - Control characters (backspace, enter...) do not translate to input, and must be controlled individually as keydown presses.
@@ -110,7 +110,6 @@ The most relevant files are.
 The organisation of the class and controller files is non prescriptive. As far as you are concerned you can have all your controllers, application classes and implementation of the framework on the root directory and everything will be allright.
 
 #TODO:
-	- Check what happens if you do LOTS AND LOTS of logic... Does it slowdown or skip. Update the "loop", "preloop", "postloop" section.
 	- Add examples of class logic.
 	- Add examples of sound.
 	- Add examples of music.

@@ -29,10 +29,10 @@ class room
 
 					room();
 
-	//This should use RVO, so no problem with superfluous copies.
-	room_drawable_collection	get_drawables() const;
+	room_drawable_collection	get_drawables() const; 	//This should use RVO, so no problem with superfluous copies.
 	void				load(const std::string&);
 	const room_entrance&		get_entrance_by_id(int) const;
+	const std::vector<room_exit>&	get_exits() const {return exits;}
 	
 	private:
 
@@ -41,8 +41,6 @@ class room
 
 	void				clear();
 	void				build_room_object(const tools::dnot_token&);
-
-	//TODO: We'll need collision functions.
 
 //	TODO: This gotta be a 2d matrix. std::vector<game_tile>		logic_tiles;
 	std::vector<tile_decoration>	floor_tiles;

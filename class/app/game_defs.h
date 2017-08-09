@@ -1,6 +1,8 @@
 #ifndef GAME_DEFS_H
 #define GAME_DEFS_H
 
+#include <tools/vector_2d/vector_2d.h>
+
 namespace app
 {
 
@@ -25,7 +27,36 @@ struct bearing
 
 	bearing& operator=(tbearing v) {val=v; return *this;}
 	bearing& operator=(const bearing& v) {val=v.val; return *this;}
-	//TODO: Maybe from vector too...
+	bearing& operator=(const ldt::vector_2d<float>& v) 
+	{
+		if(!v.y && !v.x) {}
+		else if(v.x && v.y)
+		{
+			if(v.x > 0.f)
+			{
+				if(v.y > 0.f) val=tbearing::se;
+				else val=tbearing::ne;
+			}
+			else
+			{
+				if(v.y > 0.f) val=tbearing::sw;
+				else val=tbearing::nw;
+			}
+		}
+		else if(v.x && !v.y)
+		{
+			if(v.x > 0.f) val=tbearing::e;
+			else val=tbearing::w;
+		}
+		else if(v.y && !v.x)
+		{
+			if(v.y > 0.f) val=tbearing::s;
+			else val=tbearing::n;
+		}
+		
+		return *this;
+	}
+
 	bearing& operator=(int v) 
 	{
 		switch(v)
@@ -43,14 +74,6 @@ struct bearing
 
 		return *this;
 	}
-	
-	//TODO: Shit from vectors.
-};
-
-struct game_defs
-{
-
-
 };
 
 }

@@ -8,14 +8,6 @@ motion::motion(t_vector v)
 
 }
 
-float motion::integrate_vector(float delta, float &vec, float factor)
-{
-	float copy=vec;
-	vec+=factor * delta;
-	float val=copy + vec;
-	return val * 0.5 * delta;
-}
-
 void motion::add_vector(float c, axis t)
 {
 	switch(t)
@@ -32,4 +24,15 @@ void motion::set_vector(float c, axis t)
 		case axis::x: vector.x=c; break;
 		case axis::y: vector.y=c; break;
 	}
+}
+
+float motion::get_vector(axis t)
+{
+	switch(t)
+	{
+		case axis::x: return vector.x; break;
+		case axis::y: return vector.y; break;
+	}
+
+	return 0.f; //Stupid compiler complaining about impossible cases... That was an enum class!.
 }

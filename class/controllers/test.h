@@ -49,6 +49,8 @@ class controller_test:
 
 	private:
 
+	void					do_room_change(const std::string&, int);
+
 	//references...
 	shared_resources&				s_resources;
 

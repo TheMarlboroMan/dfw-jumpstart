@@ -51,6 +51,10 @@ class room_exit:
 
 	}
 
+	const std::string&		get_destination_map() const {return destination_map;}
+	int				get_terminus_id() const {return terminus_id;}
+	
+
 	private:
 
 	std::string			destination_map;

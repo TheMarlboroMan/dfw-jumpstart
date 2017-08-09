@@ -9,6 +9,7 @@
 #include "spatiable.h"
 #include "drawable.h"
 #include "game_defs.h"
+#include "game_input.h"
 
 namespace app
 {
@@ -24,9 +25,8 @@ class player:
 
 					player();
 	void				step(float);
-	//TODO: We'll see...
-//	void				set_bearing(game_defs::tbearing b) {bearing=b;}
-	motion&				get_motion() {return motion_data;}
+	void				set_input(game_input);
+	void				integrate_motion(float, motion::axis);
 
 	//////////////////////////
 	//Spatiable implementation
@@ -50,7 +50,7 @@ class player:
 
 	static const int w=24;
 	static const int h=24;
-	static const int speed=80;
+	static const int speed=200;
 
 	app_interfaces::spatiable::t_box		bounding_box,
 							prev_bounding_box;

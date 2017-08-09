@@ -26,10 +26,10 @@ class motion
 	const t_vector&			 	get_vector() const {return vector;}
 	t_vector		 		get_vector() {return vector;}
 
+	float					get_vector(axis);
 	float 					get_vector_x() const {return vector.x;}
 	float 					get_vector_y() const {return vector.y;}
 
-	float 					integrate_vector(float delta, float& vector, float factor);
 	void 					add_vector(float, axis);
 	void 					set_vector(float, axis);
 	void 					set_vector(t_vector v) {vector=v;}

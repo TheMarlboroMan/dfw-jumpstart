@@ -27,6 +27,7 @@ class player:
 	void				step(float);
 	void				set_input(game_input);
 	void				integrate_motion(float, motion::axis);
+	void				revert_box() {bounding_box=prev_bounding_box;}
 
 	//////////////////////////
 	//Spatiable implementation

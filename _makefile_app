@@ -27,6 +27,7 @@ $(DIR_O)room.o \
 $(DIR_O)motion.o \
 $(DIR_O)player.o \
 $(DIR_O)room_connection.o \
+$(DIR_O)room_wall.o \
 
 ################################################################################
 #External dependencies...
@@ -107,16 +108,22 @@ $(DIR_APP)motion.cpp
 $(DIR_O)room.o :\
 $(DIR_O)tile_decoration.o \
 $(DIR_O)room_connection.o \
+$(DIR_O)room_wall.o \
 $(DIR_APP)room.h \
 $(DIR_APP)room.cpp
 	$(CC) $(CFLAGS) $(INCLUDES) $(DIR_APP)room.cpp -o $(DIR_O)room.o
+
+$(DIR_O)room_wall.o :\
+$(DIR_O)spatiable.o \
+$(DIR_APP)room_wall.h \
+$(DIR_APP)room_wall.cpp
+	$(CC) $(CFLAGS) $(INCLUDES) $(DIR_APP)room_wall.cpp -o $(DIR_O)room_wall.o
 
 $(DIR_O)room_connection.o :\
 $(DIR_O)spatiable.o \
 $(DIR_APP)room_connection.h \
 $(DIR_APP)room_connection.cpp
 	$(CC) $(CFLAGS) $(INCLUDES) $(DIR_APP)room_connection.cpp -o $(DIR_O)room_connection.o
-
 
 $(DIR_O)tile_decoration.o :\
 $(DIR_O)drawable.o \

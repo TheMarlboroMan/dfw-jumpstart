@@ -13,6 +13,7 @@
 using namespace app;
 
 room::room()
+	:walls{1,1}
 {
 
 }
@@ -51,16 +52,24 @@ void room::load(const std::string& fn)
 		//First, layers...
 		const auto& layers=root["data"]["layers"].get_vector();
 
-		//First item is the logic layer.
-		//TODO:
-
-		//Lambda to push tiles...
+		//Lambda to push decoration tiles...
 		auto push_tile=[](const tools::dnot_token& i, std::vector<tile_decoration>& tiles, int tset_id, int res_id, int alpha)
 		{
 			int x=i["x"], y=i["y"], id=i["t"];
 			tiles.push_back(
 				tile_decoration(x, y, id, tset_id, res_id, alpha));
 		};
+
+		//First item is the logic layer.
+		if(layers.size() >= 1)
+		{
+			walls.clear();
+			unsigned int w=layers[0]["info"]["w"].get_int(),
+				h=layers[0]["info"]["h"].get_int();
+			walls.resize(w, h);
+			for(auto& i : layers[0]["data"].get_vector())
+				walls.insert(i["x"].get_int(), i["y"].get_int(), room_wall(i["x"].get_int(), i["y"].get_int()));
+		}
 
 		//Second item is the background.
 		if(layers.size() >= 2)
@@ -150,4 +159,32 @@ const room_entrance& room::get_entrance_by_id(int id) const
 	}
 
 	return *res;
+}
+
+std::vector<const app_interfaces::spatiable *>	room::get_walls_by_box(const app_interfaces::spatiable::t_box& box) const
+{
+	std::vector<const app_interfaces::spatiable *> res;
+
+	auto x_to_cell=[](int v){return floor(v / room_wall::wall_w);};
+	auto y_to_cell=[](int v){return floor(v / room_wall::wall_h);};
+
+	size_t begin_x=x_to_cell(box.origin.x),
+		end_x=x_to_cell(box.origin.x+box.w),
+		begin_y=y_to_cell(box.origin.y),
+		end_y=y_to_cell(box.origin.y+box.h);
+
+	for(size_t x=begin_x; x <= end_x; x++)
+	{
+		for(size_t y=begin_y; y <= end_y; y++)
+		{
+			if(walls.check(x, y))
+			{
+				res.push_back(&walls(x, y));
+			}
+		}
+	}
+
+//	std::cout<<begin_x<<" "<<end_x<<" | "<<begin_y<<" "<<end_y<<" "<<res.size()<<" / "<<walls.size()<<std::endl;
+
+	return res;
 }

@@ -16,6 +16,7 @@
 //Tools
 #include <class/ttf_manager.h>
 #include <class/sprite_table.h>
+#include <class/animation_table.h>
 
 namespace app
 {
@@ -29,11 +30,13 @@ class shared_resources
 	const ldv::resource_manager&		get_video_resource_manager() const {return v_manager;}
 	ldt::log&				get_log() {return log;}
 	const tools::sprite_table&		get_tilesheet(size_t i) const {return tilesheets[i];}
+	const tools::animation_table&		get_animation(size_t i) const {return animations[i];}
 
 	private:
 
 	void					register_fonts();
 	void					register_tilesets();
+	void					register_animations();
 
 	//References
 	ldv::resource_manager&			v_manager;
@@ -42,6 +45,7 @@ class shared_resources
 	//Properties
 	tools::ttf_manager			ttf_manager;
 	std::vector<tools::sprite_table>	tilesheets;
+	std::vector<tools::animation_table>	animations;
 };
 
 }

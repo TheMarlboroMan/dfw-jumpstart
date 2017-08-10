@@ -107,3 +107,21 @@ void draw_struct::set_primitive_fill(ldv::polygon_representation::type f)
 	rep_polygon.set_filltype(f);
 	rep_box.set_filltype(f);
 }
+
+//Gets a rectangle for screen position according to the projection used.
+
+ldv::rect draw_struct::location_projection(const ldv::rect& r, const ldv::rect& f, int dispx, int dispy) const
+{
+	return ldv::rect(
+		r.origin.x+dispx,
+		r.origin.y+dispy-r.h, 
+		f.w, f.h);
+}
+
+ldv::rect draw_struct::draw_box_from_spatiable(const ldt::box<float, unsigned int>& box) const
+{
+	return ldv::rect(
+		box.origin.x, //Let narrowing happen.
+		box.origin.y,
+		box.w, box.h);
+}

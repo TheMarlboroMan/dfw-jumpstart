@@ -9,7 +9,7 @@ struct texture_defs
 {
 	enum {bgtiles=1, 
 		shadowtiles=2,
-		sprite=3};
+		playersheet=3};
 };
 
 //This is the index for a vector.
@@ -17,6 +17,13 @@ struct tileset_defs
 {
 	enum {background=0,
 		shadows=1};
+};
+
+//This is the index for a vector.
+struct animation_defs
+{
+	enum {player=0
+	};
 };
 
 struct player_animation_defs

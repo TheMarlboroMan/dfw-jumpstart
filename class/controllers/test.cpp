@@ -46,40 +46,57 @@ void controller_test::loop(dfw::input& input, float delta)
 	game_player.set_input(gi);
 
 	//Player movement...
-	//Phase x.
-	game_player.integrate_motion(delta, motion::axis::x);
-	//TODO: Here go collisions with the world. This should be tiles and objects...
-
-	//Phase y.
-	game_player.integrate_motion(delta, motion::axis::y);
-	//TODO: Here go collisions with the world.
-
-	//Now effect collisions... These only apply to the final position, by design. Not like level design allows crazy things...
-	struct {
-		std::string 	map;
-		int		terminus_id;
-		bool 		change=false;
-	}room_change;
-
-	//Interestingly, we should not enforce "do_room_change" in here, since it will clear the room, hence the very
-	//same thing we are iterating.
-	for(const auto& e : game_room.get_exits())
+	if(gi.x) //Phase x
 	{
-		if(game_player.is_colliding_with(e))
+		game_player.integrate_motion(delta, motion::axis::x);
+		auto collisions=game_room.get_walls_by_box(game_player.get_box());
+		if(collisions.size())
 		{
-			room_change.map=e.get_destination_map();
-			room_change.terminus_id=e.get_terminus_id();
-			room_change.change=true;
-			break;
+			//TODO: More like "adjust against whatever you collided with"...
+			//game_player.adjust_collision(collisions[0], motionable::axis::x);
+			game_player.revert_box();
 		}
 	}
 
-	if(room_change.change) 
+	if(gi.y) //Phase y
 	{
-		do_room_change(room_change.map, room_change.terminus_id);
+		game_player.integrate_motion(delta, motion::axis::y);
+		auto collisions=game_room.get_walls_by_box(game_player.get_box());
+		if(collisions.size())
+		{
+			game_player.revert_box();
+		}
 	}
 
-	//TODO: Have camera follow the player... 
+	if(gi.x || gi.y)
+	{
+		//Now effect collisions... These only apply to the final position, by design. Not like level design allows crazy things...
+		struct {
+			std::string 	map;
+			int		terminus_id;
+			bool 		change=false;
+		}room_change;
+
+		//Interestingly, we should not enforce "do_room_change" in here, since it will clear the room, hence the very
+		//same thing we are iterating.
+		for(const auto& e : game_room.get_exits())
+		{
+			if(game_player.is_colliding_with(e))
+			{
+				room_change.map=e.get_destination_map();
+				room_change.terminus_id=e.get_terminus_id();
+				room_change.change=true;
+				break;
+			}
+		}
+
+		if(room_change.change) 
+		{
+			do_room_change(room_change.map, room_change.terminus_id);
+		}
+
+		//TODO: Have camera follow the player... 
+	}
 }
 
 void controller_test::draw(ldv::screen& screen, int /*fps*/)

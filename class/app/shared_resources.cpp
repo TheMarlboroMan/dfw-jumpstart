@@ -10,6 +10,7 @@ shared_resources::shared_resources(ldv::resource_manager& rm, ldt::log& l)
 {
 	register_fonts();
 	register_tilesets();
+	register_animations();
 }
 
 void shared_resources::register_fonts()
@@ -35,14 +36,33 @@ void shared_resources::register_fonts()
 
 void shared_resources::register_tilesets()
 {
+	log<<"registering tilesets..."<<std::endl;
+
 	try
 	{
 		tilesheets.push_back({"data/app_data/scifitiles-sheet-alt.dat"});
 		tilesheets.push_back({"data/app_data/shadows-sheet.dat"});
+		tilesheets.push_back({"data/app_data/character-sheet.dat"});
 	}
 	catch(std::exception& e)
 	{
-		log<<"unable to load all tilesets"<<std::endl;
+		log<<"unable to load all tilesets:"<<e.what()<<std::endl;
+		throw e;
+	}
+}
+
+void shared_resources::register_animations()
+{
+	log<<"registering animations..."<<std::endl;
+
+	try
+	{
+		//This 2 is "character-sheet", hopefully :).
+		animations.push_back({tilesheets[2], "data/app_data/character-animations.dat"});
+	}
+	catch(std::exception& e)
+	{
+		log<<"unable to load all animations: "<<e.what()<<std::endl;
 		throw e;
 	}
 }

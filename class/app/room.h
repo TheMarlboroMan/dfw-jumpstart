@@ -7,10 +7,12 @@
 
 //Tools
 #include <class/dnot_token.h>
+#include <templates/matrix_2d.h>
 
 //App
 #include "tile_decoration.h"
 #include "room_connection.h"
+#include "room_wall.h"
 
 namespace app
 {
@@ -33,6 +35,7 @@ class room
 	void				load(const std::string&);
 	const room_entrance&		get_entrance_by_id(int) const;
 	const std::vector<room_exit>&	get_exits() const {return exits;}
+	std::vector<const app_interfaces::spatiable *>	get_walls_by_box(const app_interfaces::spatiable::t_box&) const;
 	
 	private:
 
@@ -42,9 +45,11 @@ class room
 	void				clear();
 	void				build_room_object(const tools::dnot_token&);
 
-//	TODO: This gotta be a 2d matrix. std::vector<game_tile>		logic_tiles;
 	std::vector<tile_decoration>	floor_tiles;
 	std::vector<tile_decoration>	shadow_tiles;
+
+	//Logic
+	tools::matrix_2d<room_wall>	walls;
 	std::vector<room_entrance>	entrances;
 	std::vector<room_exit>		exits;
 

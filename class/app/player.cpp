@@ -39,7 +39,7 @@ void player::draw(ldv::screen& scr, const ldv::camera& cam, app::draw_struct& ds
 	ds.set_clip(frect);
 	ds.set_location(
 		ds.location_projection(
-			ds.draw_box_from_spatiable(bounding_box), 
+			ds.draw_box_from_spatiable_box(bounding_box), 
 			frect, frame.disp_x, frame.disp_y));
 	ds.rep->draw(scr, cam);
 }

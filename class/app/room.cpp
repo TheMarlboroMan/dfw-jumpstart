@@ -64,9 +64,8 @@ void room::load(const std::string& fn)
 		if(layers.size() >= 1)
 		{
 			walls.clear();
-			unsigned int w=layers[0]["info"]["w"].get_int(),
-				h=layers[0]["info"]["h"].get_int();
-			walls.resize(w, h);
+			walls.resize(layers[0]["info"]["w"].get_int(), layers[0]["info"]["h"].get_int());
+
 			for(auto& i : layers[0]["data"].get_vector())
 				walls.insert(i["x"].get_int(), i["y"].get_int(), room_wall(i["x"].get_int(), i["y"].get_int()));
 		}

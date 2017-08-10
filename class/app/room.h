@@ -36,14 +36,20 @@ class room
 	const room_entrance&		get_entrance_by_id(int) const;
 	const std::vector<room_exit>&	get_exits() const {return exits;}
 	std::vector<const app_interfaces::spatiable *>	get_walls_by_box(const app_interfaces::spatiable::t_box&) const;
+	unsigned int			get_w() const {return walls.get_w()*room_wall::wall_w;}
+	unsigned int			get_h() const {return walls.get_h()*room_wall::wall_h;}
 	
 	private:
 
+	//Constants...
 	static const int		bgtiles_alpha=255,
 					shadowtiles_alpha=128;
 
+	//Private methods...
 	void				clear();
 	void				build_room_object(const tools::dnot_token&);
+
+	//Properties.
 
 	std::vector<tile_decoration>	floor_tiles;
 	std::vector<tile_decoration>	shadow_tiles;

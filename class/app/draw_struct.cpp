@@ -118,7 +118,7 @@ ldv::rect draw_struct::location_projection(const ldv::rect& r, const ldv::rect& 
 		f.w, f.h);
 }
 
-ldv::rect draw_struct::draw_box_from_spatiable(const ldt::box<float, unsigned int>& box) const
+ldv::rect draw_struct::draw_box_from_spatiable_box(const ldt::box<float, unsigned int>& box) const
 {
 	return ldv::rect(
 		box.origin.x, //Let narrowing happen.

@@ -8,7 +8,7 @@ draw_struct::draw_struct()
 	rep_group({0,0}, true),
 	rep_points(ldv::rgba8(0,0,0,255)),
 	rep_box(ldv::box_representation::type::fill, {0,0,0,0}, ldv::rgba8(0,0,0,255)),
-	rep_line(0,0,0,0, ldv::rgba8(0,0,0,255)),
+	rep_line({0,0},{0,0}, ldv::rgba8(0,0,0,255)),
 	rep_polygon(ldv::polygon_representation::type::fill, {{0,0}, {1,0}, {1,2}}, ldv::rgba8(0,0,0,255)), 
 	rep(&rep_bmp),
 	type(types::bitmap)

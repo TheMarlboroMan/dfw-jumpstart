@@ -72,7 +72,7 @@ struct draw_struct
 
 	////////////////////
 	//Manipulation of lines...
-	void 							set_line(ldv::point p1, ldv::point p2) {rep_line.set_points(p1.x, p1.y, p2.x, p2.y);}
+	void 							set_line(ldv::point p1, ldv::point p2) {rep_line.set_points(p1, p2);}
 
 	////////////////////
 	//Polygon manipulation...

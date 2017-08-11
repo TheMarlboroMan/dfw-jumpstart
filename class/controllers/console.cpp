@@ -90,7 +90,7 @@ void controller_console::draw(ldv::screen& screen, int /*fps*/)
 	txt_history.draw(screen);
 
 	ldv::ttf_representation txt_command(font, fgcolor, ">"+current_command);
-	txt_command.go_to(0, 450);
+	txt_command.go_to({0, 450});
 	txt_command.draw(screen);
 	
 	if(time < 0.5f)

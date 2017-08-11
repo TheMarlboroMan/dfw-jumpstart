@@ -21,6 +21,7 @@ try
 
 	//The thing starts at map01, terminus_id 0.
 	do_room_change("map01.dat", 0);
+//	do_room_change("map02.dat", 1);
 }
 catch(std::exception& e)
 {
@@ -145,7 +146,9 @@ void controller_test::do_room_change(const std::string& map, int terminus_id)
 	
 	game_room.load(map);
 	game_player.center_on(game_room.get_entrance_by_id(terminus_id));
-//	s_resources.get_log()<<"camera limits will be "<<game_room.get_w()<<" "<<game_room.get_h()<<std::endl;
+
+	s_resources.get_log()<<"camera limits will be "<<game_room.get_w()<<" "<<game_room.get_h()<<std::endl;
+
 	game_camera.set_limits({0,0, game_room.get_w(), game_room.get_h()});
 	//TODO: Set player bearing upon entrance.
 }

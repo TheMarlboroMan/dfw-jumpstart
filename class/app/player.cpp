@@ -116,24 +116,30 @@ void player::integrate_motion(float delta, motion::axis axis)
 
 void player::adjust_collision_horizontal(const spatiable& o)
 {
-	//There is a reason to use the vector instead of the spatiable is_x_of.
-	//Considering how the room returns the collisions, is_left_of may fail.
-	//Just check by removing the -1 from room::get_walls_by_box, changing
-	//this check for is_x_of and try walking along walls.
-	//It is also faster.
+	//Interestingly, the previous bounding box does not always behave true...
 
+	if(o.is_left_of(prev_bounding_box))		set_box_x(o.get_spatiable_ex());
+	else if(o.is_right_of(prev_bounding_box))	set_box_x(o.get_spatiable_x()-get_spatiable_w());
+
+/*
+	Funny thing... this would probably be a heck of a lot faster.
 	float v=motion_data.get_vector_x();
 	if(v > 0.f) 		set_box_x(o.get_spatiable_x()-get_spatiable_w());
 	else if(v < 0.f)	set_box_x(o.get_spatiable_ex());
+*/
 
 	motion_data.set_vector(0.f, motion::axis::x);
 }
 
 void player::adjust_collision_vertical(const spatiable& o)
 {
+	if(o.is_over(prev_bounding_box))		set_box_y(o.get_spatiable_ey());
+	else if(o.is_under(prev_bounding_box))		set_box_y(o.get_spatiable_y()-get_spatiable_h());
+
+/*
 	float v=motion_data.get_vector_y();
 	if(v > 0.f)		set_box_y(o.get_spatiable_y()-get_spatiable_h());
 	else if(v < 0.f)	set_box_y(o.get_spatiable_ey());
-
+*/
 	motion_data.set_vector(0.f, motion::axis::y);
 }

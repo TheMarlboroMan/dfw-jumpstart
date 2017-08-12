@@ -49,11 +49,24 @@ void controller_test::loop(dfw::input& input, float delta)
 	game_player.step(delta);
 
 	//Player movement...
+	auto movement_phase=[this, delta](int val, motion::axis axis, void (player::*fn)(const app_interfaces::spatiable& o))
+	{
+		if(val) 
+		{
+			game_player.integrate_motion(delta, axis);
+			auto collisions=game_room.get_walls_by_box(game_player.get_box());
+			if(collisions.size())
+			{
+				(game_player.*fn)(*collisions[0]); //This never ceases to amuse me.
+			}
+		}
+	};
 
-	//TODO: This can be adjusted into a simple function.
+	//This is also amusing and infuriating...
+	movement_phase(gi.x, motion::axis::x, &player::adjust_collision_horizontal);
+	movement_phase(gi.y, motion::axis::y, &player::adjust_collision_vertical);
 
-//	auto movement_phase=[this](motion::axis axis, player::
-
+/*
 	if(gi.x) //Phase x
 	{
 		game_player.integrate_motion(delta, motion::axis::x);
@@ -74,6 +87,7 @@ void controller_test::loop(dfw::input& input, float delta)
 			game_player.adjust_collision_vertical(*collisions[0]);
 		}
 	}
+*/
 
 	if(gi.x || gi.y)
 	{

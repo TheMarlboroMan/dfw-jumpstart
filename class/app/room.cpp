@@ -164,20 +164,38 @@ std::vector<const app_interfaces::spatiable *>	room::get_walls_by_box(const app_
 {
 	std::vector<const app_interfaces::spatiable *> res;
 
-//TODO: Warning: DO NOT ALLOW NEGATIVE SPACE!!!.
 
-	auto x_to_cell=[](int v){return floor(v / room_wall::wall_w);};
-	auto y_to_cell=[](int v){return floor(v / room_wall::wall_h);};
+	//Converts a world value to a cell value. The last parameter is used
+	//in edge cases where the "end" of a box aligns with the beginning of
+	//a cell, thus including the cell in the result. It also does not allow
+	//negative values...
 
-	//Now... this is interesting... 
-	size_t begin_x=x_to_cell(box.origin.x),
-		end_x=x_to_cell(box.origin.x+box.w-1), //adjusting...
-		begin_y=y_to_cell(box.origin.y),
-		end_y=y_to_cell(box.origin.y+box.h-1);
+	//TODO: Protect against right and botto limits. walls.get_w() & walls.get_h()
 
-	for(size_t x=begin_x; x <= end_x; x++)
+	
+
+	auto to_cell=[](int v, int dim, bool check_remainder)
 	{
-		for(size_t y=begin_y; y <= end_y; y++)
+		int val=floor(v/dim);
+		if(check_remainder && !(v%dim)) --val;
+
+		return val >= 0 ? val : 0;
+	};
+
+	//The ceil part makes sense: when passed to to_cell, box.origin.x+box.w
+	//is parsed to int, which just removes its decimal part, meaning that
+	//if you have an end in 32.7 it becomes 32 (thus decremented by "to_cell")
+	//instead of 33. The beg_X values are not subjected to the floor 
+	//treatment, as this is done by default.
+
+	size_t 	beg_x=to_cell(box.origin.x, room_wall::wall_w, false),
+		end_x=to_cell(std::ceil(box.origin.x+box.w), room_wall::wall_w, true), //adjusting...
+		beg_y=to_cell(box.origin.y, room_wall::wall_h, false),
+		end_y=to_cell(std::ceil(box.origin.y+box.h), room_wall::wall_h, true);
+
+	for(size_t x=beg_x; x <= end_x; x++)
+	{
+		for(size_t y=beg_y; y <= end_y; y++)
 		{
 			if(walls.check(x, y))
 			{

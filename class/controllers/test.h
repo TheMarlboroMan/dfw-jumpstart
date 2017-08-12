@@ -43,8 +43,8 @@ class controller_test:
 	virtual void 				loop(dfw::input& input, float delta);
 	virtual void 				postloop(dfw::input&, float, int) {}
 	virtual void 				draw(ldv::screen& screen, int);
-	virtual void 				awake(dfw::input& input);
-	virtual void 				slumber(dfw::input& input);
+	virtual void 				awake(dfw::input&) {}
+	virtual void 				slumber(dfw::input&) {}
 	virtual bool				can_leave_state() const;
 
 	private:

@@ -27,7 +27,9 @@ class player:
 	void				step(float);
 	void				set_input(game_input);
 	void				integrate_motion(float, motion::axis);
-	void				revert_box() {bounding_box=prev_bounding_box;}
+//	void				revert_box() {bounding_box=prev_bounding_box;}
+	void				adjust_collision_horizontal(const spatiable&);
+	void				adjust_collision_vertical(const spatiable&);
 
 	//////////////////////////
 	//Spatiable implementation
@@ -50,8 +52,8 @@ class player:
 	private:
 
 	static const int w=24;
-	static const int h=24;
-	static const int speed=200;
+	static const int h=14;
+	static const int speed=140;
 
 	app_interfaces::spatiable::t_box		bounding_box,
 							prev_bounding_box;
@@ -59,6 +61,7 @@ class player:
 
 	//This controls the vector and integration.
 	motion						motion_data;
+	float						walk_time;
 };
 
 }

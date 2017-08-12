@@ -23,6 +23,7 @@ class motion
 
 						motion(t_vector={0.f, 0.f});
 
+	bool					has_motion() const {return vector.x || vector.y;}
 	const t_vector&			 	get_vector() const {return vector;}
 	t_vector		 		get_vector() {return vector;}
 

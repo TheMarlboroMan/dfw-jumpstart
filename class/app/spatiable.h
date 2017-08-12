@@ -27,14 +27,7 @@ class spatiable
 
 	typedef ldt::box<float, unsigned int> 	t_box;
 	typedef ldt::point_2d<float> 		t_point;
-	enum t{T_X=1, T_Y=2};
 
-	///////////////////////////////
-	// Propiedades e internas...
-
-	protected:
-
-	//////////////////////////////
 	// Interfaz pública.
 
 	public:
@@ -49,7 +42,6 @@ class spatiable
 	float 				get_spatiable_ex() const {return get_spatiable_x() + get_spatiable_w();}
 	float 				get_spatiable_ey() const {return get_spatiable_y() + get_spatiable_h();}
 
-	
 	unsigned int 			get_spatiable_w() const {return get_box().w;}
 	unsigned int 			get_spatiable_h() const {return get_box().h;}
 	t_point		 		get_spatiable_position() const {return get_box().origin;}
@@ -68,7 +60,8 @@ class spatiable
 	bool 				is_colliding_with(const t_box& e, bool=false) const;
 
 	//Estos son siempre según la geometría en la que 0.0 es el punto superior
-	//a la izquierda.
+	//a la izquierda... Any overlap would be "is_inside_of", so we need to
+	//test positions previous to the overlap.
 
 	bool 				is_over(const spatiable& otra) const {return is_over(get_box(), otra.get_box());}
 	bool 				is_under(const spatiable& otra) const {return is_under(get_box(), otra.get_box());}

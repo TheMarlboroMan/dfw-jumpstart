@@ -1,3 +1,4 @@
 #font size	path
 consola-mono	16	data/fonts/ConsolaMono.ttf
+consola-mono	12	data/fonts/ConsolaMono.ttf
 

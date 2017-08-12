@@ -114,7 +114,7 @@ ldv::rect draw_struct::location_projection(const ldv::rect& r, const ldv::rect& 
 {
 	return ldv::rect(
 		r.origin.x+dispx,
-		r.origin.y+dispy-r.h, 
+		r.origin.y+dispy-(f.h-r.h), 
 		f.w, f.h);
 }
 

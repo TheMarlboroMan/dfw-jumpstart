@@ -164,13 +164,16 @@ std::vector<const app_interfaces::spatiable *>	room::get_walls_by_box(const app_
 {
 	std::vector<const app_interfaces::spatiable *> res;
 
+//TODO: Warning: DO NOT ALLOW NEGATIVE SPACE!!!.
+
 	auto x_to_cell=[](int v){return floor(v / room_wall::wall_w);};
 	auto y_to_cell=[](int v){return floor(v / room_wall::wall_h);};
 
+	//Now... this is interesting... 
 	size_t begin_x=x_to_cell(box.origin.x),
-		end_x=x_to_cell(box.origin.x+box.w),
+		end_x=x_to_cell(box.origin.x+box.w-1), //adjusting...
 		begin_y=y_to_cell(box.origin.y),
-		end_y=y_to_cell(box.origin.y+box.h);
+		end_y=y_to_cell(box.origin.y+box.h-1);
 
 	for(size_t x=begin_x; x <= end_x; x++)
 	{
@@ -182,8 +185,6 @@ std::vector<const app_interfaces::spatiable *>	room::get_walls_by_box(const app_
 			}
 		}
 	}
-
-//	std::cout<<begin_x<<" "<<end_x<<" | "<<begin_y<<" "<<end_y<<" "<<res.size()<<" / "<<walls.size()<<std::endl;
 
 	return res;
 }

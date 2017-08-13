@@ -23,7 +23,7 @@ DIR_TOOLS=$(DIR_HOME)herramientas_proyecto/
 DIR_O_TOOLS=$(DIR_HOME)herramientas_proyecto/objects/
 DO_DIR_OBJECTS=mkdir -p objects; touch objects/dummy
 
-LINKER=-L$(DIR_LIBDAN2) -lDanSDL2 -L. -lSDL2 -lSDL2_ttf -lSDL2_gfx -lSDL2_mixer -lSDL2_image -lGL
+LINKER=-L $(DIR_LIBDAN2) -lDanSDL2 -L. -lSDL2 -lSDL2_ttf -lSDL2_gfx -lSDL2_mixer -lSDL2_image -lGL
 INCLUDES=-I $(DIR_LIBDAN2) -I $(DIR_TOOLS) -I $(DIR_DFW)
 LIBRARIES=
 

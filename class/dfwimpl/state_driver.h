@@ -13,6 +13,7 @@
 //Controllers.
 #include "../controllers/states.h"
 #include "../controllers/test.h"
+#include "../controllers/fps_test.h"
 #include "../controllers/console.h"
 
 //Specific app_config
@@ -45,6 +46,7 @@ class state_driver:
 	std::unique_ptr<shared_resources>		s_resources;
 	std::unique_ptr<controller_test>		c_test;
 	std::unique_ptr<controller_console>		c_console;
+	std::unique_ptr<controller_fps_test>		c_fps;
 };
 
 }

@@ -16,6 +16,7 @@ $(DIR_O)kernel_config.o \
 $(DIR_O)app_config.o \
 $(DIR_O)controller_test.o \
 $(DIR_O)controller_console.o \
+$(DIR_O)controller_test_fps.o \
 
 DEP_APP=\
 $(DIR_O)shared_resources.o \
@@ -43,6 +44,7 @@ $(DIR_O_TOOLS)dnot_token.o \
 $(DIR_O_TOOLS)ttf_manager.o \
 $(DIR_O_TOOLS)localization_base.o\
 $(DIR_O_TOOLS)sprite_table.o\
+$(DIR_O_TOOLS)chrono.o\
 $(DIR_O_TOOLS)animation_table.o 
 
 DEP_FRAMEWORK=\
@@ -88,6 +90,11 @@ $(DIR_O)controller_console.o :\
 $(DIR_CONTROLLERS)console.h \
 $(DIR_CONTROLLERS)console.cpp
 	$(CC) $(CFLAGS) $(INCLUDES) $(DIR_CONTROLLERS)console.cpp -o $(DIR_O)controller_console.o
+
+$(DIR_O)controller_test_fps.o :\
+$(DIR_CONTROLLERS)fps_test.h \
+$(DIR_CONTROLLERS)fps_test.cpp
+	$(CC) $(CFLAGS) $(INCLUDES) $(DIR_CONTROLLERS)fps_test.cpp -o $(DIR_O)controller_test_fps.o
 
 ################################################################################
 #Class...

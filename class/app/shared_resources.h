@@ -17,6 +17,8 @@
 #include <class/ttf_manager.h>
 #include <class/sprite_table.h>
 #include <class/animation_table.h>
+#include <class/chrono.h>
+
 
 namespace app
 {
@@ -25,12 +27,13 @@ class shared_resources
 {
 	public:
 
-						shared_resources(ldv::resource_manager&, ldt::log&);
+						shared_resources(ldv::resource_manager&, ldt::log&, tools::chrono&);
 	const tools::ttf_manager&		get_ttf_manager() const {return ttf_manager;}
 	const ldv::resource_manager&		get_video_resource_manager() const {return v_manager;}
 	ldt::log&				get_log() {return log;}
 	const tools::sprite_table&		get_tilesheet(size_t i) const {return tilesheets[i];}
 	const tools::animation_table&		get_animation(size_t i) const {return animations[i];}
+	tools::chrono&				get_controller_chrono() {return controller_chrono;}
 
 	private:
 
@@ -41,6 +44,7 @@ class shared_resources
 	//References
 	ldv::resource_manager&			v_manager;
 	ldt::log&				log;
+	tools::chrono&				controller_chrono;
 
 	//Properties
 	tools::ttf_manager			ttf_manager;

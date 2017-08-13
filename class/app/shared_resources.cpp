@@ -5,8 +5,8 @@
 
 using namespace app;
 
-shared_resources::shared_resources(ldv::resource_manager& rm, ldt::log& l)
-	:v_manager(rm), log(l)
+shared_resources::shared_resources(ldv::resource_manager& rm, ldt::log& l, tools::chrono& cc)
+	:v_manager(rm), log(l), controller_chrono(cc)
 {
 	register_fonts();
 	register_tilesets();

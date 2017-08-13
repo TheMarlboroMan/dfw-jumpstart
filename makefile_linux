@@ -15,7 +15,7 @@ CC=g++
 EXECUTABLE=a.out
 DO_CLEAN=rm objects/*; rmdir objects; rm $(EXECUTABLE);
 
-DIR_HOME=/home/dani/programacion/
+DIR_HOME=~/programacion/
 DIR_LIBDAN2=$(DIR_HOME)libdansdl2
 DIR_DFW=$(DIR_HOME)dfw/
 DIR_O_DFW=$(DIR_HOME)dfw/objects/

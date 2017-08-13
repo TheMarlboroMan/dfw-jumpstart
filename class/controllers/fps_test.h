@@ -38,6 +38,8 @@ class controller_fps_test:
 
 	//properties
 	int						frames,
+							frames_accum,
+							frames_measured,
 							seconds;
 };
 

@@ -56,6 +56,7 @@ class app_config:
 	virtual std::string generate_file_version() const {return "1";}
 	virtual std::string get_key_file_version() const {return "config:meta:v";}
 	virtual std::string get_key_screen_double_buffer() const {return "config:video:double_buffer";}
+	virtual std::string get_key_screen_vsync() const {return "config:video:vsync";}
 	virtual std::string get_key_sound_volume() const {return "config:audio:sound_volume";}
 	virtual std::string get_key_music_volume() const {return "config:audio:music_volume";}
 	virtual std::string get_key_audio_ratio() const {return "config:audio:audio_ratio";}

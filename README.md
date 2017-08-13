@@ -1,8 +1,15 @@
+#TODO:
+	- Add examples of sound.
+		- With footsteps.
+	- Add examples of music.
+	- Add example of menu.
+	- Add example of localisation.
+
 #Basic framework.
 
 The idea here is to have a very basic application so things can run with little copy and paste. It will also include a few features I tend to forget about.
 
-There are two controllers here: a very simple console with four commands or so (first try to implement one) and a little game-like thing.
+There are two controllers here: a very simple console with four commands or so (first try to implement one) and a little game-like thing. Actually, there is a third, a very simple frames-per-second test, but it is not accessible.
 
 ##Getting started:
 
@@ -25,6 +32,8 @@ Here are a few things that need to be done in a regular basis.
 - Register the controller in state_driver.*. Perhaps in prepare_state() too.
 - Add the state to states.h, so it can be used from other controllers to request state changes.
 - Test the controller by changing the default state in state_driver's constructor.
+
+It is a bit clunky, but does not take more than 5 minutes.
 
 ###Add new input:
 
@@ -65,8 +74,7 @@ Thus:
 	- This time is measured by a ldt::fps_counter, property of the kernel. 
 	- The value "delta_step" on the kernel represents the 0.01 seconds of logic.
 	- Once N seconds of logic are run, the screen is refreshed.
-	- The loop repeats with N being the time the screen took to refresh or a maximum value set in state_driver::get_max_timestep().
-	
+	- The loop repeats with N being the time the screen took to refresh or a maximum value set in state_driver::get_max_timestep().	
 
 ###Implement text input.
 
@@ -109,10 +117,8 @@ The most relevant files are.
 
 The organisation of the class and controller files is non prescriptive. As far as you are concerned you can have all your controllers, application classes and implementation of the framework on the root directory and everything will be allright.
 
-#TODO:
-	- Add examples of class logic.
-	- Add examples of sound.
-	- Add examples of music.
-	- Add examples of rasterised resources.
-	- Add example of menu.
-	- Add example of localisation.
+##Interesting examples in the code:
+
+- The eternal pointer to member function is in class/controllers/test.cpp. Look for void (player::*fn). A few lines after the calling example is found.
+- The use of the animation sheet class is found in class/app/player.cpp
+- The use of the sprite sheet class is found in class/app/tile_decoration.cpp

@@ -66,32 +66,9 @@ void controller_test::loop(dfw::input& input, float delta)
 	movement_phase(gi.x, motion::axis::x, &player::adjust_collision_horizontal);
 	movement_phase(gi.y, motion::axis::y, &player::adjust_collision_vertical);
 
-/*
-	if(gi.x) //Phase x
-	{
-		game_player.integrate_motion(delta, motion::axis::x);
-		auto collisions=game_room.get_walls_by_box(game_player.get_box());
-		if(collisions.size())
-		{
-
-			game_player.adjust_collision_horizontal(*collisions[0]);
-		}
-	}
-
-	if(gi.y) //Phase y
-	{
-		game_player.integrate_motion(delta, motion::axis::y);
-		auto collisions=game_room.get_walls_by_box(game_player.get_box());
-		if(collisions.size())
-		{
-			game_player.adjust_collision_vertical(*collisions[0]);
-		}
-	}
-*/
-
+	//Now effect collisions... These only apply to the final position, by design. Not like level design allows crazy things...
 	if(gi.x || gi.y)
 	{
-		//Now effect collisions... These only apply to the final position, by design. Not like level design allows crazy things...
 		struct {
 			std::string 	map;
 			int		terminus_id;
@@ -144,7 +121,7 @@ void controller_test::draw(ldv::screen& screen, int fps)
 	//Draw fps.
 	ldv::ttf_representation fps_text{
 		s_resources.get_ttf_manager().get("consola-mono", 12), 
-		ldv::rgba8(255, 255, 255, 255), compat::to_string(fps)};
+		ldv::rgba8(0, 0, 255, 255), compat::to_string(fps)};
 	fps_text.go_to({500,0});
 	fps_text.draw(screen);
 }

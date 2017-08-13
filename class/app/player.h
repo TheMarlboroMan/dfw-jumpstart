@@ -27,7 +27,6 @@ class player:
 	void				step(float);
 	void				set_input(game_input);
 	void				integrate_motion(float, motion::axis);
-//	void				revert_box() {bounding_box=prev_bounding_box;}
 	void				adjust_collision_horizontal(const spatiable&);
 	void				adjust_collision_vertical(const spatiable&);
 
@@ -54,6 +53,8 @@ class player:
 	static const int w=24;
 	static const int h=14;
 	static const int speed=140;
+
+	int				choose_animation_frame() const;
 
 	app_interfaces::spatiable::t_box		bounding_box,
 							prev_bounding_box;

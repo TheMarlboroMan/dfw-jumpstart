@@ -37,34 +37,7 @@ void player::draw(ldv::screen& scr, const ldv::camera& cam, app::draw_struct& ds
 	ds.rep->draw(scr, cam);
 
 	//Now the animation...
-
-	//TODO: Wow... Move this somewhere else please.
-	int requested_animation=0;
-	switch(player_bearing())
-	{
-		case bearing::tbearing::n:
-			if(motion_data.has_motion()) requested_animation=player_animation_defs::walk_n;
-			else requested_animation=player_animation_defs::idle_n;
-		break;
-		case bearing::tbearing::ne:
-		case bearing::tbearing::e:
-		case bearing::tbearing::se:
-			if(motion_data.has_motion()) requested_animation=player_animation_defs::walk_e;
-			else requested_animation=player_animation_defs::idle_e;
-		break;
-		case bearing::tbearing::s:
-			if(motion_data.has_motion()) requested_animation=player_animation_defs::walk_s;
-			else requested_animation=player_animation_defs::idle_s;
-		break;
-		case bearing::tbearing::sw:
-		case bearing::tbearing::w:
-		case bearing::tbearing::nw:
-			if(motion_data.has_motion()) requested_animation=player_animation_defs::walk_w;
-			else requested_animation=player_animation_defs::idle_w;
-		break;
-	}
-
-	const auto& frame=sr.get_animation(animation_defs::player).get(requested_animation).get_for_time(walk_time).frame;
+	const auto& frame=sr.get_animation(animation_defs::player).get(choose_animation_frame()).get_for_time(walk_time).frame;
 	const auto& frect=frame.get_rect();
 
 	ds.set_type(app::draw_struct::types::bitmap);
@@ -116,17 +89,18 @@ void player::integrate_motion(float delta, motion::axis axis)
 
 void player::adjust_collision_horizontal(const spatiable& o)
 {
-	//Interestingly, the previous bounding box does not always behave true...
-
-	if(o.is_left_of(prev_bounding_box))		set_box_x(o.get_spatiable_ex());
-	else if(o.is_right_of(prev_bounding_box))	set_box_x(o.get_spatiable_x()-get_spatiable_w());
-
 /*
-	Funny thing... this would probably be a heck of a lot faster.
+	//TODO. Implement in terms of spatiable: have two versions.
+	Funny thing... this would probably be a heck of a lot faster and would dispose of the previous bounding boxes.
+	The only drawback?. Could not be implemented as part of spatiable.
+
 	float v=motion_data.get_vector_x();
 	if(v > 0.f) 		set_box_x(o.get_spatiable_x()-get_spatiable_w());
 	else if(v < 0.f)	set_box_x(o.get_spatiable_ex());
 */
+
+	if(o.is_left_of(prev_bounding_box))		set_box_x(o.get_spatiable_ex());
+	else if(o.is_right_of(prev_bounding_box))	set_box_x(o.get_spatiable_x()-get_spatiable_w());
 
 	motion_data.set_vector(0.f, motion::axis::x);
 }
@@ -136,10 +110,35 @@ void player::adjust_collision_vertical(const spatiable& o)
 	if(o.is_over(prev_bounding_box))		set_box_y(o.get_spatiable_ey());
 	else if(o.is_under(prev_bounding_box))		set_box_y(o.get_spatiable_y()-get_spatiable_h());
 
-/*
-	float v=motion_data.get_vector_y();
-	if(v > 0.f)		set_box_y(o.get_spatiable_y()-get_spatiable_h());
-	else if(v < 0.f)	set_box_y(o.get_spatiable_ey());
-*/
 	motion_data.set_vector(0.f, motion::axis::y);
+}
+
+int player::choose_animation_frame() const
+{
+	switch(player_bearing())
+	{
+		case bearing::tbearing::n:
+			if(motion_data.has_motion()) 	return player_animation_defs::walk_n;
+			else 				return player_animation_defs::idle_n;
+		break;
+		case bearing::tbearing::ne:
+		case bearing::tbearing::e:
+		case bearing::tbearing::se:
+			if(motion_data.has_motion()) 	return player_animation_defs::walk_e;
+			else 				return player_animation_defs::idle_e;
+		break;
+		case bearing::tbearing::s:
+			if(motion_data.has_motion()) 	return player_animation_defs::walk_s;
+			else 				return player_animation_defs::idle_s;
+		break;
+		case bearing::tbearing::sw:
+		case bearing::tbearing::w:
+		case bearing::tbearing::nw:
+			if(motion_data.has_motion()) 	return player_animation_defs::walk_w;
+			else 				return player_animation_defs::idle_w;
+		break;
+	}
+
+	///Stupid compiler...
+	return player_animation_defs::idle_n;
 }

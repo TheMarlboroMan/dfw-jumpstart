@@ -51,7 +51,8 @@ dfw::window_info kernel_config::get_window_info() const
 		config.int_from_path("config:video:window_w_logical"), 
 		config.int_from_path("config:video:window_h_px"), 
 		config.string_from_path("config:video:window_title"),
-		config.bool_from_path("config:video:window_show_cursor")};
+		config.bool_from_path("config:video:window_show_cursor"),
+		config.bool_from_path("config:video:vsync")};
 }
 
 std::vector<dfw::input_pair> kernel_config::get_input_pairs() const

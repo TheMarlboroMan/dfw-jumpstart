@@ -65,7 +65,7 @@ void controller_fps_test::draw(ldv::screen& screen, int fps)
 
 	//Draw fps.
 	ldv::ttf_representation fps_text{
-		s_resources.get_ttf_manager().get("consola-mono", 12), 
+		s_resources.get_ttf_manager().get("consola-mono", 16), 
 		ldv::rgba8(0, 255, 255, 255), fdata};
 	fps_text.go_to({0,0});
 	fps_text.draw(screen);

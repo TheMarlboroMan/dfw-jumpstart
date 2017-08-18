@@ -22,14 +22,15 @@ class tile_decoration:
 
 	public:
 
-	virtual float		get_ordering_x() const;
-	virtual float		get_ordering_y() const;
+	//These are not meant to be ordered, so there's no need to even try.
+	virtual tpos		get_ordering_x() const {return tpos{};}
+	virtual tpos		get_ordering_y() const {return tpos{};}
 	virtual bool		is_in_camera(const ldv::rect&) const;
 	virtual void		draw(ldv::screen&, const ldv::camera&, app::draw_struct&, const app::shared_resources&) const;
 
 	private:
 
-	static const int	cell_size=32;
+	static const tdim	cell_size=32;
 
 	int			x,
 				y,		//This is in game space... Grid space is useless now.

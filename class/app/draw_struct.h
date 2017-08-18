@@ -3,6 +3,8 @@
 
 #include <def_video.h>
 
+#include "app_defs.h"
+
 //Lazy drawing solution... This class has an item of each kind of common 
 //representation (minus ttf). Instead of creating and discarding representations
 //for each drawable, this structure can be passed and its representations
@@ -38,7 +40,7 @@ struct draw_struct
 	//////////
 	//Helpers...
 	ldv::rect 						location_projection(const ldv::rect&, const ldv::rect&, int, int) const;
-	ldv::rect						draw_box_from_spatiable_box(const ldt::box<float, unsigned int>&) const;
+	ldv::rect						draw_box_from_spatiable_box(const ldt::box<tpos, tdim>&) const;
 
 	//////////
 	//Generics

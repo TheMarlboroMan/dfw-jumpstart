@@ -5,6 +5,8 @@
 
 #include <tools/vector_2d/vector_2d.h>
 
+#include "app_defs.h"
+
 namespace app
 {
 
@@ -15,7 +17,6 @@ class motion
 	public:
 
 	enum class axis {x,y};
-	typedef ldt::vector_2d<float> 		t_vector;
 
 	///////////////////////
 	// Public interface
@@ -27,15 +28,15 @@ class motion
 	const t_vector&			 	get_vector() const {return vector;}
 	t_vector		 		get_vector() {return vector;}
 
-	float					get_vector(axis);
-	float 					get_vector_x() const {return vector.x;}
-	float 					get_vector_y() const {return vector.y;}
+	tpos					get_vector(axis);
+	tpos 					get_vector_x() const {return vector.x;}
+	tpos 					get_vector_y() const {return vector.y;}
 
-	void 					add_vector(float, axis);
-	void 					set_vector(float, axis);
+	void 					add_vector(tpos, axis);
+	void 					set_vector(tpos, axis);
 	void 					set_vector(t_vector v) {vector=v;}
-	float& 					ref_vector_x() {return vector.x;}
-	float& 					ref_vector_y() {return vector.y;}
+	tpos& 					ref_vector_x() {return vector.x;}
+	tpos& 					ref_vector_y() {return vector.y;}
 
 	//////////////////////
 	// Properties...

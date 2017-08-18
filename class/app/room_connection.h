@@ -11,6 +11,8 @@
 namespace app
 {
 
+//TODO: Yeah... maybe this goes further than being the base of these two.
+
 class room_object:
 	public app_interfaces::spatiable
 {
@@ -25,15 +27,15 @@ class room_object:
 	//Spatiable implementation
 
 	virtual app_interfaces::spatiable::t_box get_box() const {return bounding_box;}
-	virtual void 			set_box_x(float v) {bounding_box.origin.x=v;}
-	virtual void 			set_box_y(float v) {bounding_box.origin.y=v;}
-	virtual void 			displace_box(float x, float y) 
+	virtual void 			set_box_x(tpos v) {bounding_box.origin.x=v;}
+	virtual void 			set_box_y(tpos v) {bounding_box.origin.y=v;}
+	virtual void 			displace_box(tpos x, tpos y) 
 	{
 		bounding_box.origin.x+=x;
 		bounding_box.origin.y+=y;
 	}
-	virtual void 			set_box_w(unsigned int v) {bounding_box.w=v;}
-	virtual void 			set_box_h(unsigned int v) {bounding_box.h=v;}
+	virtual void 			set_box_w(tdim v) {bounding_box.w=v;}
+	virtual void 			set_box_h(tdim v) {bounding_box.h=v;}
 
 	private:
 
@@ -67,7 +69,7 @@ class room_entrance:
 	public:
 
 	room_entrance(app_interfaces::spatiable::t_point origin, int be, int tid):
-		room_object({(float)origin.x, (float)origin.y, w, h}), 
+		room_object({(tpos)origin.x, (tpos)origin.y, w, h}), 
 		val_bearing(be), terminus_id(tid)
 	{}
 

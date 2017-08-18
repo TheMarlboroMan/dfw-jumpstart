@@ -56,7 +56,7 @@ void player::set_input(game_input gi)
 {
 	if(!gi.x && !gi.y)
 	{
-		motion_data.set_vector({0.f, 0.f});
+		motion_data.set_vector({0.0, 0.0});
 	}
 	else
 	{
@@ -66,6 +66,12 @@ void player::set_input(game_input gi)
 		//Actually, this is an overloaded operator.
 		player_bearing=motion_data.get_vector();
 	}
+}
+
+void player::cancel_movement(motion::axis axis)
+{
+	bounding_box=prev_bounding_box;
+	motion_data.set_vector(0.0, axis);
 }
 
 void player::integrate_motion(float delta, motion::axis axis)
@@ -87,8 +93,12 @@ void player::integrate_motion(float delta, motion::axis axis)
 
 //This would go right in spatiable if we could have a callback for the vector...
 
-void player::adjust_collision_horizontal(const spatiable& o)
+void player::adjust_collision(const spatiable& o, motion::axis axis)
 {
+	switch(axis)
+	{
+		case motion::axis::x:
+
 /*
 	//TODO. Implement in terms of spatiable: have two versions.
 	Funny thing... this would probably be a heck of a lot faster and would dispose of the previous bounding boxes.
@@ -99,18 +109,15 @@ void player::adjust_collision_horizontal(const spatiable& o)
 	else if(v < 0.f)	set_box_x(o.get_spatiable_ex());
 */
 
-	if(o.is_left_of(prev_bounding_box))		set_box_x(o.get_spatiable_ex());
-	else if(o.is_right_of(prev_bounding_box))	set_box_x(o.get_spatiable_x()-get_spatiable_w());
-
-	motion_data.set_vector(0.f, motion::axis::x);
-}
-
-void player::adjust_collision_vertical(const spatiable& o)
-{
-	if(o.is_over(prev_bounding_box))		set_box_y(o.get_spatiable_ey());
-	else if(o.is_under(prev_bounding_box))		set_box_y(o.get_spatiable_y()-get_spatiable_h());
-
-	motion_data.set_vector(0.f, motion::axis::y);
+			if(o.is_left_of(prev_bounding_box))		set_box_x(o.get_spatiable_ex());
+			else if(o.is_right_of(prev_bounding_box))	set_box_x(o.get_spatiable_x()-get_spatiable_w());
+			motion_data.set_vector(0.0, motion::axis::x);
+		break;
+		case motion::axis::y:
+			if(o.is_over(prev_bounding_box))		set_box_y(o.get_spatiable_ey());
+			else if(o.is_under(prev_bounding_box))		set_box_y(o.get_spatiable_y()-get_spatiable_h());
+			motion_data.set_vector(0.0, motion::axis::y);
+		break;
 }
 
 int player::choose_animation_frame() const

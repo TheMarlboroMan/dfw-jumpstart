@@ -1,19 +1,8 @@
 #ifndef SPATIABLE_H
 #define SPATIABLE_H
 
-/*Interfaz que exige los métodos para definir una caja en 2d y a partir de ahí,
-monta el resto. Que defina una caja 2d no significa que realmente haya una
-caja por ahí, por ejemplo, las celdas de un nivel no tienen cajas reales, aunque
-devuelven una caja calculada. 
-
-Está implícito también que implementa muchas funciones para temas de colisión,
-como por ejemplo, saber si es sólido por todos lados o no, obtener información
-de colisión y demás. Intentamos separarlo en dos interfaces pero teníamos tanto
-el problema del diamante como que son casi la misma cosa. Se quedan, por tanto,
-como están.
-*/
-
 #include <libDan2.h>
+#include "app_defs.h"
 
 namespace app_interfaces
 {
@@ -25,8 +14,8 @@ class spatiable
 
 	public:
 
-	typedef ldt::box<float, unsigned int> 	t_box;
-	typedef ldt::point_2d<float> 		t_point;
+	typedef ldt::box<tpos, tdim>	 	t_box;
+	typedef ldt::point_2d<tpos> 		t_point;
 
 	// Interfaz pública.
 
@@ -35,26 +24,26 @@ class spatiable
 	virtual ~spatiable() {}
 
 	//x, y, center x and y, end x and y.
-	float 				get_spatiable_x() const {return get_box().origin.x;}
-	float 				get_spatiable_y() const {return get_box().origin.y;}
-	float 				get_spatiable_cx() const {return get_spatiable_x() + (get_spatiable_w() / 2);}
-	float 				get_spatiable_cy() const {return get_spatiable_y() + (get_spatiable_h() / 2);}
-	float 				get_spatiable_ex() const {return get_spatiable_x() + get_spatiable_w();}
-	float 				get_spatiable_ey() const {return get_spatiable_y() + get_spatiable_h();}
+	tpos 				get_spatiable_x() const {return get_box().origin.x;}
+	tpos 				get_spatiable_y() const {return get_box().origin.y;}
+	tpos 				get_spatiable_cx() const {return get_spatiable_x() + (get_spatiable_w() / 2);}
+	tpos 				get_spatiable_cy() const {return get_spatiable_y() + (get_spatiable_h() / 2);}
+	tpos 				get_spatiable_ex() const {return get_spatiable_x() + get_spatiable_w();}
+	tpos 				get_spatiable_ey() const {return get_spatiable_y() + get_spatiable_h();}
 
-	unsigned int 			get_spatiable_w() const {return get_box().w;}
-	unsigned int 			get_spatiable_h() const {return get_box().h;}
+	tdim	 			get_spatiable_w() const {return get_box().w;}
+	tdim	 			get_spatiable_h() const {return get_box().h;}
 	t_point		 		get_spatiable_position() const {return get_box().origin;}
 
-	ldt::vector_2d_screen<float>	screen_vector_for(const spatiable& e) const {return screen_vector_for(*this, e);}
-	ldt::vector_2d_screen<float>	screen_vector_for(const spatiable& a, const spatiable& b) const;
-	ldt::vector_2d_cartesian<float>	cartesian_vector_for(const spatiable& e) const {return cartesian_vector_for(*this, e);}
-	ldt::vector_2d_cartesian<float>	cartesian_vector_for(const spatiable& a, const spatiable& b) const;
+/*
+	ldt::vector_2d_cartesian<tpos>	cartesian_vector_for(const spatiable& e) const {return cartesian_vector_for(*this, e);}
+	ldt::vector_2d_cartesian<tpos>	cartesian_vector_for(const spatiable& a, const spatiable& b) const;
 
-	float		 		angle_for(const spatiable& e) const {return angle_for(*this, e);}
-	float		 		angle_for(const spatiable& a, const spatiable& b) const;
-	float		 		cartesian_angle_for(const spatiable& e) const {return cartesian_angle_for(*this, e);}
-	float		 		cartesian_angle_for(const spatiable& a, const spatiable& b) const;
+	tpos		 		angle_for(const spatiable& e) const {return angle_for(*this, e);}
+	tpos		 		angle_for(const spatiable& a, const spatiable& b) const;
+	tpos		 		cartesian_angle_for(const spatiable& e) const {return cartesian_angle_for(*this, e);}
+	tpos		 		cartesian_angle_for(const spatiable& a, const spatiable& b) const;
+*/
 
 	bool 				is_colliding_with(const spatiable&, bool=false) const;
 	bool 				is_colliding_with(const t_box& e, bool=false) const;
@@ -85,18 +74,18 @@ class spatiable
 	void				center_on(t_point);
 	void 				set_position(const spatiable& e);
 	void 				set_position(t_point);
-	t_box 				get_box_displaced(float x, float y) const;
+	t_box 				get_box_displaced(tpos x, tpos y) const;
 
 	////////////////////////////
 	// A implementar
 
 	virtual t_box 			get_box() const=0;	//Debe devolver una COPIA de la caja.
 
-	virtual void 			set_box_x(float)=0;	//Estos no tienen porqué hacer nada si no hay una caja real.
-	virtual void 			set_box_y(float)=0;
-	virtual void 			displace_box(float, float)=0;	//Este desplazaría x e y unidades.
-	virtual void 			set_box_w(unsigned int)=0;
-	virtual void 			set_box_h(unsigned int)=0;
+	virtual void 			set_box_x(tpos)=0;	//Estos no tienen porqué hacer nada si no hay una caja real.
+	virtual void 			set_box_y(tpos)=0;
+	virtual void 			displace_box(tpos, tpos)=0;	//Este desplazaría x e y unidades.
+	virtual void 			set_box_w(tdim)=0;
+	virtual void 			set_box_h(tdim)=0;
 };
 
 }

@@ -8,7 +8,7 @@ motion::motion(t_vector v)
 
 }
 
-void motion::add_vector(float c, axis t)
+void motion::add_vector(tpos c, axis t)
 {
 	switch(t)
 	{
@@ -17,7 +17,7 @@ void motion::add_vector(float c, axis t)
 	}
 }
 
-void motion::set_vector(float c, axis t)
+void motion::set_vector(tpos c, axis t)
 {
 	switch(t)
 	{
@@ -26,7 +26,7 @@ void motion::set_vector(float c, axis t)
 	}
 }
 
-float motion::get_vector(axis t)
+tpos motion::get_vector(axis t)
 {
 	switch(t)
 	{
@@ -34,5 +34,5 @@ float motion::get_vector(axis t)
 		case axis::y: return vector.y; break;
 	}
 
-	return 0.f; //Stupid compiler complaining about impossible cases... That was an enum class!.
+	return 0; //Stupid compiler complaining about impossible cases... That was an enum class!.
 }

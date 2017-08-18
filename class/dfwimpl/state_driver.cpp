@@ -12,7 +12,7 @@ using namespace app;
 extern ldt::log LOG;
 
 state_driver::state_driver(dfw::kernel& kernel, app::app_config& c)
-	:state_driver_interface(t_states::state_main, std::function<bool(int)>([](int v){return v > state_min && v < state_max;})),
+	:state_driver_interface(t_states::state_fps_test, std::function<bool(int)>([](int v){return v > state_min && v < state_max;})),
 	config(c), log(kernel.get_log())
 {
 	log<<"init state driver building: preparing video..."<<std::endl;

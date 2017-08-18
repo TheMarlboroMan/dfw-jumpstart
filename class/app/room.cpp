@@ -67,7 +67,7 @@ void room::load(const std::string& fn)
 			walls.resize(layers[0]["info"]["w"].get_int(), layers[0]["info"]["h"].get_int());
 
 			for(auto& i : layers[0]["data"].get_vector())
-				walls.insert(i["x"].get_int(), i["y"].get_int(), room_wall(i["x"].get_int(), i["y"].get_int()));
+				walls.insert(i["x"].get_int(), i["y"].get_int(), room_wall(i["x"].get_int(), i["y"].get_int(), i["t"].get_int()));
 		}
 
 		//Second item is the background.

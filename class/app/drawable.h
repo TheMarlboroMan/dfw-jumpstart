@@ -3,6 +3,7 @@
 
 #include "draw_struct.h"
 #include "shared_resources.h"
+#include "app_defs.h"
 #include <video/rect/rect.h>
 
 namespace app_interfaces
@@ -14,8 +15,8 @@ class drawable
 
 	//These should return the x position and the bottom y position,
 	//given the perspective and shit.
-	virtual float		get_ordering_x() const=0;
-	virtual float		get_ordering_y() const=0;
+	virtual tpos		get_ordering_x() const=0;
+	virtual tpos		get_ordering_y() const=0;
 	virtual bool		is_in_camera(const ldv::rect&) const=0;
 	virtual void		draw(ldv::screen&, const ldv::camera&, app::draw_struct&, const app::shared_resources&) const=0;
 };

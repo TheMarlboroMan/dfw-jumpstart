@@ -1,6 +1,8 @@
 #ifndef GAME_DEFS_H
 #define GAME_DEFS_H
 
+#include "app_defs.h"
+
 #include <tools/vector_2d/vector_2d.h>
 
 namespace app
@@ -27,30 +29,32 @@ struct bearing
 
 	bearing& operator=(tbearing v) {val=v; return *this;}
 	bearing& operator=(const bearing& v) {val=v.val; return *this;}
-	bearing& operator=(const ldt::vector_2d<float>& v) 
+	bearing& operator=(const ldt::vector_2d<tpos>& v) 
 	{
+		tpos def_tpos={}; //This is meant to be a zero value.
+
 		if(!v.y && !v.x) {}
 		else if(v.x && v.y)
 		{
-			if(v.x > 0.f)
+			if(v.x > def_tpos)
 			{
-				if(v.y > 0.f) val=tbearing::se;
+				if(v.y > def_tpos) val=tbearing::se;
 				else val=tbearing::ne;
 			}
 			else
 			{
-				if(v.y > 0.f) val=tbearing::sw;
+				if(v.y > def_tpos) val=tbearing::sw;
 				else val=tbearing::nw;
 			}
 		}
 		else if(v.x && !v.y)
 		{
-			if(v.x > 0.f) val=tbearing::e;
+			if(v.x > def_tpos) val=tbearing::e;
 			else val=tbearing::w;
 		}
 		else if(v.y && !v.x)
 		{
-			if(v.y > 0.f) val=tbearing::s;
+			if(v.y > def_tpos) val=tbearing::s;
 			else val=tbearing::n;
 		}
 		

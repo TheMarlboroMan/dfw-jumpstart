@@ -1,9 +1,15 @@
 #TODO:
 	- Add examples of sound.
-		- With footsteps.
+		- With footsteps. Linkec to frames.
 	- Add examples of music.
 	- Add example of menu.
 	- Add example of localisation.
+
+	- Center character animation.
+	- Check camera spatiable.
+	- Skip camera test (set in camera...)
+	- Add objects, to sort (bed, table, power pilon...)
+
 
 #Basic framework.
 
@@ -119,6 +125,5 @@ The organisation of the class and controller files is non prescriptive. As far a
 
 ##Interesting examples in the code:
 
-- The eternal pointer to member function is in class/controllers/test.cpp. Look for void (player::*fn). A few lines after the calling example is found.
 - The use of the animation sheet class is found in class/app/player.cpp
 - The use of the sprite sheet class is found in class/app/tile_decoration.cpp

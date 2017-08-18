@@ -20,7 +20,7 @@ try
 	game_camera.set_center_margin({300, 200, 100, 100});
 
 	//The thing starts at map01, terminus_id 0.
-	do_room_change("map01.dat", 0);
+	do_room_change("map04.dat", 0);
 }
 catch(std::exception& e)
 {
@@ -49,22 +49,46 @@ void controller_test::loop(dfw::input& input, float delta)
 	game_player.step(delta);
 
 	//Player movement...
-	auto movement_phase=[this, delta](int val, motion::axis axis, void (player::*fn)(const app_interfaces::spatiable& o))
+	auto movement_phase=[this, delta](motion::axis axis)
 	{
-		if(val) 
+		game_player.integrate_motion(delta, axis);
+		auto walls=game_room.get_walls_by_box(game_player.get_box());
+
+		//This is an easy approach but only works with axis aligned
+		//bounding boxes...
+		//game_player::adjust_collision(*collisions[0], axis);
+
+		//This is the laziest approach: revert the movement as soon as 
+		//a collision is detected, opting for an early exit.
+		//Works with walls of different shapes but may leave the player
+		//visibly separated from the wall. Of course, could be made complex so
+		//axis aligned boxes are taken into account too.
+		if(walls.size())
 		{
-			game_player.integrate_motion(delta, axis);
-			auto collisions=game_room.get_walls_by_box(game_player.get_box());
-			if(collisions.size())
+			//TODO: Prepare player polygon... These move in cartesian
+			//spaces, so that will be interesting to see, at least.
+
+			for(const auto& w: walls)
 			{
-				(game_player.*fn)(*collisions[0]); //This never ceases to amuse me.
+//TODO: Do this...
+//				if(w.in_collision_with(game_player_polygon))
+				{
+					game_player.cancel_movement(axis);
+					break;
+				}
 			}
+		}
+
+		//TODO: This is more complex and cumbersome: a binary search
+		//is conducted to the nearest free position in N iterations
+		//is found. All iterations are checked against still colliding
+		//walls. Different shapes work too.
+
 		}
 	};
 
-	//This is also amusing and infuriating...
-	movement_phase(gi.x, motion::axis::x, &player::adjust_collision_horizontal);
-	movement_phase(gi.y, motion::axis::y, &player::adjust_collision_vertical);
+	if(gi.x) movement_phase(motion::axis::x);
+	if(gi.y) movement_phase(motion::axis::y);
 
 	//Now effect collisions... These only apply to the final position, by design. Not like level design allows crazy things...
 	if(gi.x || gi.y)

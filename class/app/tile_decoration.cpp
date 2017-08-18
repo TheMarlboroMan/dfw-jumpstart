@@ -12,18 +12,6 @@ tile_decoration::tile_decoration(int px, int py, int ptile_id, int ptileset_id, 
 
 }
 
-//These are not meant to be ordered, so there's no need to even try.
-
-float tile_decoration::get_ordering_x() const
-{
-	return 0.f;
-}
-
-float tile_decoration::get_ordering_y() const
-{
-	return 0.f;
-}
-
 bool tile_decoration::is_in_camera(const ldv::rect& c_rect) const
 {
 	return drawable_box.collides_with(c_rect);

@@ -69,6 +69,50 @@ void controller_fps_test::draw(ldv::screen& screen, int fps)
 		ldv::rgba8(0, 255, 255, 255), fdata};
 	fps_text.go_to({0,0});
 	fps_text.draw(screen);
+
+	auto draw_polygon=[&screen](const ldt::polygon_2d<double>& poly, ldv::rgb_color color)
+	{
+		std::vector<ldv::point> pts;
+		for(const auto& v : poly.get_vertexes())
+			pts.push_back({v.x, v.y});
+
+		ldv::polygon_representation rep(ldv::polygon_representation::type::fill, pts, color);
+		rep.draw(screen);
+	};
+
+
+	//We shall use cartesian space for this.
+	ldt::polygon_2d<double> poly1{ 
+		{
+			{100,100}, {200, 100}, {200,200}, {100,200}
+		}, {150,150}},
+	poly2{
+		{
+			{100, 300}, {200, 400}, {100, 400}
+		}, {150, 350}};
+
+	ldt::polygon_2d<double> poly3{poly1}, poly4{poly2};
+
+	poly3.move({150,150});
+	poly4.move({150,0});
+
+	ldt::polygon_2d<double> poly5{poly3}, poly6{poly4};
+
+	auto sat_response=SAT_collision_check_mtv(poly5, poly6, true);
+	vector_2d<double> vec=vector_from_angle_and_magnitude((double)sat_response.angle, (double)sat_response.magnitude);
+
+	poly5.move({150,0});
+	poly6.move({150,0});
+
+	//Now adjust...
+	poly5.move({vec.x, vec.y});
+
+	draw_polygon(poly1, ldv::rgb8(255, 0 ,0));
+	draw_polygon(poly2, ldv::rgb8(0, 255,0));
+	draw_polygon(poly3, ldv::rgb8(255, 0 ,0));
+	draw_polygon(poly4, ldv::rgb8(0, 255,0));
+	draw_polygon(poly5, ldv::rgb8(255, 0 ,0));
+	draw_polygon(poly6, ldv::rgb8(0, 255,0));
 }
 
 void controller_fps_test::awake(dfw::input& /*input*/)

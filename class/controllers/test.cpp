@@ -83,8 +83,6 @@ void controller_test::loop(dfw::input& input, float delta)
 		//is conducted to the nearest free position in N iterations
 		//is found. All iterations are checked against still colliding
 		//walls. Different shapes work too.
-
-		}
 	};
 
 	if(gi.x) movement_phase(motion::axis::x);

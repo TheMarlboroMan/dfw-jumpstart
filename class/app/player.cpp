@@ -118,6 +118,7 @@ void player::adjust_collision(const spatiable& o, motion::axis axis)
 			else if(o.is_under(prev_bounding_box))		set_box_y(o.get_spatiable_y()-get_spatiable_h());
 			motion_data.set_vector(0.0, motion::axis::y);
 		break;
+	}
 }
 
 int player::choose_animation_frame() const

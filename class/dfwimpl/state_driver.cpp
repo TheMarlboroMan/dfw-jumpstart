@@ -7,6 +7,10 @@
 #include <class/dnot_parser.h>
 #include <source/string_utils.h>
 
+#ifdef WDEBUG_CODE
+#include "../input.h"
+#endif
+
 using namespace app;
 
 extern ldt::log LOG;
@@ -23,7 +27,9 @@ state_driver::state_driver(dfw::kernel& kernel, app::app_config& c)
 		new shared_resources(
 			kernel.get_video_resource_manager(),
 			log,
-			kernel.get_controller_chrono()));
+			kernel.get_controller_chrono(),
+			kernel.get_arg_manager()
+			));
 
 	log<<"registering controllers..."<<std::endl;
 	register_controllers(kernel);
@@ -69,7 +75,7 @@ void state_driver::prepare_state(int next, int /*current*/)
 	}
 }
 
-void state_driver::common_input(dfw::input& input, float /*delta*/)
+void state_driver::common_pre_loop_input(dfw::input& input, float /*delta*/)
 {
 	if(input().is_event_joystick_connected())
 	{
@@ -78,7 +84,23 @@ void state_driver::common_input(dfw::input& input, float /*delta*/)
 	}
 }
 
-void state_driver::common_step(float /*delta*/)
+void state_driver::common_loop_input(dfw::input& input, float /*delta*/)
+{
+#ifdef WDEBUG_CODE
+	if(input.is_input_down(input_app::reload_debug_config))
+	{
+		log<<"reloading debug configuration"<<std::endl;
+		s_resources->reload_debug_config();
+	}
+#endif
+}
+
+void state_driver::common_pre_loop_step(float /*delta*/)
+{
+
+}
+
+void state_driver::common_loop_step(float /*delta*/)
 {
 
 }

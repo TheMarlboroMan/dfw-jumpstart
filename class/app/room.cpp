@@ -162,6 +162,41 @@ const room_entrance& room::get_entrance_by_id(int id) const
 
 std::vector<const app_interfaces::spatiable *>	room::get_walls_by_box(const app_interfaces::spatiable::t_box& box) const
 {
+/*
+	//Returns the cell value for a world value. Given that the X axis ascends
+	//and the Y one descends, we need to alternatively use floor or ceil to
+	//adjust the cell value. Also, check_remainder is used for the "end"
+	//values so if we are with a value of 32 at the end we don't include 
+	//cell 1 (this changes for Y values, of course... if I am at endY -32
+	//I don't want cell -1 but 0, so I must add.
+
+	enum class operation {ofloor, oceil};
+	auto to_cell=[](double v, int dim, int check_remainder, operation op)
+	{
+		int val=op==operation::ofloor ? floor(v/dim) : ceil(v/dim);
+		if(check_remainder && !fmod(v,dim)) val+=check_remainder;
+		return val;
+	};
+
+	//Doubles are demoted to integers here without explicit casting.
+	int 	beg_x=to_cell(box.origin.x, room_wall::wall_w, 0, operation::ofloor),
+		//if I say that my end is exactly at 32 I shall not count the cell at 1, thus -1.
+		end_x=to_cell(box.origin.x+(tpos)box.w, room_wall::wall_w, -1, operation::ofloor),
+		beg_y=to_cell(box.origin.y, room_wall::wall_h, 0, operation::oceil),
+		//same here... but since cells count downwards I shall add 1.
+		end_y=to_cell(box.origin.y-(tpos)box.h, room_wall::wall_h, 1, operation::oceil);
+
+	std::vector<const app_interfaces::spatiable *> res;
+
+	//Notice that the range is descending in y.
+	for(int x=beg_x; x <= end_x; x++)
+		for(int y=beg_y; y >= end_y; y--)
+			if(walls.check(x, y))
+				res.push_back(&walls(x, y));
+
+	return res;
+*/
+
 	std::vector<const app_interfaces::spatiable *> res;
 
 
@@ -172,7 +207,6 @@ std::vector<const app_interfaces::spatiable *>	room::get_walls_by_box(const app_
 
 	//TODO: Protect against right and botto limits. walls.get_w() & walls.get_h()
 
-	
 
 	auto to_cell=[](int v, int dim, bool check_remainder)
 	{

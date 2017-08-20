@@ -5,8 +5,11 @@
 
 using namespace app;
 
-shared_resources::shared_resources(ldv::resource_manager& rm, ldt::log& l, tools::chrono& cc)
-	:v_manager(rm), log(l), controller_chrono(cc)
+shared_resources::shared_resources(ldv::resource_manager& rm, ldt::log& l, tools::chrono& cc, tools::arg_manager& am)
+	:v_manager(rm), log(l), controller_chrono(cc), arg_manager(am)
+#ifdef WDEBUG_CODE
+	,debug_config("data/config/debug_config.dnot")
+#endif
 {
 	register_fonts();
 	register_tilesets();

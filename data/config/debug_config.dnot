@@ -1,0 +1,6 @@
+debug:{
+	video:{
+		draw_bounding_boxes:true,
+		camera_method:1
+	}
+}

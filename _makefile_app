@@ -45,7 +45,8 @@ $(DIR_O_TOOLS)ttf_manager.o \
 $(DIR_O_TOOLS)localization_base.o\
 $(DIR_O_TOOLS)sprite_table.o\
 $(DIR_O_TOOLS)chrono.o\
-$(DIR_O_TOOLS)animation_table.o 
+$(DIR_O_TOOLS)animation_table.o\
+$(DIR_O_TOOLS)dnot_config_file.o\
 
 DEP_FRAMEWORK=\
 $(DIR_O_DFW)fw_audio.o \

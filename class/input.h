@@ -15,7 +15,10 @@ down,
 left,
 right,
 console_newline,
-console_backspace
+console_backspace,
+#ifdef WDEBUG_CODE
+reload_debug_config
+#endif
 };
 
 };

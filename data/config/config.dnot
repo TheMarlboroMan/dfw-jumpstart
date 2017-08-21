@@ -16,6 +16,8 @@ config:{
 			0, 0, 40
 		], console_backspace: [
 			0, 0, 42
+		], reload_debug_config: [
+			0, 0, 44
 		]
 	}, meta:{
 		v:1

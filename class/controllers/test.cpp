@@ -20,7 +20,8 @@ try
 	game_camera.set_center_margin({300, 200, 100, 100});
 
 	//The thing starts at map01, terminus_id 0.
-	do_room_change("map04.dat", 0);
+	//TODO: Copy from the other branch, the parameter shit.
+	do_room_change("map01.dat", 0);
 }
 catch(std::exception& e)
 {

@@ -137,7 +137,9 @@ void controller_test_2d::draw(ldv::screen& screen, int fps)
 	//Have camera follow the player... This would actually belong in
 	//the logic part, but it iches a bit. Still, why center if not moving?
 
-	game_camera.center_on(app_interfaces::box_from_spatiable(game_player));
+	game_camera.center_on(
+		game_draw_struct.draw_box_from_spatiable_polygon(game_player.get_poly()));
+//			app_interfaces::box_from_spatiable_(game_player)));
 
 	const auto& dc=game_room.get_drawables();
 
@@ -157,6 +159,42 @@ void controller_test_2d::draw(ldv::screen& screen, int fps)
 		ldv::rgba8(0, 0, 255, 255), compat::to_string(fps)};
 	fps_text.go_to({500,0});
 	fps_text.draw(screen);
+
+#ifdef WDEBUG_CODE
+	if(s_resources.get_debug_config().bool_from_path("debug:video:draw_bounding_boxes"))
+	{
+		//Draw collision boxes of all walls.
+		const auto& w=game_room.get_all_walls();
+
+		auto draw_bounding_box=[this, &screen](const app_interfaces::spatiable::t_box& box)
+		{
+			game_draw_struct.set_type(app::draw_struct::types::box);
+			game_draw_struct.set_color(ldv::rgb8(255,0,0));
+			game_draw_struct.set_alpha(128);
+			game_draw_struct.set_primitive_fill(ldv::polygon_representation::type::fill);
+			game_draw_struct.set_box_location(game_draw_struct.draw_box_from_spatiable_box(box));
+			game_draw_struct.rep->draw(screen, game_camera);
+		};
+
+		auto fdraw_walls=[this, &screen, draw_bounding_box](const room_wall& wall)
+		{
+			draw_bounding_box(wall.get_box());
+		};
+		w.apply(fdraw_walls);
+
+		draw_bounding_box(game_player.get_box());
+	}
+
+	//A set of dots...
+	/*
+	ldv::point_representation point_grid{ldv::rgb8(0,255,0)};
+	for(int x=0; x < 700; x+=32)
+		for(int y=0; y<500; y+=32)
+			point_grid.insert({x, y});
+
+	point_grid.draw(screen);
+	*/
+#endif
 }
 
 bool controller_test_2d::can_leave_state() const

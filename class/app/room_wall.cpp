@@ -9,27 +9,27 @@ std::vector<app_interfaces::spatiable::t_poly>	room_wall::shapes=
 	//full
 	{ 
 		{ {0.,0.}, {32.,0.}, {32.,32.}, {0.,32.} },
-		{0., 0.}
+		{16., 16.}
 	},
 	//nwcorner
 	{
 		{ {0.,0.}, {32.0,0.}, {0.,32.} },
-		{0., 0.}
+		{16., 16.}
 	},
 	//necorner
 	{
 		{ {0.,0.}, {32.0,0.}, {32.,32.} },
-		{0., 0.}
+		{16., 16.}
 	},
 	//secorner
 	{
 		{ {32.,0.}, {32.,32.}, {0.,32.} },
-		{0., 0.}
+		{16., 16.}
 	},
 	//swcorner
 	{
 		{ {0.,0.}, {32.,32.}, {0.,32.} },
-		{0., 0.}
+		{16., 16.}
 	}
 };
 
@@ -64,17 +64,24 @@ const app_interfaces::spatiable::t_poly& room_wall::get_poly() const
 
 app_interfaces::spatiable::t_poly * room_wall::get_poly_ptr()
 {
+	app_interfaces::spatiable::t_poly * res=&shapes[shape_full];
+
 	switch(type)
 	{
-		case room_wall::twall::full: 		return &shapes[shape_full]; break;
-		case room_wall::twall::nwcorner: 	return &shapes[shape_nwcorner]; break;
-		case room_wall::twall::necorner: 	return &shapes[shape_necorner]; break;
-		case room_wall::twall::secorner: 	return &shapes[shape_secorner]; break;
-		case room_wall::twall::swcorner: 	return &shapes[shape_swcorner]; break;
+		case room_wall::twall::full: 	res=&shapes[shape_full]; break;
+		case room_wall::twall::nwcorner: res=&shapes[shape_nwcorner]; break;
+		case room_wall::twall::necorner: res=&shapes[shape_necorner]; break;
+		case room_wall::twall::secorner: res=&shapes[shape_secorner]; break;
+		case room_wall::twall::swcorner: res=&shapes[shape_swcorner]; break;
 		default:
 			throw std::runtime_error("Invalid wall type");
 		break;
 	}
 
-	return &shapes[shape_full];
+	//And now, position on its place we know where the center is so...
+	double 	cx=(x*wall_w)+(wall_w/2),
+		cy=(y*wall_h)+(wall_h/2);
+	res->center_in({cx, cy});
+
+	return res;
 }

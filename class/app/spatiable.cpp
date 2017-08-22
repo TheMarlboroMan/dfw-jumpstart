@@ -23,25 +23,29 @@ void spatiable::center_on(t_poly p)
 	get_poly_ptr()->center_in(p.get_center());
 }
 
-spatiable::t_box app_interfaces::box_from_polygon(const spatiable::t_poly& p)
+spatiable::t_box app_interfaces::coarse_bounding_box(const spatiable::t_poly& p)
 {
 	auto &vt=p.get_vertexes();
-	tpos x=vt[0].x, y=vt[0].y;
-	tdim w=0., h=0.;
+
+	tpos 	minx=vt[0].x, 	maxx=minx,
+		miny=vt[0].y,	maxy=miny;
+
+	auto cmp=[](tpos src, tpos& mind, tpos& maxd)
+	{
+		if(src < mind) mind=src;
+		if(src > maxd) maxd=src;
+	};
 
 	for(const auto& v : vt)
 	{
-		if(v.x < x) x=v.x;
-		if(v.y < y) y=v.y;
-
-		if(v.x-x > w) w=v.x-x;
-		if(v.y-y > h) h=v.y-y;
+		cmp(v.x, minx, maxx);
+		cmp(v.y, miny, maxy);
 	}
 
-	return spatiable::t_box{x, y, w, h};
+	return spatiable::t_box(minx, miny, maxx-minx, maxy-miny);
 }
 
-spatiable::t_box app_interfaces::box_from_spatiable(const spatiable& s) 
+spatiable::t_box app_interfaces::coarse_bounding_box(const spatiable& s) 
 {
-	return app_interfaces::box_from_polygon(s.get_poly());
+	return app_interfaces::coarse_bounding_box(s.get_poly());
 }

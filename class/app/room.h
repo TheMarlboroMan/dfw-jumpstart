@@ -38,6 +38,10 @@ class room
 	std::vector<const app_interfaces::spatiable *>	get_walls_by_box(const app_interfaces::spatiable::t_box&) const;
 	unsigned int			get_w() const {return walls.get_w()*room_wall::wall_w;}
 	unsigned int			get_h() const {return walls.get_h()*room_wall::wall_h;}
+
+#ifdef WDEBUG_CODE
+	const tools::matrix_2d<room_wall>& get_all_walls() {return walls;} 
+#endif
 	
 	private:
 

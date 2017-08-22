@@ -6,6 +6,5 @@ if [ "$1" == "" ]; then
 else
 	cd ..;
 	cd tile_editor;
-	ls;
 	./a.out res=640x480 cfg=../dfw-jumpstart/integration/editor_data.dat out=../dfw-jumpstart/data/app_data/maps/${1}
 fi;

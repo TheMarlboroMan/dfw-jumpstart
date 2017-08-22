@@ -64,11 +64,10 @@ void controller_test_2d::loop(dfw::input& input, float delta)
 		game_player.integrate_motion(delta, axis);
 
 		//TODO: Also, collision with objects first... Walls later. If anything.
-		auto walls=game_room.get_walls_by_box(app_interfaces::box_from_spatiable(game_player));
+		auto coarse_collisions=game_room.get_walls_by_box(app_interfaces::coarse_bounding_box(game_player));
 
-		//This is an easy approach but only works with axis aligned
-		//bounding boxes...
-		//game_player::adjust_collision(*collisions[0], axis);
+		//This is an easy approach but only works with axis aligned bounding boxes...
+		//game_player::adjust_collision(*coarse_collisions[0], axis);
 
 		//This is the laziest approach: revert the movement as soon as 
 		//a collision is detected, opting for an early exit.
@@ -76,15 +75,11 @@ void controller_test_2d::loop(dfw::input& input, float delta)
 		//visibly separated from the wall. Of course, could be made complex so
 		//axis aligned boxes are taken into account too.
 
-		if(walls.size())
+		if(coarse_collisions.size())
 		{
-			//TODO: Prepare player polygon... These move in cartesian
-			//spaces, so that will be interesting to see, at least.
-
-			for(const auto& w: walls)
+			for(const auto& c: coarse_collisions)
 			{
-//TODO: Do this...
-//				if(w.in_collision_with(game_player_polygon))
+				if(game_player.is_colliding_with(*c))
 				{
 					game_player.cancel_movement(axis);
 					break;
@@ -127,6 +122,12 @@ void controller_test_2d::loop(dfw::input& input, float delta)
 		{
 			do_room_change(room_change.map, room_change.terminus_id);
 		}
+		else
+		{
+			game_camera.center_on(
+				game_draw_struct.drawable_box_from_spatiable(
+					game_player));
+		}
 	}
 }
 
@@ -134,12 +135,8 @@ void controller_test_2d::draw(ldv::screen& screen, int fps)
 {
 	screen.clear(ldv::rgba8(0, 0, 0, 0));
 	
-	//Have camera follow the player... This would actually belong in
-	//the logic part, but it iches a bit. Still, why center if not moving?
+#ifndef WDEBUG_CODE
 
-	game_camera.center_on(
-		game_draw_struct.draw_box_from_spatiable_polygon(game_player.get_poly()));
-//			app_interfaces::box_from_spatiable_(game_player)));
 
 	const auto& dc=game_room.get_drawables();
 
@@ -160,29 +157,63 @@ void controller_test_2d::draw(ldv::screen& screen, int fps)
 	fps_text.go_to({500,0});
 	fps_text.draw(screen);
 
-#ifdef WDEBUG_CODE
-	if(s_resources.get_debug_config().bool_from_path("debug:video:draw_bounding_boxes"))
+#else
+
+	if(s_resources.get_debug_config().bool_from_path("debug:video:center_camera"))
+	{
+		game_camera.center_on(
+			game_draw_struct.drawable_box_from_box_polygon(game_player.get_poly()));
+	}
+
+	if(s_resources.get_debug_config().bool_from_path("debug:video:draw_background"))
+	{
+		const auto& dc=game_room.get_drawables();
+
+		//First layer...
+		for(const auto& d: dc.background)
+		{
+			d->draw(screen, game_camera, game_draw_struct, s_resources);
+		}
+	}
+
+	if(s_resources.get_debug_config().bool_from_path("debug:video:draw_player"))
+	{
+		game_player.draw(screen, game_camera, game_draw_struct, s_resources);
+	}
+
+	if(s_resources.get_debug_config().bool_from_path("debug:video:draw_fps"))
+	{
+		ldv::ttf_representation fps_text{
+			s_resources.get_ttf_manager().get("consola-mono", 12), 
+			ldv::rgba8(0, 0, 255, 255), compat::to_string(fps)};
+		fps_text.go_to({500,0});
+		fps_text.draw(screen);
+	}	
+
+	auto draw_bounding_box=[this, &screen](const app_interfaces::spatiable& s)
+	{
+		game_draw_struct.set_type(app::draw_struct::types::box);
+		game_draw_struct.set_color(ldv::rgb8(255,0,0));
+		game_draw_struct.set_alpha(128);
+		game_draw_struct.set_primitive_fill(ldv::polygon_representation::type::fill);
+		game_draw_struct.set_box_location(game_draw_struct.drawable_box_from_spatiable(s));
+		game_draw_struct.rep->draw(screen, game_camera);
+	};
+
+	if(s_resources.get_debug_config().bool_from_path("debug:video:draw_wall_bounding_boxes"))
 	{
 		//Draw collision boxes of all walls.
 		const auto& w=game_room.get_all_walls();
-
-		auto draw_bounding_box=[this, &screen](const app_interfaces::spatiable::t_box& box)
-		{
-			game_draw_struct.set_type(app::draw_struct::types::box);
-			game_draw_struct.set_color(ldv::rgb8(255,0,0));
-			game_draw_struct.set_alpha(128);
-			game_draw_struct.set_primitive_fill(ldv::polygon_representation::type::fill);
-			game_draw_struct.set_box_location(game_draw_struct.draw_box_from_spatiable_box(box));
-			game_draw_struct.rep->draw(screen, game_camera);
-		};
-
 		auto fdraw_walls=[this, &screen, draw_bounding_box](const room_wall& wall)
 		{
-			draw_bounding_box(wall.get_box());
+			draw_bounding_box(wall);
 		};
 		w.apply(fdraw_walls);
+	}
 
-		draw_bounding_box(game_player.get_box());
+	if(s_resources.get_debug_config().bool_from_path("debug:video:draw_player_bounding_boxes"))
+	{
+		draw_bounding_box(game_player);
 	}
 
 	//A set of dots...

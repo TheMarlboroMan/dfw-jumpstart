@@ -37,8 +37,10 @@ class spatiable
 	virtual t_poly *		get_poly_ptr()=0;
 };
 
-spatiable::t_box	box_from_polygon(const spatiable::t_poly&);
-spatiable::t_box	box_from_spatiable(const spatiable&);
+//These get a spatiable bounding box from a polygon or spatiable.
+spatiable::t_box	coarse_bounding_box(const spatiable&);
+spatiable::t_box	coarse_bounding_box(const spatiable::t_poly&);
+
 }
 
 #endif

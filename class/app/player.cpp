@@ -28,15 +28,6 @@ bool player::is_in_camera(const ldv::rect&) const
 
 void player::draw(ldv::screen& scr, const ldv::camera& cam, app::draw_struct& ds, const app::shared_resources& sr) const
 {
-
-	//Bounding box.
-	ds.set_type(app::draw_struct::types::box);
-	ds.set_color(ldv::rgb8(255,0,0));
-	ds.set_alpha(128);
-	ds.set_primitive_fill(ldv::polygon_representation::type::fill);
-	ds.set_box_location({ds.box_from_polygon(polygon)});
-	ds.rep->draw(scr, cam);
-
 	//Now the animation...
 	const auto& frame=sr.get_animation(animation_defs::player).get(choose_animation_frame()).get_for_time(walk_time).frame;
 	const auto& frect=frame.get_rect();
@@ -46,7 +37,7 @@ void player::draw(ldv::screen& scr, const ldv::camera& cam, app::draw_struct& ds
 	ds.set_clip(frect);
 	ds.set_location(
 		ds.location_projection(
-			ds.draw_box_from_spatiable_polygon(polygon), 
+			ds.drawable_box_from_box_polygon(polygon), 
 			frect, frame.disp_x, frame.disp_y));
 	ds.rep->draw(scr, cam);
 }

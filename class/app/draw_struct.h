@@ -4,6 +4,7 @@
 #include <def_video.h>
 
 #include "app_defs.h"
+#include "spatiable.h"
 
 //Lazy drawing solution... This class has an item of each kind of common 
 //representation (minus ttf). Instead of creating and discarding representations
@@ -40,8 +41,9 @@ struct draw_struct
 	//////////
 	//Helpers...
 	ldv::rect 						location_projection(const ldv::rect&, const ldv::rect&, int, int) const;
-	ldv::rect						draw_box_from_spatiable_polygon(const ldt::polygon_2d<tpos>&) const;
-	ldv::rect						box_from_polygon(const ldt::polygon_2d<tpos>&) const;
+	//Expresses a polygon_2d as a box.
+	ldv::rect						drawable_box_from_box_polygon(const ldt::polygon_2d<tpos>&) const;
+	ldv::rect						drawable_box_from_spatiable(const app_interfaces::spatiable&) const;
 
 	//////////
 	//Generics

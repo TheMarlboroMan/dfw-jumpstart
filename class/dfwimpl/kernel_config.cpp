@@ -80,6 +80,9 @@ std::vector<dfw::input_pair> kernel_config::get_input_pairs() const
 		{input_app::down, 	config.token_from_path_input("down")},
 		{input_app::console_newline, 	config.token_from_path_input("console_newline")},
 		{input_app::console_backspace, 	config.token_from_path_input("console_backspace")}
+#ifdef WDEBUG_CODE
+		,{input_app::reload_debug_config, config.token_from_path_input("reload_debug_config")}
+#endif
 	};
 
 	std::vector<input_pair> res{input_pair{input_pair::types::keyboard, input_app::escape, SDL_SCANCODE_ESCAPE, 0}};

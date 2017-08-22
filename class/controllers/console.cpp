@@ -51,7 +51,7 @@ void controller_console::loop(dfw::input& input, float delta)
 		//This is pretty much stupid... A list of commands and their results.
 		if(current_command=="clear") history.clear();
 		else if(current_command=="help") history.push_back("clear, bgcolor:, fgcolor:, exit");
-		else if(current_command=="exit") set_state(state_main);
+		else if(current_command=="exit") set_state(state_test_2d);
 		else if(current_command.substr(0, 8)=="bgcolor:") 
 		{
 			try {do_color_change("bgcolor", bgc_r, bgc_g, bgc_b);}

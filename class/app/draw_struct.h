@@ -40,7 +40,8 @@ struct draw_struct
 	//////////
 	//Helpers...
 	ldv::rect 						location_projection(const ldv::rect&, const ldv::rect&, int, int) const;
-	ldv::rect						draw_box_from_spatiable_box(const ldt::box<tpos, tdim>&) const;
+	ldv::rect						draw_box_from_spatiable_polygon(const ldt::polygon_2d<tpos>&) const;
+	ldv::rect						box_from_polygon(const ldt::polygon_2d<tpos>&) const;
 
 	//////////
 	//Generics

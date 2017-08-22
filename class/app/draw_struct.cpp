@@ -118,10 +118,24 @@ ldv::rect draw_struct::location_projection(const ldv::rect& r, const ldv::rect& 
 		f.w, f.h);
 }
 
-ldv::rect draw_struct::draw_box_from_spatiable_box(const ldt::box<tpos, tdim>& box) const
+ldv::rect draw_struct::draw_box_from_spatiable_polygon(const ldt::polygon_2d<tpos>& poly) const
 {
+	const auto& vt=poly.get_vertexes();
+
 	return ldv::rect(
-		box.origin.x, //Let narrowing happen.
-		box.origin.y,
-		box.w, box.h);
+		vt[0].x,
+		vt[0].y,
+		vt[1].x-vt[0].x,
+		vt[2].y-vt[1].y);
+}
+
+ldv::rect draw_struct::box_from_polygon(const ldt::polygon_2d<tpos>& poly) const
+{
+	const auto& vt=poly.get_vertexes();
+
+	return ldv::rect(
+		vt[0].x,
+		vt[0].y,
+		vt[1].x-vt[0].x,
+		vt[2].y-vt[1].y);
 }

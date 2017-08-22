@@ -1,9 +1,11 @@
 #TODO:
 	- Add examples of sound.
-		- With footsteps. Linkec to frames.
+		- With footsteps. Linked to frames.
 	- Add examples of music.
 	- Add example of menu.
 	- Add example of localisation.
+	- Add a cartesian camera example, with polys.
+	- Comment the cartesian vs screen system.
 
 	- Center character animation.
 	- Check camera spatiable.
@@ -15,7 +17,14 @@
 
 The idea here is to have a very basic application so things can run with little copy and paste. It will also include a few features I tend to forget about.
 
-There are two controllers here: a very simple console with four commands or so (first try to implement one) and a little game-like thing. Actually, there is a third, a very simple frames-per-second test, but it is not accessible.
+There are a few controllers here: 
+
+- a very simple console with four commands or so (first try to implement one) 
+	- Demonstrates a very simple controller with text input.
+- a little game-like thing in axonometric 2d perspective (think snes rpg). 
+	- Demonstrates screen-coordinates camera, implementation of application classes, use of animations and frames, screen representations, input...
+- a very simple frames-per-second test, not accesible.
+	- 
 
 ##Getting started:
 

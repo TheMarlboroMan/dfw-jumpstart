@@ -1,5 +1,5 @@
-#ifndef CONTROLLER_TEST_H
-#define CONTROLLER_TEST_H
+#ifndef CONTROLLER_TEST_2D_H
+#define CONTROLLER_TEST_2D_H
 
 //std
 #include <cmath>
@@ -18,26 +18,16 @@
 #include "../app/shared_resources.h"
 #include "../app/draw_struct.h"
 #include "../app/player.h"
-/*
-class game_tile:
-	public spatiable,
-	public drawable
-{
-	//This should simply represent the game state, would go like:
-	x, y (in grid... maybe not), type (indicating what it does).
-};
-
-*/
 
 namespace app
 {
 
-class controller_test:
+class controller_test_2d:
 	public dfw::controller_interface
 {
 	public:
 
-						controller_test(shared_resources&);
+						controller_test_2d(shared_resources&);
 
 	virtual void 				preloop(dfw::input&, float, int) {}
 	virtual void 				loop(dfw::input& input, float delta);

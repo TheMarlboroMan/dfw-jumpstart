@@ -2,75 +2,46 @@
 
 using namespace app_interfaces;
 
-bool spatiable::is_colliding_with(const t_box& e, bool roce_es_colision) const
+bool spatiable::is_colliding_with(const spatiable& o) const
 {
-	return get_box().collides_with(e, roce_es_colision);
+	return ldt::SAT_collision_check(get_poly(), o.get_poly());
 }
 
-bool spatiable::is_colliding_with(const spatiable& e, bool roce_es_colision) const
+void spatiable::move_by(t_point p)
 {
-	return get_box().collides_with(e.get_box(), roce_es_colision);
-}
-
-spatiable::t_box spatiable::get_box_displaced(tpos x, tpos y) const
-{
-	auto c=get_box();
-	c.origin.x+=x;
-	c.origin.y+=y;
-	return c;
-}
-
-void spatiable::set_position(const spatiable& e)
-{
-	set_position({e.get_spatiable_x(), e.get_spatiable_y()});
-}
-
-void spatiable::set_position(t_point p)
-{
-	set_box_x(p.x);
-	set_box_y(p.y);
-}
-
-/*
-ldt::vector_2d_screen<tpos> spatiable::screen_vector_for(const spatiable& a, const spatiable& b) const
-{
-	tpos ax=a.get_spatiable_cx(),
-		ay=a.get_spatiable_cy(),
-		bx=b.get_spatiable_cx(),
-		by=b.get_spatiable_cy();
-
-	return ldt::for_points_screen<tpos>(bx, by, ax, ay);
-}
-
-tpos spatiable::angle_for(const spatiable& a, const spatiable& b) const
-{
-	return screen_vector_for(a, b).angle_deg();
-}
-
-ldt::vector_2d_cartesian<tpos> spatiable::cartesian_vector_for(const spatiable& a, const spatiable& b) const
-{
-	tpos ax=a.get_spatiable_cx(),
-		ay=a.get_spatiable_cy(),
-		bx=b.get_spatiable_cx(),
-		by=b.get_spatiable_cy();
-
-	return ldt::for_points_cartesian<tpos>(bx, by, ax, ay);
-}
-
-tpos spatiable::cartesian_angle_for(const spatiable& a, const spatiable& b) const
-{
-	return cartesian_vector_for(a, b).angle_deg();
-}
-*/
-
-void spatiable::center_on(const spatiable& s)
-{
-	center_on({s.get_spatiable_cx(), s.get_spatiable_cy()});
+	get_poly_ptr()->move(p);
 }
 
 void spatiable::center_on(t_point p)
 {
-	tpos x=p.x-(get_spatiable_w()/2),
-		y=p.y-(get_spatiable_h()/2);
-	set_position({x, y});
+	get_poly_ptr()->center_in(p);
+}
+
+void spatiable::center_on(t_poly p)
+{
+	//Now... p.get_center may not be the spatial center.
+	get_poly_ptr()->center_in(p.get_center());
+}
+
+spatiable::t_box app_interfaces::box_from_polygon(const spatiable::t_poly& p)
+{
+	auto &vt=p.get_vertexes();
+	tpos x=vt[0].x, y=vt[0].y;
+	tdim w=0., h=0.;
+
+	for(const auto& v : vt)
+	{
+		if(v.x < x) x=v.x;
+		if(v.y < y) y=v.y;
+
+		if(v.x-x > w) w=v.x-x;
+		if(v.y-y > h) h=v.y-y;
+	}
+
+	return spatiable::t_box{x, y, w, h};
+}
+
+spatiable::t_box app_interfaces::box_from_spatiable(const spatiable& s) 
+{
+	return app_interfaces::box_from_polygon(s.get_poly());
 }

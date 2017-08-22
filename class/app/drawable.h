@@ -14,7 +14,8 @@ class drawable
 	public:
 
 	//These should return the x position and the bottom y position,
-	//given the perspective and shit.
+	//given the perspective and shit... Assumes that all representations can fit
+	//within boxes.
 	virtual tpos		get_ordering_x() const=0;
 	virtual tpos		get_ordering_y() const=0;
 	virtual bool		is_in_camera(const ldv::rect&) const=0;

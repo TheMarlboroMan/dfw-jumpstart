@@ -18,28 +18,18 @@ class room_object:
 {
 	public:
 
-	//////////////////////////
-	//Public interface...
-	room_object():bounding_box{0,0,0,0}{};
-	room_object(app_interfaces::spatiable::t_box b):bounding_box(b) {}
+	// Public interface...
 
-	//////////////////////////
+	room_object(app_interfaces::spatiable::t_box);
+
 	//Spatiable implementation
 
-	virtual app_interfaces::spatiable::t_box get_box() const {return bounding_box;}
-	virtual void 			set_box_x(tpos v) {bounding_box.origin.x=v;}
-	virtual void 			set_box_y(tpos v) {bounding_box.origin.y=v;}
-	virtual void 			displace_box(tpos x, tpos y) 
-	{
-		bounding_box.origin.x+=x;
-		bounding_box.origin.y+=y;
-	}
-	virtual void 			set_box_w(tdim v) {bounding_box.w=v;}
-	virtual void 			set_box_h(tdim v) {bounding_box.h=v;}
+	virtual const t_poly&		get_poly() const {return polygon;}
+	virtual t_poly *		get_poly_ptr() {return &polygon;}
 
 	private:
 
-	app_interfaces::spatiable::t_box	bounding_box;
+	app_interfaces::spatiable::t_poly	polygon;
 };
 
 class room_exit:
@@ -69,6 +59,7 @@ class room_entrance:
 	public:
 
 	room_entrance(app_interfaces::spatiable::t_point origin, int be, int tid):
+		//TODO...
 		room_object({(tpos)origin.x, (tpos)origin.y, w, h}), 
 		val_bearing(be), terminus_id(tid)
 	{}

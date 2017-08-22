@@ -28,23 +28,18 @@ class player:
 	void				set_input(game_input);
 	void				integrate_motion(float, motion::axis);
 	void				cancel_movement(motion::axis);
-	void				adjust_collision(const spatiable&, motion::axis);
 
 	//////////////////////////
 	//Spatiable implementation
 
-	virtual app_interfaces::spatiable::t_box get_box() const {return bounding_box;}
-	virtual void 			set_box_x(tpos v) {bounding_box.origin.x=v;}
-	virtual void 			set_box_y(tpos v) {bounding_box.origin.y=v;}
-	virtual void 			displace_box(tpos x, tpos y) {bounding_box.origin.x+=x; bounding_box.origin.y+=y;}
-	virtual void 			set_box_w(tdim v) {bounding_box.w=v;}
-	virtual void 			set_box_h(tdim v) {bounding_box.h=v;}
+	virtual const t_poly&		get_poly() const {return polygon;}
+	virtual t_poly *		get_poly_ptr() {return &polygon;}
 
 	//////////////////////////
 	//Drawable implementation
 
-	virtual tpos			get_ordering_x() const {return get_spatiable_x();}
-	virtual tpos			get_ordering_y() const {return get_spatiable_ey();}
+	virtual tpos			get_ordering_x() const {return polygon.get_vertexes()[0].x;}
+	virtual tpos			get_ordering_y() const {return polygon.get_vertexes()[2].y;}
 	virtual bool			is_in_camera(const ldv::rect&) const;
 	virtual void			draw(ldv::screen&, const ldv::camera&, app::draw_struct&, const app::shared_resources&) const;
 
@@ -56,9 +51,9 @@ class player:
 
 	int				choose_animation_frame() const;
 
-	app_interfaces::spatiable::t_box		bounding_box,
+	app_interfaces::spatiable::t_poly		polygon,
 //TODO: Do we really need this or can we just trace the vector back?.
-							prev_bounding_box;
+							prev_polygon;
 	bearing						player_bearing;
 
 	//This controls the vector and integration.

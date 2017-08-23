@@ -22,7 +22,7 @@ There are a few controllers here:
 - a very simple console with four commands or so (first try to implement one) 
 	- Demonstrates a very simple controller with text input.
 - a little game-like thing in axonometric 2d perspective (think snes rpg). 
-	- Demonstrates screen-coordinates camera, implementation of application classes, use of animations and frames, screen representations, input...
+	- Demonstrates screen-coordinates camera, implementation of application classes, use of animations and frames, screen representations, input, SAT collision...
 - a very simple frames-per-second test, not accesible.
 	- 
 

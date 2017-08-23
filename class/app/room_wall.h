@@ -13,8 +13,8 @@ class room_wall:
 {
 	public:
 
-	enum class twall{full, nwcorner, necorner, secorner, swcorner};
-	enum indexes{shape_full, shape_nwcorner, shape_necorner, shape_secorner, shape_swcorner};
+	enum class twall{full, nwcorner, necorner, secorner, swcorner, wthin, ethin};
+	enum indexes{shape_full, shape_nwcorner, shape_necorner, shape_secorner, shape_swcorner, shape_wthin, shape_ethin};
 
 	static const int 			wall_w=32,
 						wall_h=32;

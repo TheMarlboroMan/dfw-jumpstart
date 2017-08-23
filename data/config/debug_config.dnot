@@ -2,9 +2,9 @@ debug:{
 	video:{
 		center_camera:true,
 		draw_player:true,
-		draw_player_bounding_boxes:false,
-		draw_wall_bounding_boxes:false,
-		draw_background:true,
+		draw_player_bounding_boxes:true,
+		draw_wall_bounding_boxes:true,
+		draw_background:false,
 		draw_fps:true,
 	}
 }

@@ -30,6 +30,16 @@ std::vector<app_interfaces::spatiable::t_poly>	room_wall::shapes=
 	{
 		{ {0.,0.}, {32.,32.}, {0.,32.} },
 		{16., 16.}
+	},
+	//wthin
+	{
+		{ {0.,0.}, {4.,0.}, {4.,32.}, {0.,32.} },
+		{16., 16.}
+	},
+	//ethin
+	{
+		{ {28.,0.}, {32.,0.}, {32.,32.}, {28.,32.} },
+		{16., 16.}
 	}
 };
 
@@ -48,6 +58,8 @@ room_wall::twall app::room_wall_int_to_type(int t)
 		case 3: 	return room_wall::twall::necorner; break;
 		case 4: 	return room_wall::twall::secorner; break;
 		case 5: 	return room_wall::twall::swcorner; break;
+		case 6: 	return room_wall::twall::wthin; break;
+		case 7: 	return room_wall::twall::ethin; break;
 		default:
 			throw std::runtime_error("Invalid wall type");
 		break;
@@ -68,11 +80,13 @@ app_interfaces::spatiable::t_poly * room_wall::get_poly_ptr()
 
 	switch(type)
 	{
-		case room_wall::twall::full: 	res=&shapes[shape_full]; break;
-		case room_wall::twall::nwcorner: res=&shapes[shape_nwcorner]; break;
-		case room_wall::twall::necorner: res=&shapes[shape_necorner]; break;
-		case room_wall::twall::secorner: res=&shapes[shape_secorner]; break;
-		case room_wall::twall::swcorner: res=&shapes[shape_swcorner]; break;
+		case room_wall::twall::full: 		res=&shapes[shape_full]; break;
+		case room_wall::twall::nwcorner: 	res=&shapes[shape_nwcorner]; break;
+		case room_wall::twall::necorner: 	res=&shapes[shape_necorner]; break;
+		case room_wall::twall::secorner: 	res=&shapes[shape_secorner]; break;
+		case room_wall::twall::swcorner: 	res=&shapes[shape_swcorner]; break;
+		case room_wall::twall::wthin: 		res=&shapes[shape_wthin]; break;
+		case room_wall::twall::ethin: 		res=&shapes[shape_ethin]; break;
 		default:
 			throw std::runtime_error("Invalid wall type");
 		break;

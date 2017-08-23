@@ -190,10 +190,10 @@ void controller_test_2d::draw(ldv::screen& screen, int fps)
 		fps_text.draw(screen);
 	}	
 
-	auto draw_bounding_box=[this, &screen](const app_interfaces::spatiable& s)
+	auto draw_bounding_box=[this, &screen](const app_interfaces::spatiable& s, ldv::rgb_color col)
 	{
 		game_draw_struct.set_type(app::draw_struct::types::box);
-		game_draw_struct.set_color(ldv::rgb8(255,0,0));
+		game_draw_struct.set_color(col);
 		game_draw_struct.set_alpha(128);
 		game_draw_struct.set_primitive_fill(ldv::polygon_representation::type::fill);
 		game_draw_struct.set_box_location(game_draw_struct.drawable_box_from_spatiable(s));
@@ -206,14 +206,14 @@ void controller_test_2d::draw(ldv::screen& screen, int fps)
 		const auto& w=game_room.get_all_walls();
 		auto fdraw_walls=[this, &screen, draw_bounding_box](const room_wall& wall)
 		{
-			draw_bounding_box(wall);
+			draw_bounding_box(wall, ldv::rgb8(0,255,0));
 		};
 		w.apply(fdraw_walls);
 	}
 
 	if(s_resources.get_debug_config().bool_from_path("debug:video:draw_player_bounding_boxes"))
 	{
-		draw_bounding_box(game_player);
+		draw_bounding_box(game_player, ldv::rgb8(255,0,0));
 	}
 
 	//A set of dots...

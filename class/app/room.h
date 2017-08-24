@@ -14,6 +14,7 @@
 #include "room_connection.h"
 #include "room_wall.h"
 #include "object_decoration.h"
+#include "object_trigger.h"
 
 namespace app
 {
@@ -36,6 +37,7 @@ class room
 	void				load(const std::string&);
 	const room_entrance&		get_entrance_by_id(int) const;
 	const std::vector<room_exit>&	get_exits() const {return exits;}
+	const 	std::vector<object_trigger>&	get_triggers() const {return triggers;}
 	std::vector<const app_interfaces::spatiable *>	get_walls_by_box(const app_interfaces::spatiable::t_box&) const;
 	std::vector<const app_interfaces::spatiable *> get_obstacles() const;
 	unsigned int			get_w() const {return walls.get_w()*room_wall::wall_w;}
@@ -53,7 +55,6 @@ class room
 
 	//Private methods...
 	void				clear();
-	void				build_room_object(const tools::dnot_token&);
 
 	//Properties.
 
@@ -65,8 +66,7 @@ class room
 	std::vector<room_entrance>	entrances;
 	std::vector<room_exit>		exits;
 	std::vector<object_decoration>	decorations;
-
-	//TODO: Logic objects: switches...
+	std::vector<object_trigger>	triggers;
 };
 
 }

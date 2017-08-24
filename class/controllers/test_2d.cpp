@@ -15,8 +15,11 @@ using namespace app;
 controller_test_2d::controller_test_2d(shared_resources& sr)
 try
 	:s_resources(sr),
-	game_camera{{0,0,700,500},{0,0}} //This means that the camera always gets a 700x500 box, even with a larger window.
+	game_camera{{0,0,700,500},{0,0}}, //This means that the camera always gets a 700x500 box, even with a larger window.
+	game_localization(0, {"data/app_data/localization/descriptions"})
 {
+	game_localization.init();
+
 	game_camera.set_center_margin({300, 200, 100, 100});
 	game_camera.clear_limits();
 
@@ -103,6 +106,7 @@ void controller_test_2d::loop(dfw::input& input, float delta)
 	//Now effect collisions... These only apply to the final position, by design. Not like level design allows crazy things...
 	if(gi.x || gi.y)
 	{
+		//First the change of rooms. It trumps the rest.
 		struct {
 			std::string 	map;
 			int		terminus_id;
@@ -125,13 +129,36 @@ void controller_test_2d::loop(dfw::input& input, float delta)
 		if(room_change.change) 
 		{
 			do_room_change(room_change.map, room_change.terminus_id);
+			return;
 		}
-		else
+
+		//Nothing here executes if we change rooms!.
+
+		const auto& trig=game_room.get_triggers();
+		auto it=std::find_if(std::begin(trig), std::end(trig), [this](const object_trigger& tr)
 		{
-			game_camera.center_on(
-				game_draw_struct.drawable_box_from_spatiable(
-					game_player));
+			return tr.is_touch() && game_player.is_colliding_with(tr);
+		});
+
+		if(it!=std::end(trig))
+		{
+			if(it->is_unique())
+			{
+				//TODO: Check. Early exit.
+				//TODO: If not, add to a std::set.
+			}
+
+			//TODO: Actually, trigger a state change for this controller.
+			std::cout<<game_localization.get(it->get_text_id())<<std::endl;
+			//TODO: This trigger has already executed for this room, so we should ignore it until we collide again.
+			//How to that is actually something to think about.
 		}
+		
+
+
+		game_camera.center_on(
+			game_draw_struct.drawable_box_from_spatiable(
+				game_player));
 	}
 }
 
@@ -252,6 +279,9 @@ void controller_test_2d::do_room_change(const std::string& map, int terminus_id)
 
 	ldv::rect room_box={0,0, game_room.get_w(), game_room.get_h()};
 	game_camera.set_limits(room_box);
-	game_camera.go_to({0,0});
+	game_camera.center_on(
+		game_draw_struct.drawable_box_from_spatiable(
+			game_player));
+
 	//TODO: Set player bearing upon entrance.
 }

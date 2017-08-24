@@ -18,6 +18,7 @@
 #include "../app/shared_resources.h"
 #include "../app/draw_struct.h"
 #include "../app/player.h"
+#include "../app/localization.h"
 
 namespace app
 {
@@ -49,6 +50,7 @@ class controller_test_2d:
 	room						game_room;
 	draw_struct					game_draw_struct;
 	player						game_player;
+	localization					game_localization;
 };
 
 }

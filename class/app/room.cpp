@@ -10,6 +10,7 @@
 //Local
 #include "display_defs.h"
 #include "object_decoration_factory.h"
+#include "object_logic_factory.h"
 
 using namespace app;
 
@@ -87,8 +88,9 @@ void room::load(const std::string& fn)
 		//First layer is a lot of logic objects...
 		if(logic.size() >= 1)
 		{
+			object_logic_factory fac(entrances, exits, triggers);
 			for(const auto& i: logic[0]["data"].get_vector())
-				build_room_object(i);
+				fac.make_object(i);
 		}
 
 		//Second layer is a lot of decorations...
@@ -105,49 +107,12 @@ void room::load(const std::string& fn)
 	}
 }
 
-//This is sort of a factory... The kind of thing we could delegate to another
-//class...
-
-void room::build_room_object(const tools::dnot_token& tok)
-{
-	try
-	{
-		//Caution: all properties are expressed as strings in the map format.
-		auto ifs=[](const tools::dnot_token& t) -> int
-		{
-			return std::atoi(t.get_string().c_str());
-		};
-
-		switch(tok["t"].get_int())
-		{
-			case 1: //Entrance
-				entrances.push_back({
-					app_interfaces::spatiable::t_point(tok["x"].get_int(), tok["y"].get_int()),
-					ifs(tok["p"]["bearing"]),
-					ifs(tok["p"]["terminus_id"])
-					});
-
-			break;
-			case 2: //Exit
-				exits.push_back({
-					app_interfaces::spatiable::t_box(tok["x"].get_int(), tok["y"].get_int(), tok["w"].get_int(), tok["h"].get_int()),
-					tok["p"]["destination_map"],
-					ifs(tok["p"]["terminus_id"])
-					});
-			break;
-		}
-	}
-	catch(std::exception& e)
-	{
-		throw std::runtime_error(std::string("Unable to build object of type ")+compat::to_string(tok["t"].get_int())+std::string(":")+e.what());
-	}
-}
-
 //Empties the room and basically leaves its state as after constructed.
 
 void room::clear()
 {
 	//TODO: Clear all the other things.
+	triggers.clear();
 	decorations.clear();
 	entrances.clear();
 	exits.clear();

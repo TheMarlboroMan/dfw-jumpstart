@@ -1,0 +1,14 @@
+1	Locker regular	27	17	fixed	32,32,128
+2	Locker parcel	27	17	fixed	32,32,128
+3	Locker plant	27	17	fixed	32,32,128
+4	Bookcase	23	8	fixed	128,128,128
+5	Low table	21	15	fixed	128,32,32
+6	Chair	16	15	fixed	128,32,32
+7	Trashcan	11	8	fixed	192,192,192
+8	Nightstand	18	12	fixed	192,192,192
+9	Bed	33	43	fixed	192,128,128
+10	Fridge	30	15	fixed	256,256,256
+11	Kitchen	66	19	fixed	192,192,192
+12	Dinner table	39	63	fixed	192,192,192
+13	Arcade machine	29	15	fixed	32,192,32
+14	Console	63	23	fixed	32,192,32

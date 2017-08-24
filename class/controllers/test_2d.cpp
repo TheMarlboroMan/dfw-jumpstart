@@ -140,22 +140,8 @@ void controller_test_2d::loop(dfw::input& input, float delta)
 			return tr.is_touch() && game_player.is_colliding_with(tr);
 		});
 
-		if(it!=std::end(trig))
-		{
-			if(it->is_unique())
-			{
-				//TODO: Check. Early exit.
-				//TODO: If not, add to a std::set.
-			}
-
-			//TODO: Actually, trigger a state change for this controller.
-			std::cout<<game_localization.get(it->get_text_id())<<std::endl;
-			//TODO: This trigger has already executed for this room, so we should ignore it until we collide again.
-			//How to that is actually something to think about.
-		}
+		if(it!=std::end(trig)) do_touch_trigger(*it));
 		
-
-
 		game_camera.center_on(
 			game_draw_struct.drawable_box_from_spatiable(
 				game_player));
@@ -284,4 +270,20 @@ void controller_test_2d::do_room_change(const std::string& map, int terminus_id)
 			game_player));
 
 	//TODO: Set player bearing upon entrance.
+}
+
+void controller_test_2d::do_touch_trigger(const object_trigger& trig)
+{
+	if(trig.is_unique())
+	{
+		//TODO: Add this unique set...
+		//if(unique_set.count(trig.get_unique_id())) return;
+		//unique_set.insert(trig.get_unique_id());
+	}
+
+	//TODO: Actually, trigger a state change for this controller.
+	std::cout<<game_localization.get(trig.get_text_id())<<std::endl;
+	//TODO: This trigger has already executed for this room, so we should ignore it until we collide again.
+	//How to that is actually something to think about.
+
 }

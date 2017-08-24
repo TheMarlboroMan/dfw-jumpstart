@@ -4,3 +4,13 @@
 2	Exit	32	32	resizable	0,0,255
 	destination_map	mapname
 	terminus_id	0
+3	Walking unique text trigger	32	32	resizable	255,0,0
+	trigger_id	idstring
+	text_id	0
+4	Walking text trigger	32	32	resizable	192,0,0
+	text_id	0
+5	Action unique text trigger	32	32	resizable	128,0,0
+	trigger_id	idstring
+	text_id	0
+6	Action text trigger	32	32	resizable	64,0,0
+	text_id	0

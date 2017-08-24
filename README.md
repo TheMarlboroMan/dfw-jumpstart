@@ -1,9 +1,9 @@
 #TODO:
 	- Add examples of sound.
 		- With footsteps. Linked to frames.
+		- Volume relative to position of player.
 	- Add examples of music.
 	- Add example of menu.
-	- Add example of localisation.
 	- Add a cartesian camera example, with polys.
 	- Comment the cartesian vs screen system.
 
@@ -105,6 +105,13 @@ The "console" controller includes a full working example, which goes like this:
 	- Check text events if(input().is_event_text()) and add input().get_text_input() to the buffer.
 	- Check non text events that are text related (backspace, enter) as regular key down events. Act upon the buffer.
 - On sleeping: stop the text input (input().stop_text_input();) so it does not affect other controllers.
+
+###Implement localization.
+
+A very basic example of localization is shown in the test_2d controller. The class localization extends tools::base_localization. The rules are simple:
+
+- Languages are represented by integers.
+- Strings are stored in files named #file#.#id_language#.dat.
 
 ##Files and directory structure.
 

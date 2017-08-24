@@ -27,10 +27,13 @@ $(DIR_O)tile_decoration.o \
 $(DIR_O)room.o \
 $(DIR_O)motion.o \
 $(DIR_O)player.o \
+$(DIR_O)object_trigger.o \
 $(DIR_O)room_connection.o \
 $(DIR_O)room_wall.o \
 $(DIR_O)object_decoration.o \
 $(DIR_O)object_decoration_factory.o \
+$(DIR_O)object_logic_factory.o \
+$(DIR_O)localization.o \
 
 ################################################################################
 #External dependencies...
@@ -110,6 +113,13 @@ $(DIR_APP)player.h \
 $(DIR_APP)player.cpp
 	$(CC) $(CFLAGS) $(INCLUDES) $(DIR_APP)player.cpp -o $(DIR_O)player.o
 
+$(DIR_O)object_logic_factory.o :\
+$(DIR_O)object_trigger.o\
+$(DIR_O)room_connection.o\
+$(DIR_APP)object_logic_factory.h \
+$(DIR_APP)object_logic_factory.cpp
+	$(CC) $(CFLAGS) $(INCLUDES) $(DIR_APP)object_logic_factory.cpp -o $(DIR_O)object_logic_factory.o
+
 $(DIR_O)object_decoration_factory.o :\
 $(DIR_O)object_decoration.o\
 $(DIR_APP)object_decoration_factory.h \
@@ -123,6 +133,12 @@ $(DIR_APP)object_decoration.h \
 $(DIR_APP)object_decoration.cpp
 	$(CC) $(CFLAGS) $(INCLUDES) $(DIR_APP)object_decoration.cpp -o $(DIR_O)object_decoration.o
 
+$(DIR_O)object_trigger.o :\
+$(DIR_O)spatiable.o \
+$(DIR_APP)object_trigger.h \
+$(DIR_APP)object_trigger.cpp
+	$(CC) $(CFLAGS) $(INCLUDES) $(DIR_APP)object_trigger.cpp -o $(DIR_O)object_trigger.o
+
 $(DIR_O)motion.o :\
 $(DIR_APP)motion.h \
 $(DIR_APP)motion.cpp
@@ -130,9 +146,11 @@ $(DIR_APP)motion.cpp
 
 $(DIR_O)room.o :\
 $(DIR_O)object_decoration.o \
+$(DIR_O)object_trigger.o \
 $(DIR_O)tile_decoration.o \
 $(DIR_O)room_connection.o \
 $(DIR_O)room_wall.o \
+$(DIR_O)object_logic_factory.o \
 $(DIR_O)object_decoration_factory.o \
 $(DIR_APP)room.h \
 $(DIR_APP)room.cpp
@@ -165,6 +183,11 @@ $(DIR_O)draw_struct.o :\
 $(DIR_APP)draw_struct.h \
 $(DIR_APP)draw_struct.cpp
 	$(CC) $(CFLAGS) $(INCLUDES) $(DIR_APP)draw_struct.cpp -o $(DIR_O)draw_struct.o
+
+$(DIR_O)localization.o :\
+$(DIR_APP)localization.h \
+$(DIR_APP)localization.cpp
+	$(CC) $(CFLAGS) $(INCLUDES) $(DIR_APP)localization.cpp -o $(DIR_O)localization.o
 
 #Interfaces
 

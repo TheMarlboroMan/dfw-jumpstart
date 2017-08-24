@@ -29,6 +29,8 @@ $(DIR_O)motion.o \
 $(DIR_O)player.o \
 $(DIR_O)room_connection.o \
 $(DIR_O)room_wall.o \
+$(DIR_O)object_decoration.o \
+$(DIR_O)object_decoration_factory.o \
 
 ################################################################################
 #External dependencies...
@@ -108,15 +110,30 @@ $(DIR_APP)player.h \
 $(DIR_APP)player.cpp
 	$(CC) $(CFLAGS) $(INCLUDES) $(DIR_APP)player.cpp -o $(DIR_O)player.o
 
+$(DIR_O)object_decoration_factory.o :\
+$(DIR_O)object_decoration.o\
+$(DIR_APP)object_decoration_factory.h \
+$(DIR_APP)object_decoration_factory.cpp
+	$(CC) $(CFLAGS) $(INCLUDES) $(DIR_APP)object_decoration_factory.cpp -o $(DIR_O)object_decoration_factory.o
+
+$(DIR_O)object_decoration.o :\
+$(DIR_O)spatiable.o \
+$(DIR_O)drawable.o \
+$(DIR_APP)object_decoration.h \
+$(DIR_APP)object_decoration.cpp
+	$(CC) $(CFLAGS) $(INCLUDES) $(DIR_APP)object_decoration.cpp -o $(DIR_O)object_decoration.o
+
 $(DIR_O)motion.o :\
 $(DIR_APP)motion.h \
 $(DIR_APP)motion.cpp
 	$(CC) $(CFLAGS) $(INCLUDES) $(DIR_APP)motion.cpp -o $(DIR_O)motion.o
 
 $(DIR_O)room.o :\
+$(DIR_O)object_decoration.o \
 $(DIR_O)tile_decoration.o \
 $(DIR_O)room_connection.o \
 $(DIR_O)room_wall.o \
+$(DIR_O)object_decoration_factory.o \
 $(DIR_APP)room.h \
 $(DIR_APP)room.cpp
 	$(CC) $(CFLAGS) $(INCLUDES) $(DIR_APP)room.cpp -o $(DIR_O)room.o

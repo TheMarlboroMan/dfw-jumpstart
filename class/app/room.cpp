@@ -3,12 +3,13 @@
 //Std
 #include <algorithm>
 
-//Local
-#include "display_defs.h"
-
 //Tools
 #include <class/dnot_parser.h>
 #include <templates/compatibility_patches.h>
+
+//Local
+#include "display_defs.h"
+#include "object_decoration_factory.h"
 
 using namespace app;
 
@@ -30,8 +31,8 @@ room_drawable_collection room::get_drawables() const
 		res.background.push_back(&st);
 
 	//Next game objects...
-
-	//Finally, foreground, if any.
+	for(const auto& dc: decorations) 
+		res.main.push_back(&dc);
 
 	return res;
 }
@@ -73,21 +74,29 @@ void room::load(const std::string& fn)
 		//Second item is the background.
 		if(layers.size() >= 2)
 			for(auto& i : layers[1]["data"].get_vector())
-				push_tile(i, floor_tiles, tileset_defs::background, texture_defs::bgtiles, bgtiles_alpha);
+				push_tile(i, floor_tiles, tileset_defs::background, texture_defs::bg_tiles, bgtiles_alpha);
 
 		//Third item is the shadow layer.
 		if(layers.size() >= 3)
 			for(auto& i : layers[2]["data"].get_vector())
-				push_tile(i, shadow_tiles, tileset_defs::shadows, texture_defs::shadowtiles, shadowtiles_alpha);
+				push_tile(i, shadow_tiles, tileset_defs::shadows, texture_defs::shadow_tiles, shadowtiles_alpha);
 
 		//Next, object layers...
 		const auto& logic=root["data"]["logic"].get_vector();
 
-		//First layer is a lot of room objects...
+		//First layer is a lot of logic objects...
 		if(logic.size() >= 1)
 		{
 			for(const auto& i: logic[0]["data"].get_vector())
 				build_room_object(i);
+		}
+
+		//Second layer is a lot of decorations...
+		if(logic.size() >= 2)
+		{
+			object_decoration_factory fac;
+			for(const auto& i: logic[1]["data"].get_vector())
+				decorations.push_back(fac.make_object(i));
 		}
 	}
 	catch(std::exception& e)
@@ -139,7 +148,7 @@ void room::build_room_object(const tools::dnot_token& tok)
 void room::clear()
 {
 	//TODO: Clear all the other things.
-
+	decorations.clear();
 	entrances.clear();
 	exits.clear();
 	floor_tiles.clear();
@@ -158,6 +167,14 @@ const room_entrance& room::get_entrance_by_id(int id) const
 	}
 
 	return *res;
+}
+
+std::vector<const app_interfaces::spatiable *> room::get_obstacles() const
+{
+	std::vector<const app_interfaces::spatiable *> res;
+	for(const auto& o : decorations)
+		res.push_back(&o);
+	return res;
 }
 
 std::vector<const app_interfaces::spatiable *>	room::get_walls_by_box(const app_interfaces::spatiable::t_box& box) const
@@ -216,6 +233,7 @@ std::vector<const app_interfaces::spatiable *>	room::get_walls_by_box(const app_
 		return val >= 0 ? val : 0;
 	};
 
+	//TODO: There was an easier way to do this in the other branch.
 	//The ceil part makes sense: when passed to to_cell, box.origin.x+box.w
 	//is parsed to int, which just removes its decimal part, meaning that
 	//if you have an end in 32.7 it becomes 32 (thus decremented by "to_cell")

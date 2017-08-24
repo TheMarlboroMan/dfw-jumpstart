@@ -61,31 +61,35 @@ void controller_test_2d::loop(dfw::input& input, float delta)
 	//Player movement...
 	auto movement_phase=[this, delta](motion::axis axis)
 	{
-		game_player.integrate_motion(delta, axis);
-
-		//TODO: Also, collision with objects first... Walls later. If anything.
-		auto coarse_collisions=game_room.get_walls_by_box(app_interfaces::coarse_bounding_box(game_player));
-
-		//This is an easy approach but only works with axis aligned bounding boxes...
-		//game_player::adjust_collision(*coarse_collisions[0], axis);
-
 		//This is the laziest approach: revert the movement as soon as 
 		//a collision is detected, opting for an early exit.
 		//Works with walls of different shapes but may leave the player
 		//visibly separated from the wall. Of course, could be made complex so
 		//axis aligned boxes are taken into account too.
 
-		if(coarse_collisions.size())
+		//Lambda within a lambda :D.
+		auto solve_collisions=[this, axis](const std::vector<const app_interfaces::spatiable *>& collisions) 
 		{
-			for(const auto& c: coarse_collisions)
-			{
+			if(!collisions.size()) return;
+
+			for(const auto& c: collisions)
 				if(game_player.is_colliding_with(*c))
 				{
 					game_player.cancel_movement(axis);
 					break;
-				}
 			}
-		}
+		};
+
+		game_player.integrate_motion(delta, axis);
+
+		auto obstacle_collisions=game_room.get_obstacles();
+		solve_collisions(obstacle_collisions);
+
+		//This should not be necessary, actually, as any collision with an object disqualifies collisions with walls but well...
+		auto coarse_collisions=game_room.get_walls_by_box(app_interfaces::coarse_bounding_box(game_player));
+		solve_collisions(coarse_collisions);
+
+
 
 		//TODO: This is more complex and cumbersome: a binary search
 		//is conducted to the nearest free position in N iterations
@@ -136,9 +140,7 @@ void controller_test_2d::draw(ldv::screen& screen, int fps)
 	screen.clear(ldv::rgba8(0, 0, 0, 0));
 	
 #ifndef WDEBUG_CODE
-
-
-	const auto& dc=game_room.get_drawables();
+	auto dc=game_room.get_drawables();
 
 	//First layer...
 	for(const auto& d: dc.background)
@@ -146,9 +148,14 @@ void controller_test_2d::draw(ldv::screen& screen, int fps)
 		d->draw(screen, game_camera, game_draw_struct, s_resources);
 	}
 
-	//Second layer: game objects... this has to be ordered...
-	//TODO: Get the vector from the room, add the player, order, draw.
-	game_player.draw(screen, game_camera, game_draw_struct, s_resources);
+	//Second layer... add player and sort.
+	dc.main.push_back(&game_player);
+	std::sort(std::begin(dc.main), std::end(dc.main), app_interfaces::drawable_order); 
+
+	for(const auto& d: dc.main)
+	{
+		d->draw(screen, game_camera, game_draw_struct, s_resources);
+	}
 
 	//Draw fps.
 	ldv::ttf_representation fps_text{
@@ -167,18 +174,21 @@ void controller_test_2d::draw(ldv::screen& screen, int fps)
 
 	if(s_resources.get_debug_config().bool_from_path("debug:video:draw_background"))
 	{
-		const auto& dc=game_room.get_drawables();
-
-		//First layer...
-		for(const auto& d: dc.background)
+		for(const auto& d: game_room.get_drawables().background)
 		{
 			d->draw(screen, game_camera, game_draw_struct, s_resources);
 		}
 	}
 
-	if(s_resources.get_debug_config().bool_from_path("debug:video:draw_player"))
+	if(s_resources.get_debug_config().bool_from_path("debug:video:draw_main_plane"))
 	{
-		game_player.draw(screen, game_camera, game_draw_struct, s_resources);
+		auto dc=game_room.get_drawables();
+		dc.main.push_back(&game_player);
+		std::sort(std::begin(dc.main), std::end(dc.main), app_interfaces::drawable_order); 
+		for(const auto& d: dc.main)
+		{
+			d->draw(screen, game_camera, game_draw_struct, s_resources);
+		}
 	}
 
 	if(s_resources.get_debug_config().bool_from_path("debug:video:draw_fps"))
@@ -203,7 +213,7 @@ void controller_test_2d::draw(ldv::screen& screen, int fps)
 	if(s_resources.get_debug_config().bool_from_path("debug:video:draw_wall_bounding_boxes"))
 	{
 		//Draw collision boxes of all walls.
-		const auto& w=game_room.get_all_walls();
+		const auto w=game_room.get_all_walls();
 		auto fdraw_walls=[this, &screen, draw_bounding_box](const room_wall& wall)
 		{
 			draw_bounding_box(wall, ldv::rgb8(0,255,0));

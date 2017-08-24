@@ -46,6 +46,7 @@ void shared_resources::register_tilesets()
 		tilesheets.push_back({"data/app_data/scifitiles-sheet-alt.dat"});
 		tilesheets.push_back({"data/app_data/shadows-sheet.dat"});
 		tilesheets.push_back({"data/app_data/character-sheet.dat"});
+		tilesheets.push_back({"data/app_data/decoration-sheet.dat"});
 	}
 	catch(std::exception& e)
 	{

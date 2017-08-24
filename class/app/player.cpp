@@ -33,7 +33,7 @@ void player::draw(ldv::screen& scr, const ldv::camera& cam, app::draw_struct& ds
 	const auto& frect=frame.get_rect();
 
 	ds.set_type(app::draw_struct::types::bitmap);
-	ds.set_texture(sr.get_video_resource_manager().get_texture(texture_defs::playersheet));
+	ds.set_texture(sr.get_video_resource_manager().get_texture(texture_defs::player_sheet));
 	ds.set_clip(frect);
 	ds.set_location(
 		ds.location_projection(

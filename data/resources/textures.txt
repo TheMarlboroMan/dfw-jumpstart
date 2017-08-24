@@ -2,3 +2,4 @@
 1	data/textures/scifitiles-sheet-alt.png
 2	data/textures/shadows-sheet.png
 3	data/textures/player-sheet.png
+4	data/textures/decoration-sheet.png

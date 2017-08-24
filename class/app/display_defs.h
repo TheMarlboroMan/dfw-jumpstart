@@ -4,19 +4,22 @@
 namespace app
 {
 
-//Textures...
+//Index textures for resource manager.
 struct texture_defs
 {
-	enum {bgtiles=1, 
-		shadowtiles=2,
-		playersheet=3};
+	enum {bg_tiles=1, 
+		shadow_tiles=2,
+		player_sheet=3,
+		decoration_object_sheet=4};
 };
 
-//This is the index for a vector.
+//This is the index for a vector of sheets.
 struct tileset_defs
 {
 	enum {background=0,
-		shadows=1};
+		shadows=1,
+		player,
+		decoration};
 };
 
 //This is the index for a vector.

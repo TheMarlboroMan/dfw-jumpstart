@@ -6,6 +6,7 @@
 	- Add example of menu.
 	- Add a cartesian camera example, with polys.
 	- Comment the cartesian vs screen system.
+	- Add example of views (tools).
 
 	- Center character animation.
 	- Check camera spatiable.
@@ -50,6 +51,79 @@ Here are a few things that need to be done in a regular basis.
 
 It is a bit clunky, but does not take more than 5 minutes.
 
+###Do message broadcasting between controllers:
+
+Message broadcasting is a way to share scalar information between controllers,
+like for example, strings, integers or data types that can be represented from
+primitives. Controllers can be setup as broadcasters and receivers separatedly.
+
+For each controller that can broadcast add this method (if you fail, an exception will be thrown when broadcasting).
+
+	// message broadcasting
+
+	public:
+
+	virtual bool			is_broadcaster() const {return true;}
+
+For each controller that can receive add these ones (if you fail to add a receive method an exception will be thrown when broadcasting).
+
+	// message broadcasting
+
+	public:
+
+	virtual bool			is_receiver() const {return true;}
+	virtual void			receive(const dfw::broadcast_message& msg)
+	{
+		//msg has two members: an int "type" and a dnot_token "tok"...
+		//do what you need to do here.
+	}
+
+From a controller that can broadcast, do this:
+
+	int type=1;
+	tools::dnot_token tok=tools::dnot_parse_string{"data:{key: "value", thing: true}"};
+	broadcast({type, tok});
+
+An example can be seen in the test_2d controller which uses this information to broadcast text strings to test_2d_text.
+
+If you need to share complex objects you can set up alternatives, like public
+setters and getters in you controllers that can be accessed from your state_driver
+"prepare_state" method.
+
+###Draw a controller different than the active one:
+
+There may be cases when you need to keep drawing a controller while executing one
+(for example, a help screen about a certain controller). While this can be done 
+setting up different states in controller and branching logic, input control
+and drawing, there's an alternative. When you need it, add this function in 
+the controller:
+
+virtual void			request_draw(dfw::controller_view_manager& cvm) 
+{
+	//Do this to add another controller by index.
+	cvm.add(1); 
+
+	//Do this to add your controller.
+	cvm.add_ptr(this);
+}
+
+And that's all. Controllers will be drawn in the declared order (in the example,
+first the one with the index 1 and then "this"). No logic of the controllers will be
+executed at all.
+
+An example can be seen in the test_2d_text controller which requests text_2d to 
+be drawn and then overlays new elements.
+
+###Use the tools::view_composer to create static views.
+
+Static views can be composed with dnot files to avoid the need of hardcoded 
+values and recompilation.
+
+//TODO.
+
+An example exists in the test_2d_text controller.
+
+
 ###Add new input:
 
 - Add it to the enum in class/input.h.
@@ -73,13 +147,17 @@ This is the main application flow:
 - Begin consuming loop time:
 	- Loop the input (now there are events... this is actually sdl_input::loop).
 	- Loop the state. (this is the main loop of your state).
-	- Audio queue.
+	- Process message queue.
 	- Evaluate possible state change. Break out of this loop if needed.
+	- 
+- Postloop of your state.
 - If change state
 	- Confirm state change.
 - If not change state
-	- Postloop of your state. 
+	- Do fps loop init.
 	- Draw state.
+	- Update screen.
+	- Do fps loop end.
 
 Thus:
 

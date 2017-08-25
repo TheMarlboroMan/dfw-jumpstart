@@ -3,6 +3,7 @@
 
 //std
 #include <cmath>
+#include <set>
 
 //libdansdl2
 #include <def_video.h>
@@ -38,6 +39,9 @@ class controller_test_2d:
 	virtual void 				slumber(dfw::input&) {}
 	virtual bool				can_leave_state() const;
 
+	// message broadcasting
+	virtual bool				is_broadcaster() const {return true;}
+
 	private:
 
 	void					do_room_change(const std::string&, int);
@@ -52,6 +56,7 @@ class controller_test_2d:
 	draw_struct					game_draw_struct;
 	player						game_player;
 	localization					game_localization;
+	std::set<std::string>				unique_triggers;
 };
 
 }

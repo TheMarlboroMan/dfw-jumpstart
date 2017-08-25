@@ -92,8 +92,6 @@ void controller_test_2d::loop(dfw::input& input, float delta)
 		auto coarse_collisions=game_room.get_walls_by_box(app_interfaces::coarse_bounding_box(game_player));
 		solve_collisions(coarse_collisions);
 
-
-
 		//TODO: This is more complex and cumbersome: a binary search
 		//is conducted to the nearest free position in N iterations
 		//is found. All iterations are checked against still colliding
@@ -137,10 +135,15 @@ void controller_test_2d::loop(dfw::input& input, float delta)
 		const auto& trig=game_room.get_triggers();
 		auto it=std::find_if(std::begin(trig), std::end(trig), [this](const object_trigger& tr)
 		{
-			return tr.is_touch() && game_player.is_colliding_with(tr);
+			//TODO: Add more, like the trigger id and set thing
+			//and the player trigger memory.
+			return tr.is_touch() 
+				&& game_player.is_colliding_with(tr);
 		});
 
-		if(it!=std::end(trig)) do_touch_trigger(*it));
+		//TODO: Oh yes, this shit is great but what about OTHER effects, like using the console???
+
+		if(it!=std::end(trig)) do_touch_trigger(*it);
 		
 		game_camera.center_on(
 			game_draw_struct.drawable_box_from_spatiable(
@@ -176,6 +179,9 @@ void controller_test_2d::draw(ldv::screen& screen, int fps)
 		ldv::rgba8(0, 0, 255, 255), compat::to_string(fps)};
 	fps_text.go_to({500,0});
 	fps_text.draw(screen);
+
+	//TODO: Implement double message dispa tch to draw OTHER controllers.
+	//TODO: Reimplement controller base without a reference to the state driver. That is horrid.
 
 #else
 
@@ -263,8 +269,7 @@ void controller_test_2d::do_room_change(const std::string& map, int terminus_id)
 	game_room.load(map);
 	game_player.center_on(game_room.get_entrance_by_id(terminus_id));
 
-	ldv::rect room_box={0,0, game_room.get_w(), game_room.get_h()};
-	game_camera.set_limits(room_box);
+	game_camera.set_limits({0,0, game_room.get_w(), game_room.get_h()});
 	game_camera.center_on(
 		game_draw_struct.drawable_box_from_spatiable(
 			game_player));
@@ -276,14 +281,17 @@ void controller_test_2d::do_touch_trigger(const object_trigger& trig)
 {
 	if(trig.is_unique())
 	{
-		//TODO: Add this unique set...
-		//if(unique_set.count(trig.get_unique_id())) return;
-		//unique_set.insert(trig.get_unique_id());
+		if(unique_triggers.count(trig.get_unique_id())) return;
+		s_resources.get_log()<<"Adding unique trigger "<<trig.get_unique_id()<<std::endl;
+		unique_triggers.insert(trig.get_unique_id());
 	}
 
-	//TODO: Actually, trigger a state change for this controller.
-	std::cout<<game_localization.get(trig.get_text_id())<<std::endl;
-	//TODO: This trigger has already executed for this room, so we should ignore it until we collide again.
-	//How to that is actually something to think about.
+	//TODO: Now we should store the rect somewhere so we know we can ignore
+	//it next turn. Also, we should check when we EXIT the room so we can
+	//clear that state. Who's responsible for this?. Who should own the data?
 
+	//Crude, but ok.
+	auto tok=tools::dnot_parse_string("data:{txt: \""+game_localization.get(trig.get_text_id())+"\"}");
+	broadcast({0, tok});
+	set_state(state_test_2d_text);
 }

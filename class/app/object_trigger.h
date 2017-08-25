@@ -25,6 +25,7 @@ class object_trigger:
 	bool			is_activate() const {return type==ttype::activate;}
 	bool			is_unique() const {return unique;}
 	int			get_text_id() const {return text_id;}
+	const std::string&	get_unique_id() const {return unique_id;}
 	
 	private:
 

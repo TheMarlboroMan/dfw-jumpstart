@@ -13,6 +13,7 @@
 //Controllers.
 #include "../controllers/states.h"
 #include "../controllers/test_2d.h"
+#include "../controllers/test_2d_text.h"
 #include "../controllers/fps_test.h"
 #include "../controllers/console.h"
 
@@ -47,6 +48,7 @@ class state_driver:
 
 	std::unique_ptr<shared_resources>		s_resources;
 	std::unique_ptr<controller_test_2d>		c_test_2d;
+	std::unique_ptr<controller_test_2d_text>	c_test_2d_text;
 	std::unique_ptr<controller_console>		c_console;
 	std::unique_ptr<controller_fps_test>		c_fps;
 };

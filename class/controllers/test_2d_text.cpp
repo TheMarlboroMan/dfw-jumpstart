@@ -12,15 +12,18 @@
 using namespace app;
 
 controller_test_2d_text::controller_test_2d_text(shared_resources& sr)
+try
 	:s_resources(sr), 
-	text_rep{
-		s_resources.get_ttf_manager().get("consola-mono", 12), 
-		ldv::rgba8(255, 255, 255, 255), 
-		""},
 	state(tstates::dictate), current_index(0),
 	time_text(0.f), time_blink(0.f)
 {
-
+	layout.map_font("main_text_font", s_resources.get_ttf_manager().get("consola-mono", 16));
+	layout.parse("data/app_data/layouts.dat", "text_bubble_layout");
+}
+catch(std::exception& e)
+{
+	sr.get_log()<<"Unable to create 2d text controller: "<<e.what()<<std::endl;
+	//This would still propagate: initialization lists and exceptions work like that.
 }
 
 void controller_test_2d_text::loop(dfw::input& input, float delta)
@@ -83,20 +86,19 @@ void controller_test_2d_text::loop(dfw::input& input, float delta)
 
 void controller_test_2d_text::draw(ldv::screen& screen, int /*fps*/)
 {
-	//TODO: This might as well be on the composition.
-	ldv::box_representation box{
-		ldv::polygon_representation::type::fill, 
-		{0,0,screen.get_w(), screen.get_h()}, 
-		ldv::rgba8(0,0,128,128)
-	};
-	box.set_blend(ldv::representation::blends::alpha);
+	if(state==tstates::wait)
+	{
+		bool visible=fmod(time_blink, 2.f) >= 0.5f;
+		layout.get_by_id("wait_square")->set_visible(visible);
+		layout.get_by_id("wait_triangle")->set_visible(visible);
+	}
+	else
+	{
+		layout.get_by_id("wait_square")->set_visible(false);
+		layout.get_by_id("wait_triangle")->set_visible(false);
+	}
 
-	//TODO: If state is wait, we display the blinking crap. Use ceil and mod to wrap to seconds.
-
-	box.draw(screen);
-
-	//TODO: Even better, get the text from the composition.
-	text_rep.draw(screen);
+	layout.draw(screen);
 }
 
 void controller_test_2d_text::request_draw(dfw::controller_view_manager& cvm)
@@ -115,6 +117,5 @@ void controller_test_2d_text::receive(const dfw::broadcast_message& msg)
 
 void controller_test_2d_text::redraw_text()
 {
-	//TODO: Even better, get the text from the composition.
-	text_rep.set_text(std::begin(text_buffer)->substr(0, current_index));
+	static_cast<ldv::ttf_representation *>(layout.get_by_id("main_text"))->set_text(std::begin(text_buffer)->substr(0, current_index));
 }

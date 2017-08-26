@@ -6,7 +6,6 @@
 	- Add example of menu.
 	- Add a cartesian camera example, with polys.
 	- Comment the cartesian vs screen system.
-	- Add example of views (tools).
 
 	- Center character animation.
 	- Check camera spatiable objects.
@@ -118,12 +117,11 @@ be drawn and then overlays new elements.
 ###Use the tools::view_composer to create static views.
 
 Static views can be composed with dnot files to avoid the need of hardcoded 
-values and recompilation.
+values and recompilation. These are most useful for menus, presentation screens,
+fixed graphics... There is an example in the test_2d_text controller, using the 
+file in "data/app_data/layouts.dat". 
 
-//TODO.
-
-An example exists in the test_2d_text controller.
-
+The documentation of the class if fairly complete in any case.
 
 ###Add new input:
 

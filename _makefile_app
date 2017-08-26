@@ -41,7 +41,6 @@ $(DIR_O)localization.o \
 
 DEP_TOOLS=\
 $(DIR_O_TOOLS)text_reader.o \
-$(DIR_O_TOOLS)pair_file_parser.o\
 $(DIR_O_TOOLS)arg_manager.o \
 $(DIR_O_TOOLS)string_utils.o \
 $(DIR_O_TOOLS)file_utils.o \
@@ -53,6 +52,7 @@ $(DIR_O_TOOLS)sprite_table.o\
 $(DIR_O_TOOLS)chrono.o\
 $(DIR_O_TOOLS)animation_table.o\
 $(DIR_O_TOOLS)dnot_config_file.o\
+$(DIR_O_TOOLS)view_composer.o\
 
 DEP_FRAMEWORK=\
 $(DIR_O_DFW)fw_audio.o \

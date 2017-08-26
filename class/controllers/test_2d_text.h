@@ -7,6 +7,9 @@
 //libdansdl2
 #include <def_video.h>
 
+//tools
+#include <class/view_composer.h>
+
 //framework
 #include <class/controller_interface.h>
 
@@ -45,7 +48,7 @@ class controller_test_2d_text:
 	shared_resources&				s_resources;
 
 	//properties.
-	ldv::ttf_representation 			text_rep;
+	tools::view_composer				layout;
 	enum class tstates{dictate, wait} 		state;
 	std::vector<std::string>			text_buffer;
 	size_t						current_index;

@@ -46,13 +46,14 @@ void controller_test_2d_text::loop(dfw::input& input, float delta)
 			else
 			{
 				time_text+=delta;
-				if(time_text >= 0.1f)
+				if(time_text >= 0.05f)
 				{
 					++current_index;
 					if(current_index >= std::begin(text_buffer)->size())
 					{
 						current_index=std::begin(text_buffer)->size();
 						state=tstates::wait;
+						time_blink=0.f;
 					}
 					time_text=0.f;
 					redraw_text();

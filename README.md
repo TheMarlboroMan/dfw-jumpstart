@@ -9,9 +9,8 @@
 	- Add example of views (tools).
 
 	- Center character animation.
-	- Check camera spatiable.
+	- Check camera spatiable objects.
 	- Skip camera test (set in camera...)
-	- Add objects, to sort (bed, table, power pilon...)
 
 
 #Basic framework.
@@ -23,7 +22,9 @@ There are a few controllers here:
 - a very simple console with four commands or so (first try to implement one) 
 	- Demonstrates a very simple controller with text input.
 - a little game-like thing in axonometric 2d perspective (think snes rpg). 
-	- Demonstrates screen-coordinates camera, implementation of application classes, use of animations and frames, screen representations, input, SAT collision...
+	- Demonstrates screen-coordinates camera, implementation of application classes, use of animations and frames, screen representations, input, SAT collision, message broadcasting...
+- a game thing companion that displays texts along the previous controller.
+	- Demonstrates multi-controller drawing and message broadcasting.
 - a very simple frames-per-second test, not accesible.
 	- 
 

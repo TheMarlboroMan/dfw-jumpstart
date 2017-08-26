@@ -78,6 +78,7 @@ std::vector<dfw::input_pair> kernel_config::get_input_pairs() const
 		{input_app::right, 	config.token_from_path_input("right")},
 		{input_app::up, 	config.token_from_path_input("up")},
 		{input_app::down, 	config.token_from_path_input("down")},
+		{input_app::activate, 	config.token_from_path_input("activate")},
 		{input_app::console_newline, 	config.token_from_path_input("console_newline")},
 		{input_app::console_backspace, 	config.token_from_path_input("console_backspace")}
 #ifdef WDEBUG_CODE

@@ -14,6 +14,7 @@ up,
 down,
 left,
 right,
+activate,
 console_newline,
 console_backspace,
 #ifdef WDEBUG_CODE

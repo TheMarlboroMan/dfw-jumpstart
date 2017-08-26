@@ -35,17 +35,22 @@ class controller_test_2d_text:
 	virtual void				request_draw(dfw::controller_view_manager&); 
 
 	virtual bool				is_receiver() const {return true;}
-	virtual void				receive(const dfw::broadcast_message& msg)
-	{
-		std::cout<<"this is text, copy:"<<msg.tok["data"]["txt"]<<std::endl;
-	}
+	virtual void				receive(const dfw::broadcast_message&);
 
 	private:
 
-
+	void					redraw_text();
 
 	//references...
 	shared_resources&				s_resources;
+
+	//properties.
+	ldv::ttf_representation 			text_rep;
+	enum class tstates{dictate, wait} 		state;
+	std::vector<std::string>			text_buffer;
+	size_t						current_index;
+	float						time_text, time_blink;
+				
 };
 
 }

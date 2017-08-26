@@ -1,0 +1,54 @@
+layout:
+[	
+	{type:"define", key:"ini_fade_capa", value:255.0f},
+	{type:"define", key:"fin_fade_capa", value:1.0f},
+	{type:"define", key:"ini_fade_menu", value:1.0f},
+	{type:"define", key:"fin_fade_menu", value:255.0f},
+	{type:"define", key:"fade_salto", value:100.0f},
+	{type:"define", key:"fade_menu_salto", value:200.0f},
+	{type:"define", key:"x_listado", value:32},
+	{type:"define", key:"y_listado", value:64},
+	{type:"define", key:"h_item", value:20},
+	{type:"define", key:"h_listado", value:200},
+	{type:"define", key:"color_r_activo", value:0},
+	{type:"define", key:"color_g_activo", value:0},
+	{type:"define", key:"color_b_activo", value:0},
+	{type:"define", key:"color_a_activo", value:255},
+	{type:"define", key:"color_r_inactivo", value:128},
+	{type:"define", key:"color_g_inactivo", value:128},
+	{type:"define", key:"color_b_inactivo", value:128},
+	{type:"define", key:"color_a_inactivo", value:255},
+	{
+		type:"screen", 
+		rgba:[255, 255, 255, 255]
+	},
+	{
+		type:"ttf",
+		pos:[16, 16],
+		text:"-",
+		font:"fuente", rgba:[0, 0, 0, 255],
+		id:"txt_pulsa_tecla", alpha: 255, order: 10, visible: true
+	},
+	{
+		type:"external", ref:"menu", order: 20
+	},
+	{
+		type:"bitmap",
+		pos:[140, 300, 546, 376], clip:[0, 0, 546, 376],
+		texture:"cover", order: 15, id:"cover"
+	},
+	{
+		type:"bitmap",
+		pos:[140, 300, 546, 376], clip:[0, 0, 546, 376],
+		texture:"flores", order: 16, id:"flores", visible: false,
+		alpha: 255
+	},
+	{
+		type:"box",
+		pos:[0, 0, 800, 600], 
+		rgb:[255,255,255], 
+		id:"fader", 
+		alpha:255, 
+		order: 20
+	}
+]

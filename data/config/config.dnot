@@ -12,12 +12,14 @@ config:{
 			0, 0, 79
 		], left:[
 			0, 0, 80
+		], activate:[
+			0, 0, 44
 		], console_newline: [
 			0, 0, 40
 		], console_backspace: [
 			0, 0, 42
 		], reload_debug_config: [
-			0, 0, 44
+			0, 0, 21
 		]
 	}, meta:{
 		v:1

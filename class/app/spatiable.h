@@ -24,6 +24,7 @@ class spatiable
 	virtual ~spatiable() {}
 
 	bool 				is_colliding_with(const spatiable&) const;
+	bool 				is_colliding_with(const t_poly&) const;
 
 	void				move_by(t_point);
 	void				center_on(t_point);

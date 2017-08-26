@@ -18,6 +18,16 @@ class object_trigger:
 //	enum inttype{ttouch=0, tactivate=1};
 	enum class ttype{touch, activate};
 
+	bool			operator==(const object_trigger& o) const
+	{
+		return room_object_box::operator==(o) && 
+		o.type==type &&
+		o.unique==unique &&
+		o.text_id==text_id &&
+		o.unique_id==unique_id;
+	}
+
+				object_trigger(const object_trigger&);
 				object_trigger(const app_interfaces::spatiable::t_box&, ttype, int);
 				object_trigger(const app_interfaces::spatiable::t_box&, ttype, int, const std::string&);
 	ttype			get_type() const {return type;}

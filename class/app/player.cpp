@@ -112,3 +112,43 @@ int player::choose_animation_frame() const
 	///Stupid compiler...
 	return player_animation_defs::idle_n;
 }
+
+app_interfaces::spatiable::t_poly player::get_activate_poly() const
+{
+	const auto& origin=polygon.get_vertex(0);
+	tpos	x=origin.x, y=origin.y;
+	
+	//I am sure there's a more satisfying solution, but well...
+
+	switch(player_bearing())
+	{
+		case bearing::tbearing::n: 
+			y-=h;
+		break;
+		case bearing::tbearing::ne:
+			x+=w; 		y-=h;
+		break;
+		case bearing::tbearing::e:
+			x+=w;
+		break;
+		case bearing::tbearing::se:
+			x+=w; y+=h;
+		break;
+		case bearing::tbearing::s:
+			y+=h;
+		break;
+		case bearing::tbearing::sw:
+			x-=w; y+=h;
+		break;
+		case bearing::tbearing::w:
+			x-=w;
+		break;
+		case bearing::tbearing::nw:
+			x-=w; y-=h;
+		break;
+	}
+
+	return app_interfaces::spatiable::t_poly{
+		{ {x,y}, {x+w,y}, {x+w,y+h}, {x,y+h}},
+		{x,y}};
+}

@@ -26,6 +26,8 @@ class room_object_box:
 
 	}
 
+	bool				operator==(const room_object_box& o) const {return polygon==o.polygon;}
+
 	//Spatiable implementation
 
 	virtual const t_poly&		get_poly() const {return polygon;}

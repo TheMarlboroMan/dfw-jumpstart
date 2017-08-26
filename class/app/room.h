@@ -42,6 +42,9 @@ class room
 	std::vector<const app_interfaces::spatiable *> get_obstacles() const;
 	unsigned int			get_w() const {return walls.get_w()*room_wall::wall_w;}
 	unsigned int			get_h() const {return walls.get_h()*room_wall::wall_h;}
+	object_trigger *		get_trigger_memory() {return trigger_memory.get();}
+	void				clear_trigger_memory() {trigger_memory.reset(nullptr);}
+	void				set_trigger_memory(const object_trigger& o) {trigger_memory.reset(new object_trigger{o});}
 
 #ifdef WDEBUG_CODE
 	const tools::matrix_2d<room_wall>& get_all_walls() {return walls;} 
@@ -62,6 +65,7 @@ class room
 	std::vector<tile_decoration>	shadow_tiles;
 
 	//Logic
+	std::unique_ptr<object_trigger>	trigger_memory; //copy of the last touch trigger touched.
 	tools::matrix_2d<room_wall>	walls;
 	std::vector<room_entrance>	entrances;
 	std::vector<room_exit>		exits;

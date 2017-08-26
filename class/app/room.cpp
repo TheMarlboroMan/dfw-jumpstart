@@ -15,7 +15,8 @@
 using namespace app;
 
 room::room()
-	:walls{1,1}
+	:trigger_memory(nullptr),
+	walls{1,1}
 {
 
 }
@@ -118,6 +119,7 @@ void room::clear()
 	exits.clear();
 	floor_tiles.clear();
 	shadow_tiles.clear();
+	trigger_memory.reset(nullptr);
 
 }
 

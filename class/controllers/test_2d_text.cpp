@@ -113,6 +113,11 @@ void controller_test_2d_text::receive(const dfw::broadcast_message& msg)
 	if(msg.type==0)
 	{
 		text_buffer=tools::explode(msg.tok["data"]["txt"], "[@np]");
+		current_index=0;
+		state=tstates::dictate;
+		time_blink=0.f;
+		time_text=0.f;
+		redraw_text();
 	}
 }
 

@@ -58,6 +58,8 @@ void controller_test_2d::loop(dfw::input& input, float delta)
 	if(input.is_input_pressed(input_app::left)) gi.x=-1;
 	else if(input.is_input_pressed(input_app::right)) gi.x=1;
 
+	if(input.is_input_down(input_app::activate)) gi.activate=true;
+
 	game_player.set_input(gi);
 	game_player.step(delta);
 
@@ -80,7 +82,7 @@ void controller_test_2d::loop(dfw::input& input, float delta)
 				{
 					game_player.cancel_movement(axis);
 					break;
-			}
+				}
 		};
 
 		game_player.integrate_motion(delta, axis);
@@ -92,7 +94,7 @@ void controller_test_2d::loop(dfw::input& input, float delta)
 		auto coarse_collisions=game_room.get_walls_by_box(app_interfaces::coarse_bounding_box(game_player));
 		solve_collisions(coarse_collisions);
 
-		//TODO: This is more complex and cumbersome: a binary search
+		//Another option is more complex and cumbersome: a binary search
 		//is conducted to the nearest free position in N iterations
 		//is found. All iterations are checked against still colliding
 		//walls. Different shapes work too.
@@ -130,25 +132,43 @@ void controller_test_2d::loop(dfw::input& input, float delta)
 			return;
 		}
 
-		//Nothing here executes if we change rooms!.
+		//Nothing from here onwards executes if we change rooms!.
 
+		//Check if there was trigger memory and if we need to clear it.
+		auto ttm=game_room.get_trigger_memory();
+		if(ttm && !game_player.is_colliding_with(*ttm)) game_room.clear_trigger_memory();
+		
+		//Now se if we are colliding with any trigger...ll 
 		const auto& trig=game_room.get_triggers();
-		auto it=std::find_if(std::begin(trig), std::end(trig), [this](const object_trigger& tr)
+		auto it_touch=std::find_if(std::begin(trig), std::end(trig), [this, ttm](const object_trigger& tr)
 		{
-			//TODO: Add more, like the trigger id and set thing
-			//and the player trigger memory.
-			return tr.is_touch() 
-				&& game_player.is_colliding_with(tr);
+			return tr.is_touch() 				//Is touch trigger...
+				&& game_player.is_colliding_with(tr)	//The player is touching
+				&& (!ttm || !(*ttm == tr));		//If there's a memory trigger, it is not this one.
 		});
 
-		//TODO: Oh yes, this shit is great but what about OTHER effects, like using the console???
-
-		if(it!=std::end(trig)) do_touch_trigger(*it);
-		
-		game_camera.center_on(
-			game_draw_struct.drawable_box_from_spatiable(
-				game_player));
+		if(it_touch!=std::end(trig)) 
+		{
+			do_trigger(*it_touch);
+			return;
+		}
 	}
+
+	if(gi.activate)
+	{
+		const auto& act_poly=game_player.get_activate_poly();
+		const auto& trig=game_room.get_triggers();
+		auto it_act=std::find_if(std::begin(trig), std::end(trig), [this, &act_poly](const object_trigger& tr)
+		{
+			return tr.is_activate()				//Is activate trigger...
+				&& tr.is_colliding_with(act_poly);	//The player activation box is touching
+		});
+		if(it_act!=std::end(trig)) do_trigger(*it_act);
+	}
+	
+	game_camera.center_on(
+		game_draw_struct.drawable_box_from_spatiable(
+			game_player));
 }
 
 void controller_test_2d::draw(ldv::screen& screen, int fps)
@@ -179,9 +199,6 @@ void controller_test_2d::draw(ldv::screen& screen, int fps)
 		ldv::rgba8(0, 0, 255, 255), compat::to_string(fps)};
 	fps_text.go_to({500,0});
 	fps_text.draw(screen);
-
-	//TODO: Implement double message dispa tch to draw OTHER controllers.
-	//TODO: Reimplement controller base without a reference to the state driver. That is horrid.
 
 #else
 
@@ -277,7 +294,7 @@ void controller_test_2d::do_room_change(const std::string& map, int terminus_id)
 	//TODO: Set player bearing upon entrance.
 }
 
-void controller_test_2d::do_touch_trigger(const object_trigger& trig)
+void controller_test_2d::do_trigger(const object_trigger& trig)
 {
 	if(trig.is_unique())
 	{
@@ -286,12 +303,24 @@ void controller_test_2d::do_touch_trigger(const object_trigger& trig)
 		unique_triggers.insert(trig.get_unique_id());
 	}
 
-	//TODO: Now we should store the rect somewhere so we know we can ignore
-	//it next turn. Also, we should check when we EXIT the room so we can
-	//clear that state. Who's responsible for this?. Who should own the data?
+	if(trig.is_touch())
+	{
+		game_room.set_trigger_memory(trig);
+	}
 
 	//Crude, but ok.
-	auto tok=tools::dnot_parse_string("data:{txt: \""+game_localization.get(trig.get_text_id())+"\"}");
-	broadcast({0, tok});
+	std::string dnotstr("data:{txt: \""+game_localization.get(trig.get_text_id())+"\"}");
+	auto tok=tools::dnot_parse_string(dnotstr);
+	broadcast({0, tok}); //TODO: This may just be the message type, the 0.
 	set_state(state_test_2d_text);
+
+/*
+		effects:{
+[id: 1, type: "text", text_id: 1],
+[id: 2, type: "activate_console"],
+[id: 3, type: "activate_arcade"],
+
+These could be in the "meta" part of the map file, for example, or this meta part would rather
+point at the script file?. Or we should have a single script file?.
+*/
 }

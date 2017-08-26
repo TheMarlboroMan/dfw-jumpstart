@@ -9,11 +9,8 @@ namespace app
 
 struct game_input
 {
-	game_input()
-		:x(0), y(0)
-	{}
-
-	int x, y;
+	int x=0, y=0;
+	bool activate=false;
 };
 
 }

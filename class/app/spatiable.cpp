@@ -7,6 +7,11 @@ bool spatiable::is_colliding_with(const spatiable& o) const
 	return ldt::SAT_collision_check(get_poly(), o.get_poly());
 }
 
+bool spatiable::is_colliding_with(const t_poly& o) const
+{
+	return ldt::SAT_collision_check(get_poly(), o);
+}
+
 void spatiable::move_by(t_point p)
 {
 	get_poly_ptr()->move(p);

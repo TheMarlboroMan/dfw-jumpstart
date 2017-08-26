@@ -45,7 +45,7 @@ class controller_test_2d:
 	private:
 
 	void					do_room_change(const std::string&, int);
-	void					do_touch_trigger(const object_trigger&);
+	void					do_trigger(const object_trigger&);
 
 	//references...
 	shared_resources&				s_resources;

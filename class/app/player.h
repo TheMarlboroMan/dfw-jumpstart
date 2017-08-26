@@ -23,11 +23,12 @@ class player:
 	//////////////////////////
 	//Public interface
 
-					player();
-	void				step(float);
-	void				set_input(game_input);
-	void				integrate_motion(float, motion::axis);
-	void				cancel_movement(motion::axis);
+						player();
+	void					step(float);
+	void					set_input(game_input);
+	void					integrate_motion(float, motion::axis);
+	void					cancel_movement(motion::axis);
+	app_interfaces::spatiable::t_poly	get_activate_poly() const;
 
 	//////////////////////////
 	//Spatiable implementation
@@ -52,7 +53,6 @@ class player:
 	int				choose_animation_frame() const;
 
 	app_interfaces::spatiable::t_poly		polygon,
-//TODO: Do we really need this or can we just trace the vector back?.
 							prev_polygon;
 	bearing						player_bearing;
 

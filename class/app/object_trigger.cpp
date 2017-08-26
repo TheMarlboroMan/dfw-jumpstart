@@ -25,6 +25,16 @@ object_trigger::object_trigger(const app_interfaces::spatiable::t_box& b, ttype 
 
 }
 
+object_trigger::object_trigger(const object_trigger& o)
+	:room_object_box(o),
+	type{o.type},
+	unique{o.unique},
+	text_id{o.text_id},
+	unique_id{o.unique_id}
+{
+
+}
+
 /*
 object_trigger::ttype object_trigger::int_to_type(int v) const
 {

@@ -1,5 +1,5 @@
-#ifndef ROOM_CONNECTION_H
-#define ROOM_CONNECTION_H
+#ifndef ROOM_ENTRANCE_H
+#define ROOM_ENTRANCE_H
 
 //Std
 #include <string>
@@ -10,27 +10,6 @@
 
 namespace app
 {
-
-class room_exit:
-	public room_object_box
-{
-	public:
-
-	room_exit(const app_interfaces::spatiable::t_box& b, const std::string& m, int tid):
-		room_object_box(b), destination_map(m), terminus_id(tid)
-	{
-
-	}
-
-	const std::string&		get_destination_map() const {return destination_map;}
-	int				get_terminus_id() const {return terminus_id;}
-	
-
-	private:
-
-	std::string			destination_map;
-	int				terminus_id;
-};
 
 class room_entrance:
 	public room_object_box

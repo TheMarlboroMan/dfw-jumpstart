@@ -9,7 +9,7 @@
 
 //local
 #include "object_trigger.h"
-#include "room_connection.h"
+#include "room_entrance.h"
 
 namespace app
 {
@@ -18,13 +18,12 @@ class object_logic_factory
 {
 	public:
 
-					object_logic_factory(std::vector<room_entrance>&, std::vector<room_exit>&, std::vector<object_trigger>&);
+					object_logic_factory(std::vector<room_entrance>&, std::vector<object_trigger>&);
 	void				make_object(const tools::dnot_token&);
 
 	private:
 
 	std::vector<room_entrance>&	entrances;
-	std::vector<room_exit>&		exits;
 	std::vector<object_trigger>&	triggers;
 };
 

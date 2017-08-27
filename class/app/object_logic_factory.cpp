@@ -8,8 +8,8 @@
 
 using namespace app;
 
-object_logic_factory::object_logic_factory(std::vector<room_entrance>& ent, std::vector<room_exit>& ext, std::vector<object_trigger>& trg)
-	:entrances(ent), exits(ext), triggers(trg)
+object_logic_factory::object_logic_factory(std::vector<room_entrance>& ent, std::vector<object_trigger>& trg)
+	:entrances(ent), triggers(trg)
 {
 
 }
@@ -34,12 +34,8 @@ void object_logic_factory::make_object(const tools::dnot_token& tok)
 					});
 
 			break;
-			case 2: //Exit
-				exits.push_back({
-					app_interfaces::spatiable::t_box(tok["x"].get_int(), tok["y"].get_int(), tok["w"].get_int(), tok["h"].get_int()),
-					tok["p"]["destination_map"],
-					ifs(tok["p"]["terminus_id"])
-					});
+			case 2:
+				//????
 			break;
 			case 3: //Touch trigger...
 				triggers.push_back({

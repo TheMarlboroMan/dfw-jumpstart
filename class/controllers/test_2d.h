@@ -42,9 +42,15 @@ class controller_test_2d:
 	// message broadcasting
 	virtual bool				is_broadcaster() const {return true;}
 
-	private:
-
+	// Action dispatchers.
 	void					do_room_change(const std::string&, int);
+	void					do_room_change(const room_action_exit&);
+	void					do_console_transition(const room_action_console&);
+	void					do_arcade_transition(const room_action_arcade&);
+	void					do_text_display(const room_action_text&);
+
+
+	private:
 	void					do_trigger(const object_trigger&);
 
 	//references...
@@ -56,7 +62,7 @@ class controller_test_2d:
 	draw_struct					game_draw_struct;
 	player						game_player;
 	localization					game_localization;
-	std::set<std::string>				unique_triggers;
+	std::set<int>					unique_actions;
 };
 
 }

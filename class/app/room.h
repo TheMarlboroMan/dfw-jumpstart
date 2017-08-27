@@ -11,10 +11,11 @@
 
 //App
 #include "tile_decoration.h"
-#include "room_connection.h"
+#include "room_entrance.h"
 #include "room_wall.h"
 #include "object_decoration.h"
 #include "object_trigger.h"
+#include "room_action.h"
 
 namespace app
 {
@@ -36,7 +37,6 @@ class room
 	room_drawable_collection	get_drawables() const; 	//This should use RVO, so no problem with superfluous copies.
 	void				load(const std::string&);
 	const room_entrance&		get_entrance_by_id(int) const;
-	const std::vector<room_exit>&	get_exits() const {return exits;}
 	const 	std::vector<object_trigger>&	get_triggers() const {return triggers;}
 	std::vector<const app_interfaces::spatiable *>	get_walls_by_box(const app_interfaces::spatiable::t_box&) const;
 	std::vector<const app_interfaces::spatiable *> get_obstacles() const;
@@ -45,6 +45,7 @@ class room
 	object_trigger *		get_trigger_memory() {return trigger_memory.get();}
 	void				clear_trigger_memory() {trigger_memory.reset(nullptr);}
 	void				set_trigger_memory(const object_trigger& o) {trigger_memory.reset(new object_trigger{o});}
+	const room_action *		get_action(int) const;
 
 #ifdef WDEBUG_CODE
 	const tools::matrix_2d<room_wall>& get_all_walls() {return walls;} 
@@ -68,9 +69,9 @@ class room
 	std::unique_ptr<object_trigger>	trigger_memory; //copy of the last touch trigger touched.
 	tools::matrix_2d<room_wall>	walls;
 	std::vector<room_entrance>	entrances;
-	std::vector<room_exit>		exits;
 	std::vector<object_decoration>	decorations;
 	std::vector<object_trigger>	triggers;
+	std::vector<std::unique_ptr<room_action>>	actions;
 };
 
 }

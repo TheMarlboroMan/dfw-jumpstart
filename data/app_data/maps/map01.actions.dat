@@ -1,6 +1,7 @@
 actions:[
-	{id: 1, type: 2, text_id: 1, repeat: false, repeat_id:"m01-1"}
-	{id: 2, type: 2, text_id: 2, repeat: true}
-	{id: 3, type: 2, text_id: 3, repeat: true}
-	{id: 4, type: 2, text_id: 4, repeat: true}
+	{id: 1000, type: 2, text_id: 1, repeat: false},
+	{id: 2, type: 2, text_id: 2, repeat: true},
+	{id: 3, type: 2, text_id: 3, repeat: true},
+	{id: 4, type: 2, text_id: 4, repeat: true},
+	{id: 5, type: 1, room:"map02.dat", terminus_id:1, repeat: true}
 ]

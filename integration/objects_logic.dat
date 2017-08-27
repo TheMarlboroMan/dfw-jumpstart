@@ -1,9 +1,7 @@
 1	Start	32	32	fixed	0,255,0
 	terminus_id	0
 	bearing	0
-2	Exit	32	32	resizable	0,0,255
-	destination_map	mapname
-	terminus_id	0
+2	Unused	32	32	fixed	255,255,255
 3	Touch trigger	32	32	resizable	255,0,0
 	action_id	0
 4	Action trigger	32	32	resizable	192,0,0

@@ -11,6 +11,7 @@
 #include "display_defs.h"
 #include "object_decoration_factory.h"
 #include "object_logic_factory.h"
+#include "room_action_factory.h"
 
 using namespace app;
 
@@ -89,7 +90,7 @@ void room::load(const std::string& fn)
 		//First layer is a lot of logic objects...
 		if(logic.size() >= 1)
 		{
-			object_logic_factory fac(entrances, exits, triggers);
+			object_logic_factory fac(entrances, triggers);
 			for(const auto& i: logic[0]["data"].get_vector())
 				fac.make_object(i);
 		}
@@ -103,11 +104,14 @@ void room::load(const std::string& fn)
 		}
 
 		//There are no more layers. so now, meta.
-		const auto& meta=root["data"]["meta"].get_map();
+		auto& meta=root["data"]["meta"].get_map();
 
 		if(meta.count("actions"))
 		{
-			std::cout<<"WILL LOAD "<<meta.at("actions").get_string()<<std::endl;
+			room_action_factory fac(actions);
+			auto root_act=tools::dnot_parse_file("data/app_data/maps/"+meta["actions"].get_string());
+			for(const auto& n : root_act["actions"].get_vector())
+				fac.make_action(n);
 		}
 	}
 	catch(std::exception& e)
@@ -124,10 +128,10 @@ void room::clear()
 	triggers.clear();
 	decorations.clear();
 	entrances.clear();
-	exits.clear();
 	floor_tiles.clear();
 	shadow_tiles.clear();
 	trigger_memory.reset(nullptr);
+	actions.clear();
 
 }
 
@@ -232,4 +236,16 @@ std::vector<const app_interfaces::spatiable *>	room::get_walls_by_box(const app_
 	}
 
 	return res;
+}
+
+const room_action * room::get_action(int id) const
+{
+	//This implementation would be easier with a map.
+	auto it=std::find_if(std::begin(actions), std::end(actions), [id](const std::unique_ptr<room_action>& a)
+	{
+		return a->action_id==id;
+	});
+
+	if(it!=std::end(actions)) return (it->get());
+	else return nullptr;
 }

@@ -25,9 +25,9 @@ try
 
 	const auto& am=sr.get_arg_manager();
 
+	//The thing starts at map01, terminus_id 0.
 	if(am.value_exists_for("map") && am.value_exists_for("terminus"))
 	{
-			//The thing starts at map01, terminus_id 0.
 		do_room_change(am.get_value("map"), std::atoi(am.get_value("terminus").c_str()));
 	}
 	else
@@ -106,34 +106,6 @@ void controller_test_2d::loop(dfw::input& input, float delta)
 	//Now effect collisions... These only apply to the final position, by design. Not like level design allows crazy things...
 	if(gi.x || gi.y)
 	{
-		//First the change of rooms. It trumps the rest.
-		struct {
-			std::string 	map;
-			int		terminus_id;
-			bool 		change=false;
-		}room_change;
-
-		//Interestingly, we should not enforce "do_room_change" in here, since it will clear the room, hence the very
-		//same thing we are iterating.
-		for(const auto& e : game_room.get_exits())
-		{
-			if(game_player.is_colliding_with(e))
-			{
-				room_change.map=e.get_destination_map();
-				room_change.terminus_id=e.get_terminus_id();
-				room_change.change=true;
-				break;
-			}
-		}
-
-		if(room_change.change) 
-		{
-			do_room_change(room_change.map, room_change.terminus_id);
-			return;
-		}
-
-		//Nothing from here onwards executes if we change rooms!.
-
 		//Check if there was trigger memory and if we need to clear it.
 		auto ttm=game_room.get_trigger_memory();
 		if(ttm && !game_player.is_colliding_with(*ttm)) game_room.clear_trigger_memory();
@@ -279,6 +251,7 @@ bool controller_test_2d::can_leave_state() const
 	return true;
 }
 
+//TODO: This will dissapear.
 void controller_test_2d::do_room_change(const std::string& map, int terminus_id)
 {
 	//TODO: Clear any lingering data belonging to this controller...
@@ -294,39 +267,60 @@ void controller_test_2d::do_room_change(const std::string& map, int terminus_id)
 	//TODO: Set player bearing upon entrance.
 }
 
-void controller_test_2d::do_trigger(const object_trigger& trig)
+void controller_test_2d::do_room_change(const room_action_exit& a)
 {
-	//TODO:
-	//This is wrong... triggers are NOT unique, actions are.
-/*
-	if(trig.is_unique())
-	{
-		if(unique_triggers.count(trig.get_unique_id())) return;
-		s_resources.get_log()<<"Adding unique trigger "<<trig.get_unique_id()<<std::endl;
-		unique_triggers.insert(trig.get_unique_id());
-	}
-*/
-	if(trig.is_touch())
-	{
-		game_room.set_trigger_memory(trig);
-	}
+	do_room_change(a.room, a.terminus_id);
+}
 
-	//TODO: Where are the actions?. Property of the map?.
-
-	//TODO: Invoke action
-/*
-	//Crude, but ok.
-	std::string dnotstr("data:{txt: \""+game_localization.get(trig.get_text_id())+"\"}");
+void controller_test_2d::do_text_display(const room_action_text& a)
+{
+	std::string dnotstr("data:{txt: \""+game_localization.get(a.text_id)+"\"}");
 	auto tok=tools::dnot_parse_string(dnotstr);
 	broadcast({0, tok}); //TODO: This may just be the message type, the 0.
 	set_state(state_test_2d_text);
+}
 
-		effects:{
-[id: 1, type: "text", text_id: 1],
-[id: 2, type: "activate_console"],
-[id: 3, type: "activate_arcade"],
+void controller_test_2d::do_console_transition(const room_action_console&)
+{
 
-These could be in the "meta" part of the map file, for example, or this meta part would rather
-point at the script file?. Or we should have a single script file?.
-*/
+}
+
+void controller_test_2d::do_arcade_transition(const room_action_arcade&)
+{
+
+}
+
+void controller_test_2d::do_trigger(const object_trigger& trig)
+{
+	if(trig.is_touch())
+		game_room.set_trigger_memory(trig);
+ 
+	const room_action * act=game_room.get_action(trig.get_action_id());
+	if(!act)
+	{
+		s_resources.get_log()<<"unavailable action "<<trig.get_action_id()<<std::endl;
+		return;
+	}
+	
+	//If it is repeatable we may skip the action.
+	if(!act->repeat)
+	{
+		if(unique_actions.count(act->action_id)) return;
+		s_resources.get_log()<<"Adding unique trigger "<<act->action_id<<std::endl;
+		unique_actions.insert(act->action_id);
+	}
+
+	//Pure win.
+	struct d:
+		public action_dispatcher
+	{
+					d(controller_test_2d * ct):c{ct}{}
+
+		virtual void		resolve(const room_action_exit& a) 	{c->do_room_change(a);}
+		virtual void		resolve(const room_action_text& a) 	{c->do_text_display(a);}
+		virtual void		resolve(const room_action_console& a) {c->do_console_transition(a);}
+		virtual void		resolve(const room_action_arcade& a) 	{c->do_arcade_transition(a);}
+		controller_test_2d *	c;
+	}ad(this);
+	act->dispatch(ad);
 }

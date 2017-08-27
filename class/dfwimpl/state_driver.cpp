@@ -25,6 +25,8 @@ state_driver::state_driver(dfw::kernel& kernel, app::app_config& c)
 	log<<"preparing shared resources..."<<std::endl;
 	s_resources.reset(
 		new shared_resources(
+			kernel.get_audio(),
+			kernel.get_audio_resource_manager(),
 			kernel.get_video_resource_manager(),
 			log,
 			kernel.get_controller_chrono(),

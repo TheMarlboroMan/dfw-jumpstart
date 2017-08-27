@@ -49,7 +49,6 @@ class controller_test_2d:
 	void					do_arcade_transition(const room_action_arcade&);
 	void					do_text_display(const room_action_text&);
 
-
 	private:
 	void					do_trigger(const object_trigger&);
 

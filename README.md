@@ -168,6 +168,14 @@ Thus:
 	- Once N seconds of logic are run, the screen is refreshed.
 	- The loop repeats with N being the time the screen took to refresh or a maximum value set in state_driver::get_max_timestep().	
 
+###Use and inject resource managers.
+
+//TODO: Explain this too.
+
+###Play audio
+
+//TODO: Explain how to get the audio_interface from the kernel and inject it into the controllers. Then use it.
+
 ###Implement text input.
 
 Getting the text input to work properly seems tricky but it is actually easy. Two important things:

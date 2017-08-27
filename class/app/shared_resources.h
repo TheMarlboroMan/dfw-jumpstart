@@ -20,6 +20,9 @@
 #include <class/chrono.h>
 #include <class/arg_manager.h>
 
+//dfw
+#include <class/audio.h>
+
 #ifdef WDEBUG_CODE
 #include <class/dnot_config_file.h>
 #endif
@@ -32,13 +35,15 @@ class shared_resources
 {
 	public:
 
-						shared_resources(ldv::resource_manager&, ldt::log&, tools::chrono&, tools::arg_manager&);
+						shared_resources(dfw::audio&, lda::resource_manager&, ldv::resource_manager&, ldt::log&, tools::chrono&, tools::arg_manager&);
 
 #ifdef WDEBUG_CODE
 	const tools::dnot_config_file&		get_debug_config() const {return debug_config;}
 	void					reload_debug_config() {debug_config.reload();}
 #endif
 
+	dfw::audio&				get_audio() {return audio;}
+	const lda::resource_manager&		get_audio_resource_manager() const {return a_manager;}
 	const tools::ttf_manager&		get_ttf_manager() const {return ttf_manager;}
 	const ldv::resource_manager&		get_video_resource_manager() const {return v_manager;}
 	ldt::log&				get_log() {return log;}
@@ -46,7 +51,6 @@ class shared_resources
 	const tools::animation_table&		get_animation(size_t i) const {return animations[i];}
 	tools::chrono&				get_controller_chrono() {return controller_chrono;}
 	const tools::arg_manager&		get_arg_manager() const {return arg_manager;}
-	
 
 	private:
 
@@ -55,6 +59,8 @@ class shared_resources
 	void					register_animations();
 
 	//References
+	dfw::audio				audio;
+	lda::resource_manager&			a_manager;
 	ldv::resource_manager&			v_manager;
 	ldt::log&				log;
 	tools::chrono&				controller_chrono;

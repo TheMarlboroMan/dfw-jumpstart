@@ -1,12 +1,19 @@
 #include "shared_resources.h"
 
+//tools
 #include <source/string_utils.h>
 #include <class/text_reader.h> //Explode lines from file.
 
 using namespace app;
 
-shared_resources::shared_resources(ldv::resource_manager& rm, ldt::log& l, tools::chrono& cc, tools::arg_manager& am)
-	:v_manager(rm), log(l), controller_chrono(cc), arg_manager(am)
+shared_resources::shared_resources(dfw::audio& au, 
+	lda::resource_manager& am, 
+	ldv::resource_manager& rm, 
+	ldt::log& l, 
+	tools::chrono& cc, 
+	tools::arg_manager& argm
+)
+	:audio(au), a_manager(am), v_manager(rm), log(l), controller_chrono(cc), arg_manager(argm)
 #ifdef WDEBUG_CODE
 	,debug_config("data/config/debug_config.dnot")
 #endif

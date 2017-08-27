@@ -49,6 +49,35 @@ void controller_test_2d::loop(dfw::input& input, float delta)
 		return;
 	}
 
+	//TODO: This is audio testing.
+	if(input.is_input_down(input_app::left)) 
+	{
+		//TODO: Good idea: have an interface for audio producing shit.
+		//Call it every turn, have it fill a vector of sound defs with a ptr to the interface.
+		//In successful channel retrieval, call the interface ptr with the channel, so a copy is made
+		//Take full advantage of the callback to unlink channels when done.
+
+		//TODO: Play sound on far left channel
+		//TODO: Experiment and try.
+		//It is always good to have a class that does the work for you... like
+		//audio_calculator.pan_from_screen(0, 0);
+		//
+		//This is the basic.
+		//Of course, we can wrap that if we can come with RULES.
+		//s_resources.get_audio().play_sound({
+		//	s_resources.get_audio_resource_manager()[shit]
+		//	volume, repeat, pan_left, pan_right, fadein
+		//});
+		//volume=calculate_distance(p1, p2, mindist, maxdist, maxvol);
+		//pan=calculate_pan(p1, camera);
+		//play_audio_panned_simple(resource, repeat, volume, pan); //return the channel??? 
+		//play_audio_panned(channel, resource, repeat, volume, pan); //preferred form? Get always a channel?.
+	}
+	else if(input.is_input_down(input_app::right))
+	{
+		//TODO: Play sound on far right channel.
+	}
+
 	//Input processing.
 	game_input gi;
 

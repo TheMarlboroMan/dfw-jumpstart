@@ -101,6 +101,14 @@ void room::load(const std::string& fn)
 			for(const auto& i: logic[1]["data"].get_vector())
 				decorations.push_back(fac.make_object(i));
 		}
+
+		//There are no more layers. so now, meta.
+		const auto& meta=root["data"]["meta"].get_map();
+
+		if(meta.count("actions"))
+		{
+			std::cout<<"WILL LOAD "<<meta.at("actions").get_string()<<std::endl;
+		}
 	}
 	catch(std::exception& e)
 	{

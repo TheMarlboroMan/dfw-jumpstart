@@ -3,12 +3,16 @@
 #Three lines per [@np]
 <1$>This should be some sort of welcome test...
 [@np]Soo....
-[@np]Welcome to the demo?<#>
+[@np]Welcome to the demo?.
+[@np]By the way, this is NON repeating trigger, so
+you won't be able to trigger this text again.<#>
 
-<2$>This is a touch repeating trigger.
-That's actually a rarity.
-[@np]I don't think you'll be seeing a lot of them.<#>
+<2$>The console throws numbers, seemingly at random.
+None of the numbers mean anything to me.<#>
 
-<3$>The console ticks and whirrs, then turns off.<#>
+<3$>A large string of letters is output on the console
+screen. Save from lucky coincidences, they seem
+to carry no meaning at all.<#>
 
-<4$>It doesn't seem like there's anything here.<#>
+<4$>The opening is closed shut. There are no
+bolts or locks in place.<#>

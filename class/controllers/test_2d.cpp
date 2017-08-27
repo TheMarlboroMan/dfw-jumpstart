@@ -296,25 +296,31 @@ void controller_test_2d::do_room_change(const std::string& map, int terminus_id)
 
 void controller_test_2d::do_trigger(const object_trigger& trig)
 {
+	//TODO:
+	//This is wrong... triggers are NOT unique, actions are.
+/*
 	if(trig.is_unique())
 	{
 		if(unique_triggers.count(trig.get_unique_id())) return;
 		s_resources.get_log()<<"Adding unique trigger "<<trig.get_unique_id()<<std::endl;
 		unique_triggers.insert(trig.get_unique_id());
 	}
-
+*/
 	if(trig.is_touch())
 	{
 		game_room.set_trigger_memory(trig);
 	}
 
+	//TODO: Where are the actions?. Property of the map?.
+
+	//TODO: Invoke action
+/*
 	//Crude, but ok.
 	std::string dnotstr("data:{txt: \""+game_localization.get(trig.get_text_id())+"\"}");
 	auto tok=tools::dnot_parse_string(dnotstr);
 	broadcast({0, tok}); //TODO: This may just be the message type, the 0.
 	set_state(state_test_2d_text);
 
-/*
 		effects:{
 [id: 1, type: "text", text_id: 1],
 [id: 2, type: "activate_console"],

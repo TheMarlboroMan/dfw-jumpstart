@@ -41,34 +41,18 @@ void object_logic_factory::make_object(const tools::dnot_token& tok)
 					ifs(tok["p"]["terminus_id"])
 					});
 			break;
-			case 3: //Walking trigger, unique...
+			case 3: //Touch trigger...
 				triggers.push_back({
 					app_interfaces::spatiable::t_box(tok["x"].get_int(), tok["y"].get_int(), tok["w"].get_int(), tok["h"].get_int()),
 					object_trigger::ttype::touch,
-					ifs(tok["p"]["text_id"]),
-					tok["p"]["trigger_id"]
+					ifs(tok["p"]["action_id"])
 					});
 			break;
-			case 4: //Walking trigger, repeatable...
-				triggers.push_back({
-					app_interfaces::spatiable::t_box(tok["x"].get_int(), tok["y"].get_int(), tok["w"].get_int(), tok["h"].get_int()),
-					object_trigger::ttype::touch,
-					ifs(tok["p"]["text_id"])
-					});
-			break;
-			case 5: //Action trigger, unique.
+			case 4: //Action trigger...
 				triggers.push_back({
 					app_interfaces::spatiable::t_box(tok["x"].get_int(), tok["y"].get_int(), tok["w"].get_int(), tok["h"].get_int()),
 					object_trigger::ttype::activate,
-					ifs(tok["p"]["text_id"]),
-					tok["p"]["trigger_id"]
-					});
-			break;
-			case 6: //Action trigger, repeatable.
-				triggers.push_back({
-					app_interfaces::spatiable::t_box(tok["x"].get_int(), tok["y"].get_int(), tok["w"].get_int(), tok["h"].get_int()),
-					object_trigger::ttype::activate,
-					ifs(tok["p"]["text_id"])
+					ifs(tok["p"]["action_id"])
 					});
 			break;
 			default:

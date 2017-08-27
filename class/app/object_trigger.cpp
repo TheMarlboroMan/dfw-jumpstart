@@ -4,47 +4,19 @@
 
 using namespace app;
 
-//Construct repeatable.
 object_trigger::object_trigger(const app_interfaces::spatiable::t_box& b, ttype tp, int tid)
 	:room_object_box{b},
 	type{tp},
-	unique{false},
-	text_id{tid}
+	action_id{tid}
 {
 
 }
 
-//Construct unique.
-object_trigger::object_trigger(const app_interfaces::spatiable::t_box& b, ttype tp, int tid, const std::string& uid)
-	:room_object_box{b},
-	type{tp},
-	unique{true},
-	text_id{tid},
-	unique_id{uid}
-{
-
-}
 
 object_trigger::object_trigger(const object_trigger& o)
 	:room_object_box(o),
 	type{o.type},
-	unique{o.unique},
-	text_id{o.text_id},
-	unique_id{o.unique_id}
+	action_id{o.action_id}
 {
 
 }
-
-/*
-object_trigger::ttype object_trigger::int_to_type(int v) const
-{
-	switch(v)
-	{
-		case ttouch: return touch; break;
-		case tactivate: return activate; break;
-		default: throw std::runtime_error("Invalid trigger type"); break;
-	}
-
-	return touch; //Stupid compiler...
-}
-*/

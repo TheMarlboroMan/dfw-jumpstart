@@ -43,6 +43,13 @@ try
 	continuous_channel=sr.get_audio()().get_free_channel();
 	continuous_channel.set_monitoring(true);
 
+	sp.set(player_channel);
+	player_channel.play({
+		s_resources.get_audio_resource_manager().get_sound(sound_defs::sample),
+		0, 3, {127, 127}, 0
+		});
+/*
+
 	player_channel.play({
 		s_resources.get_audio_resource_manager().get_sound(sound_defs::sample),
 		0, -1, {127, 127}, 0
@@ -52,6 +59,7 @@ try
 		s_resources.get_audio_resource_manager().get_sound(sound_defs::sample2),
 		0, -1, {0, 127}, 0
 		});
+*/
 }
 catch(std::exception& e)
 {

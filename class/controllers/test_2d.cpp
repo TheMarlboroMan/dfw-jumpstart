@@ -5,10 +5,12 @@
 
 //tools
 #include <templates/compatibility_patches.h>
+#include <templates/ranged_value.h>
 
 //local
 #include "../input.h"
 #include "../app/game_input.h"
+#include "../app/audio_defs.h"
 
 using namespace app;
 
@@ -34,6 +36,22 @@ try
 	{
 		do_room_change("map01.dat", 0);
 	}
+
+	player_channel=sr.get_audio()().get_free_channel();
+	player_channel.set_monitoring(true);
+
+	continuous_channel=sr.get_audio()().get_free_channel();
+	continuous_channel.set_monitoring(true);
+
+	player_channel.play({
+		s_resources.get_audio_resource_manager().get_sound(sound_defs::sample),
+		0, -1, {127, 127}, 0
+		});
+
+	continuous_channel.play({
+		s_resources.get_audio_resource_manager().get_sound(sound_defs::sample2),
+		0, -1, {0, 127}, 0
+		});
 }
 catch(std::exception& e)
 {
@@ -47,35 +65,6 @@ void controller_test_2d::loop(dfw::input& input, float delta)
 	{
 		set_leave(true);
 		return;
-	}
-
-	//TODO: This is audio testing.
-	if(input.is_input_down(input_app::left)) 
-	{
-		//TODO: Good idea: have an interface for audio producing shit.
-		//Call it every turn, have it fill a vector of sound defs with a ptr to the interface.
-		//In successful channel retrieval, call the interface ptr with the channel, so a copy is made
-		//Take full advantage of the callback to unlink channels when done.
-
-		//TODO: Play sound on far left channel
-		//TODO: Experiment and try.
-		//It is always good to have a class that does the work for you... like
-		//audio_calculator.pan_from_screen(0, 0);
-		//
-		//This is the basic.
-		//Of course, we can wrap that if we can come with RULES.
-		//s_resources.get_audio().play_sound({
-		//	s_resources.get_audio_resource_manager()[shit]
-		//	volume, repeat, pan_left, pan_right, fadein
-		//});
-		//volume=calculate_distance(p1, p2, mindist, maxdist, maxvol);
-		//pan=calculate_pan(p1, camera);
-		//play_audio_panned_simple(resource, repeat, volume, pan); //return the channel??? 
-		//play_audio_panned(channel, resource, repeat, volume, pan); //preferred form? Get always a channel?.
-	}
-	else if(input.is_input_down(input_app::right))
-	{
-		//TODO: Play sound on far right channel.
 	}
 
 	//Input processing.
@@ -135,6 +124,35 @@ void controller_test_2d::loop(dfw::input& input, float delta)
 	//Now effect collisions... These only apply to the final position, by design. Not like level design allows crazy things...
 	if(gi.x || gi.y)
 	{
+
+		//TODO: Experiment with the callbacks too. Basically request the channel to be freed.
+
+		//TODO: Are callbacks called when the sound is MANUALLY stopped? Should they? Experiment by stopping all shit when the level exits.
+
+		///////////////////////////////
+		//TODO: Erase this bunch when experiments are done.
+		const auto& cbox=game_camera.get_focus_box();
+		const auto& sound_center=game_player.get_poly().get_center();
+		auto solve_line=[](double x1, double y1, double x2, double y2, int resx)->int
+		{
+			//TODO: This, of course, fails for straight or vertical lines.
+			double m=(y2-y1) / (x2-x1); //m=(y2-y1) / (x2-x1)
+			//y=mx+b => b=y-mx
+			double b=y1-(m*x1);
+			return (m*resx) + b; 
+		};
+
+		tools::ranged_value<int> pan_left{0, 255, solve_line(cbox.origin.x, 255, cbox.origin.x+cbox.w, 0, sound_center.x)};
+		player_channel.set_stereo_volume(lda::sound_panning::from_left(pan_left));
+		player_channel.set_volume(128);
+
+		//And a distant sound.
+		double distance=sound_center.distance_to({645, 142});
+		tools::ranged_value<int> volume{0, 127, solve_line(64, 127, 500, 0, distance)};
+		continuous_channel.set_volume(volume);
+
+		//////////////////
+
 		//Check if there was trigger memory and if we need to clear it.
 		auto ttm=game_room.get_trigger_memory();
 		if(ttm && !game_player.is_colliding_with(*ttm)) game_room.clear_trigger_memory();

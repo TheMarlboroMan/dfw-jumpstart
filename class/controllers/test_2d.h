@@ -62,6 +62,10 @@ class controller_test_2d:
 	player						game_player;
 	localization					game_localization;
 	std::set<int>					unique_actions;
+
+	//TODO: Remove
+	lda::audio_channel				player_channel,
+							continuous_channel;
 };
 
 }

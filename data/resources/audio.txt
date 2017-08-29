@@ -1,3 +1,5 @@
 #index path
-1	data/audio/sample.ogg
-2	data/audio/sample2.ogg
+1	data/audio/step.ogg
+100	data/audio/tones.ogg
+101	data/audio/sample2.ogg
+102	data/audio/ambiance_00.ogg

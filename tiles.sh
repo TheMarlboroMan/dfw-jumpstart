@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if [ "$1" == "" ]; then
-	printf "./tiles.sh #tiles|logic|shadow|decoration#\n"
+	printf "./tiles.sh #tiles|logic|shadow|decoration|player#\n"
 	exit
 else
 
@@ -21,8 +21,11 @@ else
 		"decoration")
 			./a.out img=../dfw-jumpstart/data/textures/decoration-sheet.png out=../dfw-jumpstart/data/app_data/decoration-sheet.dat 
 		;;
+		"player")
+			./a.out img=../dfw-jumpstart/data/textures/player-sheet.png out=../dfw-jumpstart/data/app_data/player-sheet.dat 
+		;;
 		?) 
-			echo "Error, use tiles|logic|shadow\n";
+			echo "Error, use tiles|logic|shadow|decoration|player\n";
 		;;
 	esac
 fi;

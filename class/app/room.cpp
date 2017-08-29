@@ -90,7 +90,7 @@ void room::load(const std::string& fn)
 		//First layer is a lot of logic objects...
 		if(logic.size() >= 1)
 		{
-			object_logic_factory fac(entrances, triggers);
+			object_logic_factory fac(entrances, triggers, audio_players);
 			for(const auto& i: logic[0]["data"].get_vector())
 				fac.make_object(i);
 		}
@@ -130,9 +130,9 @@ void room::clear()
 	entrances.clear();
 	floor_tiles.clear();
 	shadow_tiles.clear();
+	audio_players.clear();
 	trigger_memory.reset(nullptr);
 	actions.clear();
-
 }
 
 const room_entrance& room::get_entrance_by_id(int id) const
@@ -248,4 +248,9 @@ const room_action * room::get_action(int id) const
 
 	if(it!=std::end(actions)) return (it->get());
 	else return nullptr;
+}
+
+void room::inject_audio_dispatcher(app_interfaces::channel_dispatcher_interface& cdi)
+{
+	for(auto& a: audio_players) a.inject_dispatcher(cdi);
 }

@@ -6,9 +6,11 @@ namespace app
 
 struct sound_defs
 {
-	enum {sample=1, 
-	sample2
-	};
+	//Here be indexes for sounds fixed in code.
+	enum {
+	step=1
+
+};
 };
 
 }

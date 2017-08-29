@@ -1,6 +1,9 @@
 #include "player.h"
 
+//local
 #include "display_defs.h"
+#include "audio_defs.h"
+#include "audio_tools.h"
 
 using namespace app;
 
@@ -8,16 +11,42 @@ player::player():
 	polygon{ {{0.,0.}, {w,0.}, {w, h}, {0., h}}, {w/2, h/2}},
 	prev_polygon(polygon),
 	player_bearing{2},
-	walk_time{0.f}
+	walk_time{0.f},
+	next_step_sound{0.2f}
 {
 
 }
 
-void player::step(float delta)
+//Cam box is used to calculate sound panning.
+void player::step(float delta, const app_interfaces::spatiable::t_box& cam_box)
 {
-	if(motion_data.has_motion()) walk_time+=delta;
-	else walk_time=0.f;
-	//TODO.
+	if(motion_data.has_motion()) 
+	{
+		walk_time+=delta;
+
+		//In an ideal world, the concern of sound is separated. Not here.
+		if(walk_time >= next_step_sound)
+		{
+			try
+			{
+				//Fire and forget.
+				auto channel=dispatcher->request_audio_channel();
+				channel.play({
+					dispatcher->request_sound_resource(sound_defs::step),
+					64, 0, //Volume and repeats.
+					calculate_panning(cam_box, polygon.get_center()), 0}); //Panning and fade.
+
+				next_step_sound+=0.4f;
+			}
+			catch(std::exception &e)
+			{}
+		}
+	}
+	else 
+	{
+		walk_time=0.f;
+		next_step_sound=0.2f;
+	}
 }
 
 bool player::is_in_camera(const ldv::rect&) const

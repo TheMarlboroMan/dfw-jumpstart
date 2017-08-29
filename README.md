@@ -175,6 +175,10 @@ Thus:
 ###Play audio
 
 //TODO: Explain how to get the audio_interface from the kernel and inject it into the controllers. Then use it.
+//TODO: Explain the fire and forget way.
+//TODO: Explain the way used in the controller.
+//TODO: Explain callbacks.
+//TODO: Explain how the order REALLY matters.
 
 ###Implement text input.
 

@@ -13,7 +13,7 @@ DIR_LIBDAN2=$(DIR_HOME)libdansdl2-master
 DIR_HERRAMIENTAS_PROYECTO=$(DIR_HOME)herramientas_proyecto-master/
 DIR_O_HERRAMIENTAS_PROYECTO=$(DIR_HOME)herramientas_proyecto-master/objects/
 
-CFLAGS= -DWINCOMPIL=1 $(DEBUG) $(OPTIMIZATION) -c -Wno-deprecated -Wall -ansi -pedantic -std=c++11
+CFLAGS= -DWINCOMPIL=1 $(DEBUG) $(OPTIMIZATION) -c -Wno-deprecated -Wall -ansi -pedantic -std=c++11 -fno-rtti
 CFLAGS_TARGET_FINAL=-DWINCOMPIL=1 $(DEBUG) $(OPTIMIZATION) -Wno-deprecated -Wall -ansi -pedantic -std=c++11
 CC=g++
 EXECUTABLE=a.exe

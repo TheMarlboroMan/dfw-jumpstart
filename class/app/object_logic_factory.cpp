@@ -8,8 +8,12 @@
 
 using namespace app;
 
-object_logic_factory::object_logic_factory(std::vector<room_entrance>& ent, std::vector<object_trigger>& trg)
-	:entrances(ent), triggers(trg)
+object_logic_factory::object_logic_factory(
+	std::vector<room_entrance>& ent, 
+	std::vector<object_trigger>& trg,
+	std::vector<object_audio_player>& aup
+)
+	:entrances(ent), triggers(trg), audio_players(aup)
 {
 
 }
@@ -26,6 +30,7 @@ void object_logic_factory::make_object(const tools::dnot_token& tok)
 
 		switch(tok["t"].get_int())
 		{
+//TODO: push_back makes gratuitous copies everywhere...
 			case 1: //Entrance
 				entrances.push_back({
 					app_interfaces::spatiable::t_point(tok["x"].get_int(), tok["y"].get_int()),
@@ -34,8 +39,21 @@ void object_logic_factory::make_object(const tools::dnot_token& tok)
 					});
 
 			break;
-			case 2:
-				//????
+			case 2: //Audio...
+				audio_players.push_back({
+					app_interfaces::spatiable::t_point(tok["x"].get_int(), tok["y"].get_int()),
+					ifs(tok["p"]["type"])==1 ? object_audio_player::ttype::ambient : object_audio_player::ttype::source,
+					{		//object_audio_player_data  
+						ifs(tok["p"]["sound_id"]),
+						ifs(tok["p"]["volume"]),
+						ifs(tok["p"]["repeat"]),
+						ifs(tok["p"]["pre_delay_min"]),
+						ifs(tok["p"]["pre_delay_random"]),
+						0.f, //Remaining time...
+						(tpos)ifs(tok["p"]["max_radius_source"]),
+						(tpos)ifs(tok["p"]["min_radius_source"])
+					}
+				});
 			break;
 			case 3: //Touch trigger...
 				triggers.push_back({

@@ -16,6 +16,7 @@
 #include "object_decoration.h"
 #include "object_trigger.h"
 #include "room_action.h"
+#include "object_audio_player.h"
 
 namespace app
 {
@@ -40,6 +41,8 @@ class room
 	const 	std::vector<object_trigger>&	get_triggers() const {return triggers;}
 	std::vector<const app_interfaces::spatiable *>	get_walls_by_box(const app_interfaces::spatiable::t_box&) const;
 	std::vector<const app_interfaces::spatiable *> get_obstacles() const;
+	std::vector<object_audio_player>&	get_audio_players() {return audio_players;}
+	void				inject_audio_dispatcher(app_interfaces::channel_dispatcher_interface&);
 	unsigned int			get_w() const {return walls.get_w()*room_wall::wall_w;}
 	unsigned int			get_h() const {return walls.get_h()*room_wall::wall_h;}
 	object_trigger *		get_trigger_memory() {return trigger_memory.get();}
@@ -71,6 +74,7 @@ class room
 	std::vector<room_entrance>	entrances;
 	std::vector<object_decoration>	decorations;
 	std::vector<object_trigger>	triggers;
+	std::vector<object_audio_player>	audio_players;
 	std::vector<std::unique_ptr<room_action>>	actions;
 };
 

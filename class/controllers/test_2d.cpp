@@ -17,6 +17,7 @@ using namespace app;
 controller_test_2d::controller_test_2d(shared_resources& sr)
 try
 	:s_resources(sr),
+	game_audio_dispatcher(sr.get_audio(), sr.get_audio_resource_manager()),
 	game_camera{{0,0,700,500},{0,0}}, //This means that the camera always gets a 700x500 box, even with a larger window.
 	game_localization(0, {"data/app_data/localization/descriptions"})
 {
@@ -24,6 +25,9 @@ try
 
 	game_camera.set_center_margin({300, 200, 100, 100});
 	game_camera.clear_limits();
+
+	//TODO: I'd actually like to have this in the constructor.
+	game_player.inject_dispatcher(game_audio_dispatcher);
 
 	const auto& am=sr.get_arg_manager();
 
@@ -36,30 +40,6 @@ try
 	{
 		do_room_change("map01.dat", 0);
 	}
-
-	player_channel=sr.get_audio()().get_free_channel();
-	player_channel.set_monitoring(true);
-
-	continuous_channel=sr.get_audio()().get_free_channel();
-	continuous_channel.set_monitoring(true);
-
-	sp.set(player_channel);
-	player_channel.play({
-		s_resources.get_audio_resource_manager().get_sound(sound_defs::sample),
-		0, 3, {127, 127}, 0
-		});
-/*
-
-	player_channel.play({
-		s_resources.get_audio_resource_manager().get_sound(sound_defs::sample),
-		0, -1, {127, 127}, 0
-		});
-
-	continuous_channel.play({
-		s_resources.get_audio_resource_manager().get_sound(sound_defs::sample2),
-		0, -1, {0, 127}, 0
-		});
-*/
 }
 catch(std::exception& e)
 {
@@ -75,7 +55,12 @@ void controller_test_2d::loop(dfw::input& input, float delta)
 		return;
 	}
 
-	//Input processing.
+	//World processing... First the audio players. So far roles are separate.
+	const auto& cfb=game_camera.get_focus_box();
+	app_interfaces::spatiable::t_box fb{(tpos)cfb.origin.x, (tpos)cfb.origin.y, (tdim)cfb.w, (tdim)cfb.h};
+	for(auto& ap : game_room.get_audio_players()) ap.loop(delta, fb, game_player.get_poly().get_center());
+
+	//Input processing and player logic.
 	game_input gi;
 
 	if(input.is_input_pressed(input_app::up)) gi.y=-1;
@@ -87,7 +72,7 @@ void controller_test_2d::loop(dfw::input& input, float delta)
 	if(input.is_input_down(input_app::activate)) gi.activate=true;
 
 	game_player.set_input(gi);
-	game_player.step(delta);
+	game_player.step(delta, fb);
 
 	//Player movement...
 	auto movement_phase=[this, delta](motion::axis axis)
@@ -132,35 +117,6 @@ void controller_test_2d::loop(dfw::input& input, float delta)
 	//Now effect collisions... These only apply to the final position, by design. Not like level design allows crazy things...
 	if(gi.x || gi.y)
 	{
-
-		//TODO: Experiment with the callbacks too. Basically request the channel to be freed.
-
-		//TODO: Are callbacks called when the sound is MANUALLY stopped? Should they? Experiment by stopping all shit when the level exits.
-
-		///////////////////////////////
-		//TODO: Erase this bunch when experiments are done.
-		const auto& cbox=game_camera.get_focus_box();
-		const auto& sound_center=game_player.get_poly().get_center();
-		auto solve_line=[](double x1, double y1, double x2, double y2, int resx)->int
-		{
-			//TODO: This, of course, fails for straight or vertical lines.
-			double m=(y2-y1) / (x2-x1); //m=(y2-y1) / (x2-x1)
-			//y=mx+b => b=y-mx
-			double b=y1-(m*x1);
-			return (m*resx) + b; 
-		};
-
-		tools::ranged_value<int> pan_left{0, 255, solve_line(cbox.origin.x, 255, cbox.origin.x+cbox.w, 0, sound_center.x)};
-		player_channel.set_stereo_volume(lda::sound_panning::from_left(pan_left));
-		player_channel.set_volume(128);
-
-		//And a distant sound.
-		double distance=sound_center.distance_to({645, 142});
-		tools::ranged_value<int> volume{0, 127, solve_line(64, 127, 500, 0, distance)};
-		continuous_channel.set_volume(volume);
-
-		//////////////////
-
 		//Check if there was trigger memory and if we need to clear it.
 		auto ttm=game_room.get_trigger_memory();
 		if(ttm && !game_player.is_colliding_with(*ttm)) game_room.clear_trigger_memory();
@@ -310,8 +266,11 @@ bool controller_test_2d::can_leave_state() const
 void controller_test_2d::do_room_change(const std::string& map, int terminus_id)
 {
 	//TODO: Clear any lingering data belonging to this controller...
+
+	//TODO: Stop sounds. I think that will happen when the map loads, but just in case.
 	
 	game_room.load(map);
+	game_room.inject_audio_dispatcher(game_audio_dispatcher);
 	game_player.center_on(game_room.get_entrance_by_id(terminus_id));
 
 	game_camera.set_limits({0,0, game_room.get_w(), game_room.get_h()});
@@ -329,6 +288,7 @@ void controller_test_2d::do_room_change(const room_action_exit& a)
 
 void controller_test_2d::do_text_display(const room_action_text& a)
 {
+	//TODO: Perhaps stop sounds, right? Or maybe we just leave them. Try it.
 	std::string dnotstr("data:{txt: \""+game_localization.get(a.text_id)+"\"}");
 	auto tok=tools::dnot_parse_string(dnotstr);
 	broadcast({0, tok}); //TODO: This may just be the message type, the 0.

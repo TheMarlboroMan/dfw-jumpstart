@@ -10,13 +10,15 @@
 #include "drawable.h"
 #include "game_defs.h"
 #include "game_input.h"
+#include "aurable.h"
 
 namespace app
 {
 
 class player:
 	public app_interfaces::spatiable,
-	public app_interfaces::drawable
+	public app_interfaces::drawable,
+	public app_interfaces::aurable
 {
 	public:
 
@@ -24,7 +26,7 @@ class player:
 	//Public interface
 
 						player();
-	void					step(float);
+	void					step(float, const app_interfaces::spatiable::t_box&);
 	void					set_input(game_input);
 	void					integrate_motion(float, motion::axis);
 	void					cancel_movement(motion::axis);
@@ -58,7 +60,8 @@ class player:
 
 	//This controls the vector and integration.
 	motion						motion_data;
-	float						walk_time;
+	float						walk_time,
+							next_step_sound;
 };
 
 }

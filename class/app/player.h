@@ -26,17 +26,17 @@ class player:
 	//Public interface
 
 						player();
-	void					step(float, const app_interfaces::spatiable::t_box&);
+	void					step(float);
 	void					set_input(game_input);
 	void					integrate_motion(float, motion::axis);
 	void					cancel_movement(motion::axis);
-	app_interfaces::spatiable::t_poly	get_activate_poly() const;
+	tpoly					get_activate_poly() const;
 
 	//////////////////////////
 	//Spatiable implementation
 
-	virtual const t_poly&		get_poly() const {return polygon;}
-	virtual t_poly *		get_poly_ptr() {return &polygon;}
+	virtual const tpoly&			get_poly() const {return polygon;}
+	virtual tpoly *				get_poly_ptr() {return &polygon;}
 
 	//////////////////////////
 	//Drawable implementation
@@ -54,7 +54,7 @@ class player:
 
 	int				choose_animation_frame() const;
 
-	app_interfaces::spatiable::t_poly		polygon,
+	tpoly						polygon,
 							prev_polygon;
 	bearing						player_bearing;
 
@@ -62,6 +62,8 @@ class player:
 	motion						motion_data;
 	float						walk_time,
 							next_step_sound;
+	std::vector<size_t>				step_sounds;
+	int						step_sounds_index;
 };
 
 }

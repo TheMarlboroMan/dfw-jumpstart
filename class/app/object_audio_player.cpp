@@ -6,7 +6,7 @@
 
 using namespace app;
 
-object_audio_player::object_audio_player(app_interfaces::spatiable::t_point pt, ttype t, object_audio_player_data d)
+object_audio_player::object_audio_player(tpoint pt, ttype t, object_audio_player_data d)
 	:room_object_box({pt.x, pt.y, 1, 1}), type(t), data(d)
 {
 	calculate_time();
@@ -17,6 +17,7 @@ object_audio_player::~object_audio_player()
 	if(channel.is_linked())
 	{
 		//The order is essential: stop will invoke the callback if still available. The callback DOES unlink, causing crashes when doing further actions on the channel.
+		channel.clear_panning();
 		channel.clear_callback_listener();
 		channel.stop();
 		channel.set_monitoring(false);
@@ -24,12 +25,10 @@ object_audio_player::~object_audio_player()
 	}
 }
 
-//The box is the camera, the point is the player.
-
 //The whole thing is done without states. Arguably, it would be MUCH easier to
 //use states for this, right?. Just "waiting", "acquiring" and "playing".
 
-void object_audio_player::loop(float delta, const app_interfaces::spatiable::t_box& box, app_interfaces::spatiable::t_point pt)
+void object_audio_player::loop(float delta)
 {
 	//Am I not playing? To be playing one's gotta have a channel and that channel must be playing.
 	if(! (channel.is_linked() && channel.is_playing()))
@@ -38,7 +37,7 @@ void object_audio_player::loop(float delta, const app_interfaces::spatiable::t_b
 		{
 			if(acquire_channel())
 			{
-				play_audio(box, pt);
+				play_audio();
 			} //If I could not, channel acquisition failed: no more channels available...
 		}
 		else	//Do my waiting...
@@ -49,11 +48,11 @@ void object_audio_player::loop(float delta, const app_interfaces::spatiable::t_b
 	}
 	else
 	{
-		do_play_logic(box, pt);
+		do_play_logic();
 	}
 }
 
-void object_audio_player::do_play_logic(const app_interfaces::spatiable::t_box& box, app_interfaces::spatiable::t_point pt)
+void object_audio_player::do_play_logic()
 {
 	switch(type)
 	{
@@ -63,8 +62,8 @@ void object_audio_player::do_play_logic(const app_interfaces::spatiable::t_box& 
 		case ttype::source:
 		{
 			auto center=get_poly().get_center();
-			channel.set_stereo_volume(calculate_panning(box, center));
-			channel.set_volume(calculate_volume(data.volume, data.max_radius, data.min_radius, center, pt));
+			channel.set_stereo_volume(calculate_panning(dispatcher->request_view_rect(), center));
+			channel.set_volume(calculate_volume(data.volume, data.max_radius, data.min_radius, center, dispatcher->request_player_pos()));
 		}
 		break;
 	}
@@ -74,6 +73,7 @@ void object_audio_player::on_audio_stop()
 {
 	channel.clear_callback_listener();
 	channel.clear_panning();
+	channel.set_monitoring(false);
 	channel.unlink();
 
 	if(data.replays)
@@ -104,7 +104,7 @@ bool object_audio_player::can_play() const
 }
 
 //Almost better to subclass, actually.
-void object_audio_player::play_audio(const app_interfaces::spatiable::t_box& box, app_interfaces::spatiable::t_point pt)
+void object_audio_player::play_audio()
 {
 	lda::sound_panning panning;
 	tools::ranged_value<int> volume{0, data.volume, data.volume};
@@ -112,13 +112,12 @@ void object_audio_player::play_audio(const app_interfaces::spatiable::t_box& box
 	switch(type)
 	{
 		case ttype::ambient:
-			//Nothing to do here...
 		break;
 		case ttype::source:
 		{
 			auto center=get_poly().get_center();
-			panning=calculate_panning(box, center);
-			volume=calculate_volume(data.volume, data.max_radius, data.min_radius, center, pt);
+			panning=calculate_panning(dispatcher->request_view_rect(), center);
+			volume=calculate_volume(data.volume, data.max_radius, data.min_radius, center, dispatcher->request_player_pos());
 		}
 		break;
 	}

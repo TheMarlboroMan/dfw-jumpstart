@@ -17,8 +17,8 @@ class drawable
 	//given the perspective and shit... Assumes that all representations can fit
 	//within boxes.
 
-	virtual tpos		get_ordering_x() const=0;
-	virtual tpos		get_ordering_y() const=0;
+	virtual app::tpos	get_ordering_x() const=0;
+	virtual app::tpos	get_ordering_y() const=0;
 	virtual bool		is_in_camera(const ldv::rect&) const=0;
 	virtual void		draw(ldv::screen&, const ldv::camera&, app::draw_struct&, const app::shared_resources&) const=0;
 };

@@ -33,7 +33,7 @@ void object_logic_factory::make_object(const tools::dnot_token& tok)
 //TODO: push_back makes gratuitous copies everywhere...
 			case 1: //Entrance
 				entrances.push_back({
-					app_interfaces::spatiable::t_point(tok["x"].get_int(), tok["y"].get_int()),
+					tpoint(tok["x"].get_int(), tok["y"].get_int()),
 					ifs(tok["p"]["bearing"]),
 					ifs(tok["p"]["terminus_id"])
 					});
@@ -41,7 +41,7 @@ void object_logic_factory::make_object(const tools::dnot_token& tok)
 			break;
 			case 2: //Audio...
 				audio_players.push_back({
-					app_interfaces::spatiable::t_point(tok["x"].get_int(), tok["y"].get_int()),
+					tpoint(tok["x"].get_int(), tok["y"].get_int()),
 					ifs(tok["p"]["type"])==1 ? object_audio_player::ttype::ambient : object_audio_player::ttype::source,
 					{		//object_audio_player_data  
 						ifs(tok["p"]["sound_id"]),
@@ -57,14 +57,14 @@ void object_logic_factory::make_object(const tools::dnot_token& tok)
 			break;
 			case 3: //Touch trigger...
 				triggers.push_back({
-					app_interfaces::spatiable::t_box(tok["x"].get_int(), tok["y"].get_int(), tok["w"].get_int(), tok["h"].get_int()),
+					tbox(tok["x"].get_int(), tok["y"].get_int(), tok["w"].get_int(), tok["h"].get_int()),
 					object_trigger::ttype::touch,
 					ifs(tok["p"]["action_id"])
 					});
 			break;
 			case 4: //Action trigger...
 				triggers.push_back({
-					app_interfaces::spatiable::t_box(tok["x"].get_int(), tok["y"].get_int(), tok["w"].get_int(), tok["h"].get_int()),
+					tbox(tok["x"].get_int(), tok["y"].get_int(), tok["w"].get_int(), tok["h"].get_int()),
 					object_trigger::ttype::activate,
 					ifs(tok["p"]["action_id"])
 					});

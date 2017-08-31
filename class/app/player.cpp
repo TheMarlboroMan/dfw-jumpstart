@@ -1,5 +1,8 @@
 #include "player.h"
 
+//tools
+#include <class/number_generator.h>
+
 //local
 #include "display_defs.h"
 #include "audio_defs.h"
@@ -12,13 +15,20 @@ player::player():
 	prev_polygon(polygon),
 	player_bearing{2},
 	walk_time{0.f},
-	next_step_sound{0.2f}
+	next_step_sound{0.2f},
+	step_sounds{sound_defs::step_01, sound_defs::step_02},
+	step_sounds_index{0}
 {
 
 }
 
 //Cam box is used to calculate sound panning.
-void player::step(float delta, const app_interfaces::spatiable::t_box& cam_box)
+
+//TODO: To have the box here is OUTRAGEOUS. Let the dependency injection handle
+//that. Maybe through another interface, like "location_aware"?. Maybe that's
+//overkill, but we can always have that shit on the same dispatcher... 
+
+void player::step(float delta)
 {
 	if(motion_data.has_motion()) 
 	{
@@ -30,12 +40,15 @@ void player::step(float delta, const app_interfaces::spatiable::t_box& cam_box)
 			try
 			{
 				//Fire and forget.
+				tools::int_generator v(30,40); //Random volume...
+				size_t sndindex=step_sounds_index % step_sounds.size();
 				auto channel=dispatcher->request_audio_channel();
 				channel.play({
-					dispatcher->request_sound_resource(sound_defs::step),
-					64, 0, //Volume and repeats.
-					calculate_panning(cam_box, polygon.get_center()), 0}); //Panning and fade.
+					dispatcher->request_sound_resource(step_sounds[sndindex]),
+					v(), 0, //Volume and repeats.
+					calculate_panning(dispatcher->request_view_rect(), polygon.get_center()), 0}); //Panning and fade.
 
+				++step_sounds_index;
 				next_step_sound+=0.4f;
 			}
 			catch(std::exception &e)
@@ -93,6 +106,11 @@ void player::cancel_movement(motion::axis axis)
 {
 	polygon=prev_polygon;
 	motion_data.set_vector(0.0, axis);
+
+	//TODO: There's a bug. Try walking against a wall. If you reset
+	//animation, it fucks up too because now it doesn't animate.
+	//Of course, sounds need to be reset too.
+	next_step_sound=0.2f;
 }
 
 void player::integrate_motion(float delta, motion::axis axis)
@@ -142,7 +160,7 @@ int player::choose_animation_frame() const
 	return player_animation_defs::idle_n;
 }
 
-app_interfaces::spatiable::t_poly player::get_activate_poly() const
+tpoly player::get_activate_poly() const
 {
 	const auto& origin=polygon.get_vertex(0);
 	tpos	x=origin.x, y=origin.y;
@@ -177,7 +195,7 @@ app_interfaces::spatiable::t_poly player::get_activate_poly() const
 		break;
 	}
 
-	return app_interfaces::spatiable::t_poly{
+	return tpoly{
 		{ {x,y}, {x+w,y}, {x+w,y+h}, {x,y+h}},
 		{x,y}};
 }

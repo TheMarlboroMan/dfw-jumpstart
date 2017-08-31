@@ -4,7 +4,7 @@
 
 using namespace app;
 
-object_decoration::object_decoration(const app_interfaces::spatiable::t_poly& tp, int frame)
+object_decoration::object_decoration(const tpoly& tp, int frame)
 	:poly(tp), frame_index(frame)
 {
 

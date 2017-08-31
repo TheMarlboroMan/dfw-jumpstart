@@ -18,14 +18,14 @@ class room_wall:
 
 	static const int 			wall_w=32,
 						wall_h=32;
-	static std::vector<app_interfaces::spatiable::t_poly>	shapes;
+	static std::vector<tpoly>		shapes;
 
 						room_wall(int, int, int);
 
 	// Implementation of spatiable
 
-	virtual const app_interfaces::spatiable::t_poly&	get_poly() const;
-	virtual app_interfaces::spatiable::t_poly *		get_poly_ptr();
+	virtual const tpoly&			get_poly() const;
+	virtual tpoly *				get_poly_ptr();
 
 	private:
 

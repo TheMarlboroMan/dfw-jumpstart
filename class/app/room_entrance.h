@@ -16,8 +16,8 @@ class room_entrance:
 {
 	public:
 
-	room_entrance(app_interfaces::spatiable::t_point origin, int be, int tid):
-		room_object_box({(tpos)origin.x, (tpos)origin.y, w, h}), 
+	room_entrance(tpoint origin, int be, int tid):
+		room_object_box({origin.x, origin.y, w, h}), 
 		val_bearing(be), terminus_id(tid)
 	{}
 

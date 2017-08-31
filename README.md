@@ -1,7 +1,4 @@
 #TODO:
-	- Add examples of sound.
-		- With footsteps. Linked to frames.
-		- Volume relative to position of player.
 	- Add examples of music.
 	- Add example of menu.
 	- Add a cartesian camera example, with polys.
@@ -170,11 +167,37 @@ Thus:
 
 ###Use and inject resource managers.
 
-//TODO: Explain this too.
+In order to obtain any resource (music, sound, texture...) first these must be
+loaded within the framework. The files in "/data/resources" contain all these
+statically loaded resources. Of course, resources can be loaded dinamically too but it just doesn't pay for
+small applications with small memory prints. 
+
+Each resource goes into a different resource manager, property of the kernel, 
+thus accesible from the state_driver:
+
+ldv::resource_manager&	kernel.get_video_resource_manager() provides access to
+textures kernel.get_video_resource_manager().get_texture(index) and 
+surfaces kernel.get_video_resource_manager().get_surface(index).
+
+lda::resource_manager&	kernel.get_audio_resource_manager() does the same for
+aural resources with "get_sound" and "get_music". 
+
+These managers are emptied once the application stops. In order to access any
+texture from any class or controller (which happens all the time) either the 
+kernel must be accessible to these (bad idea) or the managers must be injected
+into them (better idea). The de facto way of doing this is to set a reference
+to them into your controller and pass them when the controllers are being
+constructed in the state_driver. Controllers, in turn, can pass these references
+to classes or methods.
+
+Another option is the one used in this code: a single "shared_resources" object
+that has references to all managers and shared stuff, injected into the 
+controllers later. Shoddy, but quick.
 
 ###Play audio
 
 //TODO: Explain how to get the audio_interface from the kernel and inject it into the controllers. Then use it.
+//TODO: Explain the complex channel things...
 //TODO: Explain the fire and forget way.
 //TODO: Explain the way used in the controller.
 //TODO: Explain callbacks.

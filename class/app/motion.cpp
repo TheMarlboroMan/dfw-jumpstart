@@ -2,7 +2,7 @@
 
 using namespace app;
 
-motion::motion(t_vector v)
+motion::motion(tvector v)
 	:vector(v)
 {
 

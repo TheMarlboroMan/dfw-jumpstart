@@ -24,7 +24,7 @@ object_decoration object_decoration_factory::make_object(const tools::dnot_token
 			w=info["w"].get_int(), 
 			h=info["h"].get_int();
 
-		app_interfaces::spatiable::t_poly poly{
+		tpoly poly{
 			{ {x,y}, {x+w,y}, {x+w,y+h}, {x,y+h} },
 			{x, y}};
 

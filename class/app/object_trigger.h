@@ -26,7 +26,7 @@ class object_trigger:
 	}
 
 				object_trigger(const object_trigger&);
-				object_trigger(const app_interfaces::spatiable::t_box&, ttype, int);
+				object_trigger(const tbox&, ttype, int);
 	bool			is_touch() const {return type==ttype::touch;}
 	bool			is_activate() const {return type==ttype::activate;}
 	int			get_action_id() const {return action_id;}

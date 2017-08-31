@@ -14,7 +14,7 @@ class room_object_box:
 
 	// Public interface...
 
-	room_object_box(const app_interfaces::spatiable::t_box& b)
+	room_object_box(const tbox& b)
 		:polygon{
 			{ 
 				{b.origin.x, b.origin.y}, 
@@ -30,12 +30,12 @@ class room_object_box:
 
 	//Spatiable implementation
 
-	virtual const t_poly&		get_poly() const {return polygon;}
-	virtual t_poly *		get_poly_ptr() {return &polygon;}
+	virtual const tpoly&		get_poly() const {return polygon;}
+	virtual tpoly *			get_poly_ptr() {return &polygon;}
 
 	private:
 
-	app_interfaces::spatiable::t_poly	polygon;
+	tpoly				polygon;
 };
 }
 

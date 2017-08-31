@@ -16,7 +16,8 @@
 using namespace app;
 
 room::room()
-	:trigger_memory(nullptr),
+	:music_data{0,0}, 
+	trigger_memory(nullptr),
 	walls{1,1}
 {
 
@@ -113,6 +114,17 @@ void room::load(const std::string& fn)
 			for(const auto& n : root_act["actions"].get_vector())
 				fac.make_action(n);
 		}
+
+		if(meta.count("music_id") && meta.count("music_fade"))
+		{
+			music_data={
+				std::atoi(meta["music_id"].get_string().c_str()), 
+				std::atoi(meta["music_fade"].get_string().c_str())
+			};
+		}
+		else	music_data={0,0};
+
+		//TODO
 	}
 	catch(std::exception& e)
 	{
@@ -156,7 +168,7 @@ std::vector<const app_interfaces::spatiable *> room::get_obstacles() const
 	return res;
 }
 
-std::vector<const app_interfaces::spatiable *>	room::get_walls_by_box(const app_interfaces::spatiable::t_box& box) const
+std::vector<const app_interfaces::spatiable *>	room::get_walls_by_box(const tbox& box) const
 {
 /*
 	//Returns the cell value for a world value. Given that the X axis ascends

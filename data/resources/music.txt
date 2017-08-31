@@ -1,2 +1,3 @@
 #index path
-#1	data/music/example.ogg
+1	data/audio/mus_blind_shift.ogg
+2	data/audio/mus_egypt.ogg

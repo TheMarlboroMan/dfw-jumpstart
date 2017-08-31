@@ -27,7 +27,13 @@ struct room_drawable_collection
 	std::vector<const app_interfaces::drawable *>	background; //These are not ordered.
 	std::vector<const app_interfaces::drawable *>	main;	//The must be ordered.
 	std::vector<const app_interfaces::drawable *>	foreground; //These are not ordered.
-}; 
+};
+
+struct room_music_data
+{
+	int			music_id;
+	int			ms_fade;
+};
 
 class room
 {
@@ -39,7 +45,7 @@ class room
 	void				load(const std::string&);
 	const room_entrance&		get_entrance_by_id(int) const;
 	const 	std::vector<object_trigger>&	get_triggers() const {return triggers;}
-	std::vector<const app_interfaces::spatiable *>	get_walls_by_box(const app_interfaces::spatiable::t_box&) const;
+	std::vector<const app_interfaces::spatiable *>	get_walls_by_box(const tbox&) const;
 	std::vector<const app_interfaces::spatiable *> get_obstacles() const;
 	std::vector<object_audio_player>&	get_audio_players() {return audio_players;}
 	void				inject_audio_dispatcher(app_interfaces::channel_dispatcher_interface&);
@@ -49,6 +55,7 @@ class room
 	void				clear_trigger_memory() {trigger_memory.reset(nullptr);}
 	void				set_trigger_memory(const object_trigger& o) {trigger_memory.reset(new object_trigger{o});}
 	const room_action *		get_action(int) const;
+	const room_music_data&		get_music_data() const {return music_data;}
 
 #ifdef WDEBUG_CODE
 	const tools::matrix_2d<room_wall>& get_all_walls() {return walls;} 
@@ -67,6 +74,7 @@ class room
 
 	std::vector<tile_decoration>	floor_tiles;
 	std::vector<tile_decoration>	shadow_tiles;
+	room_music_data			music_data;
 
 	//Logic
 	std::unique_ptr<object_trigger>	trigger_memory; //copy of the last touch trigger touched.

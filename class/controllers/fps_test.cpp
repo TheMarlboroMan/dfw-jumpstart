@@ -74,7 +74,7 @@ void controller_fps_test::draw(ldv::screen& screen, int fps)
 	{
 		std::vector<ldv::point> pts;
 		for(const auto& v : poly.get_vertexes())
-			pts.push_back({v.x, v.y});
+			pts.push_back({(int)v.x, (int)v.y});
 
 		ldv::polygon_representation rep(ldv::polygon_representation::type::fill, pts, color);
 		rep.draw(screen);

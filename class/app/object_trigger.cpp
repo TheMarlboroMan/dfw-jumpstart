@@ -4,7 +4,7 @@
 
 using namespace app;
 
-object_trigger::object_trigger(const app_interfaces::spatiable::t_box& b, ttype tp, int tid)
+object_trigger::object_trigger(const tbox& b, ttype tp, int tid)
 	:room_object_box{b},
 	type{tp},
 	action_id{tid}

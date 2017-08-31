@@ -4,8 +4,10 @@ using namespace app;
 
 audio_dispatcher::audio_dispatcher(
 	dfw::audio& pa,
-	const lda::resource_manager& pam)
-	:a(pa), am(pam)
+	const lda::resource_manager& pam,
+	const ldv::rect& pr,
+	const tpoint& pp)
+	:a(pa), am(pam), view_rect(pr), player_pos(pp)
 {
 
 } 

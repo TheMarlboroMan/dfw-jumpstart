@@ -42,17 +42,17 @@ class object_audio_player:
 	//TODO: Almost better to have two of these.
 	enum class 			ttype{ambient, source};
 
-					object_audio_player(app_interfaces::spatiable::t_point, ttype, object_audio_player_data);
+					object_audio_player(tpoint, ttype, object_audio_player_data);
 					//	room_object_box(const app_interfaces::spatiable::t_box& b)
 					~object_audio_player(); //Needs to make the sound stop and FREE the channel.
 
-					//The box is the camera, the point is the player.
-	void				loop(float, const app_interfaces::spatiable::t_box&, app_interfaces::spatiable::t_point);
+					//The point is the player.
+	void				loop(float);
 
 	private:
 
-	void				do_play_logic(const app_interfaces::spatiable::t_box&, app_interfaces::spatiable::t_point);
-	void				play_audio(const app_interfaces::spatiable::t_box&, app_interfaces::spatiable::t_point);
+	void				do_play_logic();
+	void				play_audio();
 	void				on_audio_stop();
 	bool				acquire_channel();
 	bool				can_play() const;

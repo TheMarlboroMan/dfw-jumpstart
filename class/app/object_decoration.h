@@ -18,12 +18,12 @@ class object_decoration:
 {
 	public:
 
-				object_decoration(const app_interfaces::spatiable::t_poly&, int);
+							object_decoration(const tpoly&, int);
 	
 	// Spatiable
 
-	virtual const app_interfaces::spatiable::t_poly&	get_poly() const {return poly;}
-	virtual app_interfaces::spatiable::t_poly *		get_poly_ptr() {return &poly;}
+	virtual const tpoly&	get_poly() const {return poly;}
+	virtual tpoly *		get_poly_ptr() {return &poly;}
 	
 	// Drawable
 
@@ -34,7 +34,7 @@ class object_decoration:
 
 	private:
 
-	app_interfaces::spatiable::t_poly		poly;
+	tpoly						poly;
 	int						frame_index;
 
 };

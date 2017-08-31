@@ -4,7 +4,7 @@
 
 using namespace app;
 
-std::vector<app_interfaces::spatiable::t_poly>	room_wall::shapes=
+std::vector<tpoly>	room_wall::shapes=
 {
 	//full
 	{ 
@@ -68,15 +68,15 @@ room_wall::twall app::room_wall_int_to_type(int t)
 	return room_wall::twall::full;
 }
 
-const app_interfaces::spatiable::t_poly& room_wall::get_poly() const
+const tpoly& room_wall::get_poly() const
 {
 	//Fuck lol.
 	return *(const_cast<room_wall*>(this)->get_poly_ptr());
 }
 
-app_interfaces::spatiable::t_poly * room_wall::get_poly_ptr()
+tpoly * room_wall::get_poly_ptr()
 {
-	app_interfaces::spatiable::t_poly * res=&shapes[shape_full];
+	tpoly * res=&shapes[shape_full];
 
 	switch(type)
 	{

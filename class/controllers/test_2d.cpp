@@ -17,8 +17,9 @@ using namespace app;
 controller_test_2d::controller_test_2d(shared_resources& sr)
 try
 	:s_resources(sr),
-	game_audio_dispatcher(sr.get_audio(), sr.get_audio_resource_manager()),
 	game_camera{{0,0,700,500},{0,0}}, //This means that the camera always gets a 700x500 box, even with a larger window.
+	m_fader(sr.get_audio()(), sr.get_audio_resource_manager()),
+	game_audio_dispatcher(sr.get_audio(), sr.get_audio_resource_manager(), game_camera.get_focus_box(), game_player.get_poly().get_center()),
 	game_localization(0, {"data/app_data/localization/descriptions"})
 {
 	game_localization.init();
@@ -55,10 +56,11 @@ void controller_test_2d::loop(dfw::input& input, float delta)
 		return;
 	}
 
+	//Music...
+	m_fader.loop(delta);
+
 	//World processing... First the audio players. So far roles are separate.
-	const auto& cfb=game_camera.get_focus_box();
-	app_interfaces::spatiable::t_box fb{(tpos)cfb.origin.x, (tpos)cfb.origin.y, (tdim)cfb.w, (tdim)cfb.h};
-	for(auto& ap : game_room.get_audio_players()) ap.loop(delta, fb, game_player.get_poly().get_center());
+	for(auto& ap : game_room.get_audio_players()) ap.loop(delta);
 
 	//Input processing and player logic.
 	game_input gi;
@@ -72,7 +74,7 @@ void controller_test_2d::loop(dfw::input& input, float delta)
 	if(input.is_input_down(input_app::activate)) gi.activate=true;
 
 	game_player.set_input(gi);
-	game_player.step(delta, fb);
+	game_player.step(delta);
 
 	//Player movement...
 	auto movement_phase=[this, delta](motion::axis axis)
@@ -214,8 +216,8 @@ void controller_test_2d::draw(ldv::screen& screen, int fps)
 	{
 		ldv::ttf_representation fps_text{
 			s_resources.get_ttf_manager().get("consola-mono", 12), 
-			ldv::rgba8(0, 0, 255, 255), compat::to_string(fps)};
-		fps_text.go_to({500,0});
+			ldv::rgba8(0, 0, 255, 255), s_resources.get_audio()().debug_state()+" "+compat::to_string(fps)};
+		fps_text.go_to({200,0});
 		fps_text.draw(screen);
 	}	
 
@@ -267,8 +269,6 @@ void controller_test_2d::do_room_change(const std::string& map, int terminus_id)
 {
 	//TODO: Clear any lingering data belonging to this controller...
 
-	//TODO: Stop sounds. I think that will happen when the map loads, but just in case.
-	
 	game_room.load(map);
 	game_room.inject_audio_dispatcher(game_audio_dispatcher);
 	game_player.center_on(game_room.get_entrance_by_id(terminus_id));
@@ -277,6 +277,11 @@ void controller_test_2d::do_room_change(const std::string& map, int terminus_id)
 	game_camera.center_on(
 		game_draw_struct.drawable_box_from_spatiable(
 			game_player));
+
+	const auto& md=game_room.get_music_data();
+
+	if(md.music_id) m_fader.play_music(md.music_id, md.ms_fade);
+	else m_fader.stop_music(md.ms_fade);
 
 	//TODO: Set player bearing upon entrance.
 }

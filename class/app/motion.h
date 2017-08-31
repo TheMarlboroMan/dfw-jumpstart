@@ -22,11 +22,11 @@ class motion
 	// Public interface
 	public:
 
-						motion(t_vector={0.f, 0.f});
+						motion(tvector={0.f, 0.f});
 
 	bool					has_motion() const {return vector.x || vector.y;}
-	const t_vector&			 	get_vector() const {return vector;}
-	t_vector		 		get_vector() {return vector;}
+	const tvector&			 	get_vector() const {return vector;}
+	tvector		 			get_vector() {return vector;}
 
 	tpos					get_vector(axis);
 	tpos 					get_vector_x() const {return vector.x;}
@@ -34,7 +34,7 @@ class motion
 
 	void 					add_vector(tpos, axis);
 	void 					set_vector(tpos, axis);
-	void 					set_vector(t_vector v) {vector=v;}
+	void 					set_vector(tvector v) {vector=v;}
 	tpos& 					ref_vector_x() {return vector.x;}
 	tpos& 					ref_vector_y() {return vector.y;}
 
@@ -42,7 +42,7 @@ class motion
 	// Properties...
 	private:
 
-	t_vector				vector;
+	tvector					vector;
 
 };
 

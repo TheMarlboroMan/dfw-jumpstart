@@ -1,7 +1,12 @@
 #ifndef AURABLE_H
 #define AURABLE_H
 
+//libdansd2l
 #include <audio/audio_channel/audio_channel.h>
+#include <video/rect/rect.h>
+
+//local
+#include "app_defs.h"
 
 namespace app_interfaces
 {
@@ -13,6 +18,8 @@ class channel_dispatcher_interface
 
 	virtual lda::audio_channel	request_audio_channel()=0;
 	virtual lda::sound&		request_sound_resource(size_t)const=0;
+	virtual const ldv::rect&	request_view_rect() const=0;
+	virtual const app::tpoint&	request_player_pos() const=0;
 };
 
 //The aurable needs to get injected with a channel dispatcher, which it will

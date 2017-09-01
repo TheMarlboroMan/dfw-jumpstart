@@ -215,13 +215,26 @@ lda::audio_controller class (accesible through the () method of the dfw::audio,
 is in kernel.get_audio()()).
 
 To acquire a channel use lda::audio_controller::get_channel(size_t) or 
-lda::lda::audio_controller::get_free_channel() (which may throw). This will
-return a channel object that must instantly be set to play something or
-monitored (lest the same channel is returned again with the next call). Once
-a channel is monitored, it won't be returned to the channel pool until it
-is unmonitored and freed. Monitored, thus, basically means "Please, do not
-return this channel to the pool when it is done playing, I want to keep
-using it".
+lda::audio_controller::get_free_channel() (which may throw). This will
+return an lda::audio_channel object that must instantly be set to play something 
+or monitored (lest the same channel is returned again with the next call). 
+This object is "linked" to a real_audio_channel so every action upon it will
+reflect on the real channel. When the lda::audio_channel objects have long
+lifetimes this can be problematic, as different objects may point to the same
+real channel. 
+
+A call to "unlink" will unlink the lda::audio_channel from
+its real_audio_channel (any operation upon the channel will crash, as it is
+equivalent to deferencing an invalid pointer). After "unlink" is called, the
+channel should not be used except for reassigning it through
+
+my_channel=lda::audio_controller::get_free_channel().
+
+Channels will be reported as free if they are not playing. Any monitored channel
+will not be reported as free. Once a channel is monitored, it won't be returned 
+to the channel pool until it is unmonitored. Monitored, thus, basically means 
+"Please, do not return this channel to the pool when it is done playing, I want 
+to keep using it".
 
 To control the lifetime of channels, it is possible to attach a callback
 (derived from lda::audio_callback_interface) to the channel, whose method
@@ -236,9 +249,6 @@ since you can:
 - In the callback, clear the channel callback, unmonitor it and free it so it
 can be acquired again.
 
-These objects are "linked" to the real channels. Once you are done working
-with them you should call "unlink" so changes on your local object do not
-reflect in the pool.
 
 Notice that the callback function will be called only if a lda::audio_callback_interface
 is attached. It will be executed either when the sound ends "naturally" or 
@@ -246,7 +256,7 @@ when "stop" is called on the channel.
 
 Also, notice these methods on the channel:
 
-- free: 
+- free (private function).
 	unmonitors the channel, removes panning effects, removes callback_listener...
 - set_monitoring(false) 
 	only unmonitors the channel. The rest is the same.
@@ -258,7 +268,50 @@ Also, notice these methods on the channel:
 
 Understanding these dynamics is key to properly manage sound channels. The
 class "object_audio_player" implements these audio ideas, including callbacks
-and monitoring.
+and monitoring. If improperly done, crashes are sure to happen.
+
+When lda::audio_channel instances exist, this guide can help set them up. It is
+done from the point of view of an application object that owns a
+lda::audio_channel
+
+- When I am constructed:
+	- My channel is linked
+		=> Do so at constructor.
+	- My channel is unlinked
+		=> Leave things as they are.
+
+- My channel is ...
+
+- When I am destroyed
+	- My channel is playing and...
+		- ... I want it to keep playing.
+			=> If there's any call to "channel.unlink" in your code, 
+			check if the channel is linked first!
+			=> Unmonitor if monitored: on the contrary it will be 
+			lost forever (not really, but well).
+			=> Remove the callback if any: specially if it lies in 
+			the scope of your class.
+			=> You don't need to unlink it: it will do so upon destruction.
+		- ... I want it to stop:
+			=> Unmonitor if monitored. This never has side effects.
+			=> If you don't want your callback to execute, remove it. 
+			If your callback unlinks the channel you certainly want to do this, 
+			as it will do so and then crash when the destructor continues.
+			=> Call "stop"... Stop will call free. 
+
+- When my audio channel ends playing ...
+	- ... I have a callback ...
+		- ... and I want to reuse the very same channel.
+			=> Make sure you are monitoring the channel before playing it.
+			=> Do not unlink your channel in your callback. Do so in your destructor.
+			=> Do not unmonitor it.
+		- ... I want to free the channel.
+			=> If monitored, unmonitor it. "Free" will be called next.
+			=> Remove the callback listener: else it may execute out of your scope or worse, crash.
+			=> Unlink the channel.
+	- ... I don't have a callback
+		=> Bad choice. Why do you have a lda::audio_channel member?
+
 ###Implement text input.
 
 Getting the text input to work properly seems tricky but it is actually easy. Two important things:

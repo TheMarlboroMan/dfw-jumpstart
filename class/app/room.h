@@ -31,8 +31,10 @@ struct room_drawable_collection
 
 struct room_music_data
 {
-	int			music_id;
-	int			ms_fade;
+	size_t			music_id;
+	unsigned int		ms_fade_in;
+	unsigned int		ms_fade_out;
+	unsigned int		volume;
 };
 
 class room

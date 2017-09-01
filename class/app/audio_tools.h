@@ -40,24 +40,26 @@ class music_fader
 
 				music_fader(lda::audio_controller&, const lda::resource_manager&);
 	void			loop(float);
-	void			play_music(size_t, unsigned int);
+	void			play_music(size_t, unsigned int, unsigned int, unsigned int);
 	void			stop_music(unsigned int);
 
 	private:
 
-	void			begin_play();
+	void			begin_play(int);
+	void			begin_fadein(unsigned int);
+	void			begin_fadeout(unsigned int);
 	void			stop_play();
-	void			begin_fade(unsigned int);
 
 	lda::audio_controller&			ac;
 	const lda::resource_manager&		rm;
-	enum class tstates{silence, playing, fading} state;
+	enum class tstates{silence, playing, fading_out, fading_in} state;
 	size_t					curr_music,
 						next_music;
-	//TODO: What's actually missing here is to update this value when the config changes. 
-	//TODO: Perhaps we can have a "master" music volume and a "particular" music volume in the fw?
-	int					original_volume;
-	tools::linear_timed_function<float>	volume;
+	tools::linear_timed_function<float>	fadeout,
+						fadein;
+	int					target_volume,
+						next_fadeout,
+						next_fadein;
 };
 
 }

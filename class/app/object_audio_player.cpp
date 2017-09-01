@@ -16,6 +16,7 @@ object_audio_player::~object_audio_player()
 {
 	if(channel.is_linked())
 	{
+		//TODO: Rework this... less calls should do it. 
 		//The order is essential: stop will invoke the callback if still available. The callback DOES unlink, causing crashes when doing further actions on the channel.
 		channel.clear_panning();
 		channel.clear_callback_listener();
@@ -72,6 +73,7 @@ void object_audio_player::do_play_logic()
 void object_audio_player::on_audio_stop()
 {
 	channel.clear_callback_listener();
+	//TODO: I think that with "unmonitor" and "unlink" I win: if unmonitored, the channel will do "free" and that will clear all.
 	channel.clear_panning();
 	channel.set_monitoring(false);
 	channel.unlink();

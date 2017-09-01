@@ -1,5 +1,4 @@
 #TODO:
-	- Add examples of music.
 	- Add example of menu.
 	- Add a cartesian camera example, with polys.
 	- Comment the cartesian vs screen system.
@@ -33,6 +32,10 @@ There are a few controllers here:
 - Delete the example controllers from the state_driver files (includes and register_controllers).
 - Modify what you need.
 - Make with make -f makefile_[linux-win] all
+
+##On coordinate systems.
+
+//TODO.
 
 ##Howto
 
@@ -196,13 +199,66 @@ controllers later. Shoddy, but quick.
 
 ###Play audio
 
-//TODO: Explain how to get the audio_interface from the kernel and inject it into the controllers. Then use it.
-//TODO: Explain the complex channel things...
-//TODO: Explain the fire and forget way.
-//TODO: Explain the way used in the controller.
-//TODO: Explain callbacks.
-//TODO: Explain how the order REALLY matters.
+The simplest way to play sound and music is to obtain the dfw::audio object 
+from the kernel (kernel.get_audio()) and use its play_music and play_sound
+methods, that map directly to the libdansdl2 audio_controller (check the
+documentation). The play_sound method should be enclosed in a try-catch
+block, as it will throw when no channels are available (for example, if you
+play many sounds simultaneously... you can always request more channels anyway).
+Since the kernel is not accessible from the controllers you will want to inject
+this dfw::audio object into them... This would be the "fire and forget" method,
+as no control over the played sounds is given.
 
+To achieve control over the sounds (for example, to change their volume, panning
+or stop them on the fly), a channel must be acquired from the 
+lda::audio_controller class (accesible through the () method of the dfw::audio,
+is in kernel.get_audio()()).
+
+To acquire a channel use lda::audio_controller::get_channel(size_t) or 
+lda::lda::audio_controller::get_free_channel() (which may throw). This will
+return a channel object that must instantly be set to play something or
+monitored (lest the same channel is returned again with the next call). Once
+a channel is monitored, it won't be returned to the channel pool until it
+is unmonitored and freed. Monitored, thus, basically means "Please, do not
+return this channel to the pool when it is done playing, I want to keep
+using it".
+
+To control the lifetime of channels, it is possible to attach a callback
+(derived from lda::audio_callback_interface) to the channel, whose method
+operator() will be executed when the sound stops playing. This makes sense 
+since you can:
+
+- Acquire a channel.
+- Monitor it (now the channel is yours).
+- Set the callback.
+- Play sounds.
+- Once the sound is done, execute the callback.
+- In the callback, clear the channel callback, unmonitor it and free it so it
+can be acquired again.
+
+These objects are "linked" to the real channels. Once you are done working
+with them you should call "unlink" so changes on your local object do not
+reflect in the pool.
+
+Notice that the callback function will be called only if a lda::audio_callback_interface
+is attached. It will be executed either when the sound ends "naturally" or 
+when "stop" is called on the channel.
+
+Also, notice these methods on the channel:
+
+- free: 
+	unmonitors the channel, removes panning effects, removes callback_listener...
+- set_monitoring(false) 
+	only unmonitors the channel. The rest is the same.
+- stop:
+	halts the sound and frees the channel (if unmonitored).
+- do_callback (the callback execution, happens when stop is called or the sound ends)
+	executes the callback listener. After that, if the channel is unmonitored,
+	frees it.
+
+Understanding these dynamics is key to properly manage sound channels. The
+class "object_audio_player" implements these audio ideas, including callbacks
+and monitoring.
 ###Implement text input.
 
 Getting the text input to work properly seems tricky but it is actually easy. Two important things:

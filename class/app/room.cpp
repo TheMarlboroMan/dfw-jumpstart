@@ -16,7 +16,7 @@
 using namespace app;
 
 room::room()
-	:music_data{0,0}, 
+	:music_data{0,0,0,0}, 
 	trigger_memory(nullptr),
 	walls{1,1}
 {
@@ -115,16 +115,17 @@ void room::load(const std::string& fn)
 				fac.make_action(n);
 		}
 
-		if(meta.count("music_id") && meta.count("music_fade"))
+		if(meta.count("music_id") && meta.count("music_fade_in") && meta.count("music_fade_out"), meta.count("music_volume"))
 		{
+			auto stoi=[&meta](const std::string& key) {return (unsigned)std::atoi(meta[key].get_string().c_str());};
 			music_data={
-				std::atoi(meta["music_id"].get_string().c_str()), 
-				std::atoi(meta["music_fade"].get_string().c_str())
-			};
+				stoi("music_id"), stoi("music_fade_in"), 
+				stoi("music_fade_out"), stoi("music_volume")};
 		}
-		else	music_data={0,0};
-
-		//TODO
+		else
+		{
+			throw std::runtime_error("music data missing");
+		}
 	}
 	catch(std::exception& e)
 	{

@@ -278,10 +278,10 @@ void controller_test_2d::do_room_change(const std::string& map, int terminus_id)
 		game_draw_struct.drawable_box_from_spatiable(
 			game_player));
 
+	//Music!
 	const auto& md=game_room.get_music_data();
-
-	if(md.music_id) m_fader.play_music(md.music_id, md.ms_fade);
-	else m_fader.stop_music(md.ms_fade);
+	if(md.music_id) m_fader.play_music(md.music_id, md.ms_fade_out, md.ms_fade_in, md.volume);
+	else m_fader.stop_music(md.ms_fade_out);
 
 	//TODO: Set player bearing upon entrance.
 }

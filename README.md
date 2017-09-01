@@ -7,7 +7,6 @@
 	- Check camera spatiable objects.
 	- Skip camera test (set in camera...)
 
-
 #Basic framework.
 
 The idea here is to have a very basic application so things can run with little copy and paste. It will also include a few features I tend to forget about.
@@ -21,7 +20,13 @@ There are a few controllers here:
 - a game thing companion that displays texts along the previous controller.
 	- Demonstrates multi-controller drawing and message broadcasting.
 - a very simple frames-per-second test, not accesible.
-	- 
+
+The rest of this text file includes:
+	- a getting started guide.
+	- notion on coordinate systems.
+	- "howto" for many things.
+	- files and directory structure.
+	- interesting examples in classes.
 
 ##Getting started:
 
@@ -56,6 +61,10 @@ It is a bit clunky, but does not take more than 5 minutes.
 Message broadcasting is a way to share scalar information between controllers,
 like for example, strings, integers or data types that can be represented from
 primitives. Controllers can be setup as broadcasters and receivers separatedly.
+Information is broadcast in two data items:
+
+	- an integer type.
+	- a dnot for the rest.
 
 For each controller that can broadcast add this method (if you fail, an exception will be thrown when broadcasting).
 
@@ -273,6 +282,21 @@ and monitoring. If improperly done, crashes are sure to happen.
 When lda::audio_channel instances exist, this guide can help set them up. It is
 done from the point of view of an application object that owns a
 lda::audio_channel
+
+- Always remember:
+	- If you set a callback, clear when you are done with the channel.
+	- If you monitor a channel, unmonitor when you are done with the channel.
+	- If you "stop" a channel, you callback executes.
+
+- About unlinking channels:
+	- Unlink does not affect the real channel.
+	- Unlink signals YOU that you should not use the channel.
+	- If in doubt, use the audio_channel_safe class. It will throw if you mess up.
+	- With long lived and unmonitored channels, your unlinked channel may 
+	end up linked to a channel used by another entity. That's actually ok
+	as the relationship is not exclusive. It may, however, do unexpected 
+	things like your sounds not playing because other entity is using the
+	real channel.
 
 - When I am constructed:
 	- My channel is linked

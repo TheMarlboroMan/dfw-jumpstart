@@ -14,6 +14,7 @@ DEP_CONTROLLERS=\
 $(DIR_O)state_driver.o \
 $(DIR_O)kernel_config.o \
 $(DIR_O)app_config.o \
+$(DIR_O)controller_menu.o \
 $(DIR_O)controller_test_2d.o \
 $(DIR_O)controller_test_2d_text.o \
 $(DIR_O)controller_console.o \
@@ -72,9 +73,11 @@ $(DIR_O_DFW)fw_state_driver_interface.o \
 
 $(DIR_O)state_driver.o :\
 $(DIR_O)shared_resources.o \
+$(DIR_O)controller_menu.o \
 $(DIR_O)controller_test_2d.o \
 $(DIR_O)controller_test_2d_text.o \
 $(DIR_O)controller_console.o \
+$(DIR_O)controller_test_fps.o \
 $(DIR_DFWIMPL)state_driver.h \
 $(DIR_DFWIMPL)state_driver.cpp
 	$(CC) $(CFLAGS) $(INCLUDES) $(DIR_DFWIMPL)state_driver.cpp -o $(DIR_O)state_driver.o 
@@ -91,6 +94,11 @@ $(DIR_DFWIMPL)app_config.cpp
 
 ################################################################################
 #Controllers...
+
+$(DIR_O)controller_menu.o :\
+$(DIR_CONTROLLERS)menu.h \
+$(DIR_CONTROLLERS)menu.cpp
+	$(CC) $(CFLAGS) $(INCLUDES) $(DIR_CONTROLLERS)menu.cpp -o $(DIR_O)controller_menu.o
 
 $(DIR_O)controller_test_2d.o :\
 $(DIR_CONTROLLERS)test_2d.h \

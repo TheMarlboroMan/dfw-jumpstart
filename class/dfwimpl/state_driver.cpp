@@ -16,7 +16,7 @@ using namespace app;
 extern ldt::log LOG;
 
 state_driver::state_driver(dfw::kernel& kernel, app::app_config& c)
-	:state_driver_interface(t_states::state_test_2d, std::function<bool(int)>([](int v){return v > state_min && v < state_max;})),
+	:state_driver_interface(t_states::state_menu, std::function<bool(int)>([](int v){return v > state_min && v < state_max;})),
 	config(c), log(kernel.get_log())
 {
 	log<<"init state driver building: preparing video..."<<std::endl;
@@ -57,11 +57,13 @@ void state_driver::prepare_video(dfw::kernel& kernel)
 
 void state_driver::register_controllers(dfw::kernel& /*kernel*/)
 {
+	c_menu.reset(new controller_menu(*s_resources));
 	c_test_2d.reset(new controller_test_2d(*s_resources));
 	c_test_2d_text.reset(new controller_test_2d_text(*s_resources));
 	c_console.reset(new controller_console(*s_resources));
 	c_fps.reset(new controller_fps_test(*s_resources));
 
+	register_controller(t_states::state_menu, *c_menu);
 	register_controller(t_states::state_test_2d, *c_test_2d);
 	register_controller(t_states::state_test_2d_text, *c_test_2d_text);
 	register_controller(t_states::state_console, *c_console);
@@ -72,6 +74,7 @@ void state_driver::prepare_state(int next, int /*current*/)
 {
 	switch(next)
 	{
+		case t_states::state_menu:
 		case t_states::state_test_2d:
 		case t_states::state_test_2d_text:
 		case t_states::state_console:

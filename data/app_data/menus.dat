@@ -1,0 +1,7 @@
+main:[
+	{k:"10_START", m:"void", t:1000},
+	{k:"20_CONTINUE", m:"void", t:1001},
+	{k:"30_CONTROLS", m:"void", t:1002},
+	{k:"40_OPTIONS", m:"void", t:1003},
+	{k:"50_EXIT", m:"void", t:1004}
+]

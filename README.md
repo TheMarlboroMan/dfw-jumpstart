@@ -99,6 +99,11 @@ If you need to share complex objects you can set up alternatives, like public
 setters and getters in you controllers that can be accessed from your state_driver
 "prepare_state" method.
 
+###Use a menu
+
+//TODO options_menu
+//TODO representation example
+
 ###Draw a controller different than the active one:
 
 There may be cases when you need to keep drawing a controller while executing one
@@ -128,7 +133,7 @@ be drawn and then overlays new elements.
 Static views can be composed with dnot files to avoid the need of hardcoded 
 values and recompilation. These are most useful for menus, presentation screens,
 fixed graphics... There is an example in the test_2d_text controller, using the 
-file in "data/app_data/layouts.dat". 
+file in "data/app_data/layouts.dat". Another is in the menu controller.
 
 The documentation of the class if fairly complete in any case.
 

@@ -63,4 +63,16 @@ text_bubble_layout:
 		id:"wait_triangle",
 		visible: false
 	}
+],
+
+main_menu_layout: [
+	{
+		type:"screen",
+		rgba:[128,128,128,255]
+	},
+	{
+		type:"external",
+		ref:"menu_selections",
+		order:20
+	}
 ]

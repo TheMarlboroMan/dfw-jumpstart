@@ -22,8 +22,6 @@ try
 	game_audio_dispatcher(sr.get_audio(), sr.get_audio_resource_manager(), game_camera.get_focus_box(), game_player.get_poly().get_center()),
 	game_localization(0, {"data/app_data/localization/descriptions"})
 {
-	game_localization.init();
-
 	game_camera.set_center_margin({300, 200, 100, 100});
 	game_camera.clear_limits();
 

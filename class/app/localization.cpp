@@ -9,5 +9,5 @@ localization::localization(short unsigned int lan, const t_filename& val)
 	not_loaded("localization file not ready"),
 	not_found("localization string not found")
 {
-
+	init();
 }

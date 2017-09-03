@@ -13,15 +13,10 @@ using namespace app;
 
 controller_menu::controller_menu(shared_resources& s)
 	:s_resources(s), 
-	horizontal(ldv::representation_aligment::h::none),
-	vertical(ldv::representation_aligment::v::none)
-	
+	menu_rep(menu),
+	menu_localization(0, {"data/app_data/localization/texts"})
 {
-}
-
-void controller_menu::preloop(dfw::input& /*input*/, float /*delta*/, int /*fps*/)
-{
-
+	mount_menu();
 }
 
 void controller_menu::loop(dfw::input& input, float /*delta*/)
@@ -32,110 +27,86 @@ void controller_menu::loop(dfw::input& input, float /*delta*/)
 		return;
 	}
 
-	if(input.is_input_pressed(input_app::activate))
+	if(input.is_input_down(input_app::up)) menu_rep.previous();
+	else if(input.is_input_down(input_app::down)) menu_rep.next();
+	else if(input.is_input_down(input_app::activate)) 
 	{
-		if(input.is_input_down(input_app::up)) --margin_v;
-		else if(input.is_input_down(input_app::down)) ++margin_v;
-		else if(input.is_input_down(input_app::left)) --margin_h;
-		else if(input.is_input_down(input_app::right)) ++margin_h;
-	}
-	else
-	{
-		using namespace ldv;
-
-		if(input.is_input_down(input_app::up))
+		switch(menu_rep.get_current_index())
 		{
-			switch(horizontal)
-			{
-				case representation_aligment::h::none: 		horizontal=representation_aligment::h::outer_left; break;
-				case representation_aligment::h::outer_left:	horizontal=representation_aligment::h::inner_left; break;
-				case representation_aligment::h::inner_left:	horizontal=representation_aligment::h::center; break;
-				case representation_aligment::h::center:	horizontal=representation_aligment::h::inner_right; break;
-				case representation_aligment::h::inner_right:	horizontal=representation_aligment::h::outer_right; break;
-				case representation_aligment::h::outer_right:	horizontal=representation_aligment::h::none; break;
-			}
-		}
-
-		if(input.is_input_down(input_app::down))
-		{
-			switch(vertical)
-			{
-				case representation_aligment::v::none: 		vertical=representation_aligment::v::outer_top; break;
-				case representation_aligment::v::outer_top:	vertical=representation_aligment::v::inner_top; break;
-				case representation_aligment::v::inner_top:	vertical=representation_aligment::v::center; break;
-				case representation_aligment::v::center:	vertical=representation_aligment::v::inner_bottom; break;
-				case representation_aligment::v::inner_bottom:	vertical=representation_aligment::v::outer_bottom; break;
-				case representation_aligment::v::outer_bottom:	vertical=representation_aligment::v::none; break;
-			}
+			case 0: break;
+			case 1: break;
+			case 2: break;
+			case 3: break;
+			case 4: break;
 		}
 	}
-}
-
-void controller_menu::postloop(dfw::input& /*input*/, float /*delta*/, int /*fps*/)
-{
-
 }
 
 void controller_menu::draw(ldv::screen& screen, int /*fps*/)
 {
-	screen.clear(ldv::rgba8(0, 0, 0, 0));
+	menu_rep.get_representation().align(screen.get_rect(), {
+			ldv::representation_alignment::h::inner_right,
+			ldv::representation_alignment::v::inner_top,
+			20,20});
 
-	std::string text="";
+	//TODO: Screen color of the layout is not working.
+	layout.draw(screen);
+}
 
-	using namespace ldv;
+void controller_menu::mount_menu()
+{
+	std::map<std::string, int>	translation_map;
+	tools::mount_from_dnot(tools::dnot_parse_file("data/app_data/menus.dat")["main"], menu, &translation_map);
 
-	switch(horizontal)
+	std::vector<tools::options_menu<std::string>::translation_struct > trad;
+	for(const auto& p: translation_map) trad.push_back({p.first, menu_localization.get(p.second)});
+	menu.translate(trad);
+
+	const auto& ttfm=s_resources.get_ttf_manager();
+
+	//Now we can init the representation...
+	menu_rep.set_register_name_function([ttfm](const std::string& /*k*/, std::vector<ldv::representation*>& v)
 	{
-		case representation_aligment::h::none: 		text+="h: none"; break;
-		case representation_aligment::h::outer_left:	text+="h: outer left"; break;
-		case representation_aligment::h::inner_left:	text+="h: inner left"; break;
-		case representation_aligment::h::center:	text+="h: center"; break;
-		case representation_aligment::h::inner_right:	text+="h: inner right"; break;
-		case representation_aligment::h::outer_right:	text+="h: outer right"; break;
-	}
-
-	text+="\n";
-
-	switch(vertical)
+		v.push_back(new ldv::ttf_representation{
+			ttfm.get("consola-mono", 16), 
+			ldv::rgba8(255, 255, 255, 255), "", 1, ldv::ttf_representation::text_align::right});
+	});
+	menu_rep.set_register_value_function([ttfm](const std::string& /*k*/, std::vector<ldv::representation*>& /*v*/)
 	{
-		case representation_aligment::v::none: 		text+="v: none"; break;
-		case representation_aligment::v::outer_top:	text+="v: outer top"; break;
-		case representation_aligment::v::inner_top:	text+="v: inner top"; break;
-		case representation_aligment::v::center:	text+="v: center"; break;
-		case representation_aligment::v::inner_bottom:	text+="v: inner bottom"; break;
-		case representation_aligment::v::outer_bottom:	text+="v: outer bottom"; break;
-	}
+//		v.push_back(new ldv::ttf_representation{
+//			ttfm.get("consola-mono", 16), 
+//			ldv::rgba8(255, 255, 255, 255), "", 1, ldv::ttf_representation::text_align::left});
+	});
+	menu_rep.set_draw_name_function([](const std::string& /*k*/, size_t index, const std::vector<ldv::representation*>& v, const std::string& val, bool current)
+	{
+		auto& r=*(static_cast<ldv::ttf_representation*>(v[0]));
+		r.lock_changes();
+		r.set_color(current ? ldv::rgb8(255,255,255) : ldv::rgb8(64,64,64));
+		r.set_text(val);
+		r.unlock_changes();
+		r.go_to({0, (int)index*20});
+		r.align(ldv::rect{0, 0, 0, 0}, {
+			ldv::representation_alignment::h::inner_right,
+			ldv::representation_alignment::v::none,
+			0,0 });
+	});
+	menu_rep.set_draw_value_function([](const std::string& /*k*/, size_t /*index*/, const std::vector<ldv::representation*>& /*v*/, const std::string& /*val*/, bool /*current*/)
+	{
+//		auto& r=*(static_cast<ldv::ttf_representation*>(v[0]));
+//		r.lock_changes();
+//		r.set_color(current ? ldv::rgb8(255,255,255) : ldv::rgb8(64,64,64));
+//		r.set_text(val);
+//		r.unlock_changes();
+//		r.go_to({0, (int)index*20});
+//		r.align(ldv::rect{0, 0, 100, 100}, {
+//			ldv::representation_alignment::h::outer_right,
+//			ldv::representation_alignment::v::none,
+//			20,0});
+	});
+	menu_rep.init();
 
-	text+="\n"+compat::to_string(margin_h)+","+compat::to_string(margin_v);
-	
-	ldv::box_representation	a{ldv::polygon_representation::type::fill, {100, 100, 500, 300}, rgba8(255,0,0,255)};
-	ldv::box_representation	b{ldv::polygon_representation::type::fill, {200, 200, 100, 100}, rgba8(0,0,255,255)};
+	layout.register_as_external("menu_selections", menu_rep.get_representation());
+//	layout.map_font("main_text_font", s_resources.get_ttf_manager().get("consola-mono", 16));
+	layout.parse("data/app_data/layouts.dat", "main_menu_layout");
 
-	b.align(a, representation_aligment{horizontal, vertical, margin_h, margin_v});
-
-	a.draw(screen);
-	b.draw(screen);
-
-	ldv::ttf_representation text_rep{
-		s_resources.get_ttf_manager().get("consola-mono", 16), 
-		ldv::rgba8(255, 255, 255, 255), text, 2.f, ldv::ttf_representation::text_align::center};
-
-	text_rep.align(a, representation_aligment{horizontal, vertical, margin_h, margin_v});
-
-	text_rep.draw(screen);
-}
-
-void controller_menu::awake(dfw::input& /*input*/)
-{
-
-}
-
-void controller_menu::slumber(dfw::input& /*input*/)
-{
-
-}
-
-bool controller_menu::can_leave_state() const
-{
-	return true;
 }

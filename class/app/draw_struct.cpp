@@ -5,7 +5,7 @@ using namespace app;
 
 draw_struct::draw_struct()
 	:rep_bmp(), 
-	rep_group({0,0}, true),
+	rep_group({0,0}),
 	rep_points(ldv::rgba8(0,0,0,255)),
 	rep_box(ldv::box_representation::type::fill, {0,0,0,0}, ldv::rgba8(0,0,0,255)),
 	rep_line({0,0},{0,0}, ldv::rgba8(0,0,0,255)),

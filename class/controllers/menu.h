@@ -10,6 +10,7 @@
 //tools
 #include <templates/options_menu.h>
 #include <class/view_composer.h>
+#include <class/number_generator.h>
 
 //framework
 #include <class/controller_interface.h>
@@ -41,6 +42,27 @@ class controller_menu:
 
 	void					mount_menu();
 
+	struct bar_struct
+	{
+		bar_struct(ldv::representation& r, float t, float m):
+			rep(r), pos(r.get_position().x),
+			time(t), mult(m)
+		{}
+
+		void					step(float delta)
+		{
+			time+=delta;
+			pos+=sin(time)*mult;
+			rep.go_to({(int)pos, 0});
+		}
+	
+		private:
+
+		ldv::representation&			rep;
+		float 					pos, time, mult;
+
+	};
+
 	//references...
 	shared_resources&				s_resources;
 
@@ -49,6 +71,42 @@ class controller_menu:
 	menu_representation<std::string>		menu_rep;
 	tools::view_composer				layout;
 	localization					menu_localization;
+
+	std::vector<bar_struct>				menu_decorations;
+
+	struct
+	{
+		bool					visible,
+							changed;
+		float					time;
+		
+		void					step(float delta)
+		{
+			changed=false;
+			time-=delta;
+			if(time <= 0.f) toggle();
+		}
+
+		void					toggle()
+		{
+			visible=!visible;
+			changed=true;
+
+			if(visible) time=0.08f;
+			else
+			{
+				tools::int_generator g(500, 3000);
+				time=(float)g() / 1000.f;
+			}
+		}
+	}						flicker;
+
+	struct
+	{
+		float					time=0;
+		int					val=0;
+		void					step(float delta) {val=191+(sin(time+=delta)*64);}
+	}						pulse;
 };
 
 }

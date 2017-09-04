@@ -1,7 +1,8 @@
 #TODO:
-	- Add example of menu.
 	- Add a cartesian camera example, with polys.
 	- Comment the cartesian vs screen system.
+	- Redefine keys.
+	- Save configurations.
 
 	- Center character animation.
 	- Check camera spatiable objects.
@@ -101,8 +102,58 @@ setters and getters in you controllers that can be accessed from your state_driv
 
 ###Use a menu
 
-//TODO options_menu
-//TODO representation example
+Menus are time consuming if done by hand, but they are also an important part
+of a relatively polished application.
+
+The tools::options_menu class allows for creating dynamic menus of a single depth
+on the fly. The particulars of the class are documented but the most important
+thing to know is how to parse one from a dnot file. There's an example in the
+menu controller that basically goes:
+
+	//Create a translation map.
+	std::map<std::string, int>	translation_map;
+	//Parse the menu and fill the translation map.
+	tools::mount_from_dnot(tools::dnot_parse_file("data/app_data/menus.dat")["main"], menu, &translation_map);
+	//Create a translation vector.
+	std::vector<tools::options_menu<std::string>::translation_struct > trad;
+	//Use the translation map to fill the translation vector.
+	for(const auto& p: translation_map) trad.push_back({p.first, menu_localization.get(p.second)});
+	//Translate with the translation vector.
+	menu.translate(trad);
+
+That's enough to mount and translate a menu. Now, representations are a 
+completely different matter (all that tools::options_menu contains is the data).
+The end user is responsible to convert the data to representations. However, 
+this project has a "menu_representation" class that is very useful to both
+create the representations and add events (change selection, navigate...). 
+Examples are in the code of the controller. It is easier to copy and paste
+than to try and explain. The two things to understand here: 
+
+	- in tools::options_menu terms, get_name is the name of a property and
+	get_title is its volume.
+	- the "menu_representation" class is just a framework that must be filled 
+	with six functions (for example, with lambdas)
+
+		 - register name/value representations void(const T&, std::vector<ldv::representation*>&)
+			T is the key type, in case some keys need special treatment.
+			The vector must be filled with as many representations
+			as needed.
+		 - draw name/value (const T&, size_t, const std::vector<ldv::representation*>&, const std::string&, bool)
+			T is the key again, and size_t is the index we are currently
+			drawing (two ways of referencing the same thing). The
+			vector contains the representations created previously
+			in the order of insertion (they need to be static_cast,
+			of course). The bool indicates if this is the current
+			selection.
+		 - step name/value (const T&, size_t, float, const std::vector<ldv::representation*>&, const std::string&, bool)
+			Similar to the previous one, to be called if the menu
+			has "time" effects. Float is the delta value. This is
+			only needed if we are going to use the "step" function
+			of the menu.
+	- representations are refreshed only when:
+		 - it is forced through a menu_representation.refresh() call.
+		 - whenever next, previous or browse are invoked.
+		 - if the step functions are used.
 
 ###Draw a controller different than the active one:
 
@@ -133,7 +184,9 @@ be drawn and then overlays new elements.
 Static views can be composed with dnot files to avoid the need of hardcoded 
 values and recompilation. These are most useful for menus, presentation screens,
 fixed graphics... There is an example in the test_2d_text controller, using the 
-file in "data/app_data/layouts.dat". Another is in the menu controller.
+file in "data/app_data/layouts.dat". Another is in the menu controller, which
+does things like use external representations and manipulate representations
+in the layout from the code.
 
 The documentation of the class if fairly complete in any case.
 

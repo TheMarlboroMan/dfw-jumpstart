@@ -78,6 +78,10 @@ A simple example:
 	});
 	menu_rep.init();
 	menu_rep.draw(screen);
+
+There is no need to assign the "step" functions if "step" is not going to be called.
+In any case, there is no checking that the functions are assigned, so crashes are
+expected for bad use.
 */
 
 template <typename T>
@@ -98,11 +102,14 @@ class menu_representation
 			menu_representation_config cfg,
 			std::function<void(const T&, std::vector<ldv::representation*>&)> frn,
 			std::function<void(const T&, std::vector<ldv::representation*>&)> frv,
-//TODO: I need the index too!!!.
 			std::function<void(const T&, size_t, const std::vector<ldv::representation*>&, const std::string&, bool)> fdn,
-			std::function<void(const T&, size_t, const std::vector<ldv::representation*>&, const std::string&, bool)> fdv
+			std::function<void(const T&, size_t, const std::vector<ldv::representation*>&, const std::string&, bool)> fdv,
+			std::function<void(const T&, size_t, float, const std::vector<ldv::representation*>&, const std::string&, bool)> fsn,
+			std::function<void(const T&, size_t, float, const std::vector<ldv::representation*>&, const std::string&, bool)> fsv
 		):menu(m), 
-		f_register_name(frn), f_register_value(frv), f_draw_name(fdn), f_draw_value(fdv),
+		f_register_name(frn), f_register_value(frv), 
+		f_draw_name(fdn), f_draw_value(fdv),
+		f_step_name(fsn), f_step_value(fsv),
 		config(cfg), current_index(0), total_options(menu.size()),
 		group({0,0})
 	{
@@ -118,6 +125,18 @@ class menu_representation
 		regenerate_representations();
 	}
 
+	void				step(float delta)
+	{
+		size_t i=0;
+		for(const auto& k : menu.get_keys())
+		{
+			bool current=index_to_t[current_index]==k;
+			f_step_name(k, i, delta, name_representations[k], menu.get_name(k), current);
+			f_step_value(k, i, delta, name_representations[k], menu.get_title(k), current);
+			++i;
+		}
+	}
+
 	//!Sets the configuration.
 	void				set_config(menu_representation_config cfg) {config=cfg;}
 
@@ -127,6 +146,9 @@ class menu_representation
 	//!Sets the external function. The vector contains the previously inserted representations. A certain amount of static_cast is expected.
 	void 				set_draw_name_function(std::function<void(const T&, size_t, const std::vector<ldv::representation*>&, const std::string&, bool)> fdn) {f_draw_name=fdn;}
 	void				set_draw_value_function(std::function<void(const T&, size_t, const std::vector<ldv::representation*>&, const std::string&, bool)> fdv) {f_draw_value=fdv;}
+	//!Sets the external function. Similar to draw, but a delta value. Will be used if the step function is called.
+	void 				set_step_name_function(std::function<void(const T&, size_t, float, const std::vector<ldv::representation*>&, const std::string&, bool)> fsn) {f_step_name=fsn;}
+	void				set_step_value_function(std::function<void(const T&, size_t, float, const std::vector<ldv::representation*>&, const std::string&, bool)> fsv) {f_step_value=fsv;}
 
 	//!Advances to the next menu item. Will wrap if allowed.
 	void				next()
@@ -190,7 +212,6 @@ class menu_representation
 	void				regenerate_representations()
 	{
 		size_t i=0;
-
 		for(const auto& k : menu.get_keys())
 		{
 			bool current=index_to_t[current_index]==k;
@@ -223,6 +244,8 @@ class menu_representation
 	std::function<void(const T&, std::vector<ldv::representation*>&)> 	f_register_value;
 	std::function<void(const T&, size_t, const std::vector<ldv::representation*>&, const std::string&, bool)>	f_draw_name;
 	std::function<void(const T&, size_t, const std::vector<ldv::representation*>&, const std::string&, bool)>	f_draw_value;
+	std::function<void(const T&, size_t, float, const std::vector<ldv::representation*>&, const std::string&, bool)>	f_step_name;
+	std::function<void(const T&, size_t, float, const std::vector<ldv::representation*>&, const std::string&, bool)>	f_step_value;
 
 	//properties
 

@@ -7,3 +7,30 @@
 <1002$>Controls<#>
 <1003$>Options<#>
 <1004$>Exit<#>
+
+<1010$>Window size<#>
+<1011$>700x500<#>
+<1012$>1100x750<#>
+<1013$>1400x1000<#>
+<1020$>Fullscreen<#>
+<1021$>Yes<#>
+<1022$>No<#>
+<1025$>VSync<#>
+<1026$>Enabled<#>
+<1027$>Disabled<#>
+<1030$>Sound volume<#>
+<1040$>Music volume<#>
+<1050$>Back<#>
+
+<1060$>Up<#>
+<1061$>Down<#>
+<1062$>Left<#>
+<1063$>Right<#>
+<1064$>Examine<#>
+<1065$>Back<#>
+
+<1100$>Key<#>
+<1101$>Joystick<#>
+<1102$>Button<#>
+<1103$>Mouse<#>
+<1104$>None<#>

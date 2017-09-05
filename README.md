@@ -1,8 +1,9 @@
 #TODO:
+	- Redefine keys.
+	- Options menu: music and audio volume, screen size.
+	- Save configurations.
 	- Add a cartesian camera example, with polys.
 	- Comment the cartesian vs screen system.
-	- Redefine keys.
-	- Save configurations.
 
 	- Center character animation.
 	- Check camera spatiable objects.
@@ -154,6 +155,12 @@ than to try and explain. The two things to understand here:
 		 - it is forced through a menu_representation.refresh() call.
 		 - whenever next, previous or browse are invoked.
 		 - if the step functions are used.
+
+There are alternatives, like the tools::grid_list and tools::vertical list
+but these need to be manually rolled... In any case, complex menu systems
+(like one with submenus, specific actions taking place upon selection of an
+option and so on) are sinonym with grunt work... The menu controller is a good
+example of things that can be done.
 
 ###Draw a controller different than the active one:
 

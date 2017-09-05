@@ -1,8 +1,9 @@
 #index path
-1	data/audio/step_01.ogg
-2	data/audio/step_02.ogg
-3	data/audio/step_03.ogg
-4	data/audio/step_04.ogg
-100	data/audio/tones.ogg
-101	data/audio/sample2.ogg
-102	data/audio/ambiance_00.ogg
+1	data/audio/snd_step_01.ogg
+2	data/audio/snd_step_02.ogg
+3	data/audio/snd_step_03.ogg
+4	data/audio/snd_step_04.ogg
+10	data/audio/snd_menu_change.ogg
+100	data/audio/snd_tones.ogg
+101	data/audio/snd_sample2.ogg
+102	data/audio/snd_ambiance_00.ogg

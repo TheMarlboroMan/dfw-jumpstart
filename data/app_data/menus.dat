@@ -4,4 +4,32 @@ main:[
 	{k:"30_CONTROLS", m:"void", t:1002},
 	{k:"40_OPTIONS", m:"void", t:1003},
 	{k:"50_EXIT", m:"void", t:1004}
+],
+
+options:[
+	{k:"10_VIDEO_SIZE", m:"templated", t:1010, mt:"string", o:[
+		{k:"10_WINDOW_SIZE_10", v: "700x500", t:1011},
+		{k:"10_WINDOW_SIZE_20", v: "1100x750", t:1012},
+		{k:"10_WINDOW_SIZE_30", v: "1400x1000", t:1013}]
+	},
+	{k:"20_VIDEO_FULLSCREEN", m:"templated", t:1020, mt:"bool", o:[
+		{k:"20_VIDEO_FULLSCREEN_10", v: false, t:1022},
+		{k:"20_VIDEO_FULLSCREEN_20", v: true, t:1021}]
+	},
+	{k:"25_VIDEO_VSYNC", m:"templated", t:1025, mt:"bool", o:[
+		{k:"25_VIDEO_VSYNC_10", v: false, t:1027},
+		{k:"25_VIDEO_VSYNC_20", v: true, t:1026}]
+	},
+	{k:"30_SOUND_VOLUME", m:"int", min:0, max:127, t:1030},
+	{k:"40_MUSIC_VOLUME", m:"int", min:0, max:127, t:1040},
+	{k:"50_BACK", m:"void", t:1050}
+],
+
+controls:[
+	{k:"10_UP", m:"string", t:1060},
+	{k:"20_DOWN", m:"string", t:1061},
+	{k:"30_LEFT", m:"string", t:1062},
+	{k:"40_RIGHT", m:"string", t:1063},
+	{k:"50_ACTIVATE", m:"string", t:1064},
+	{k:"60_BACK", m:"void", t:1065}
 ]

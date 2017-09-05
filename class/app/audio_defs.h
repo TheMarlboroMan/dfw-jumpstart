@@ -11,7 +11,8 @@ struct sound_defs
 	step_01=1,
 	step_02=2,
 	step_03=3,
-	step_04=4
+	step_04=4,
+	menu_change=10
 
 };
 };

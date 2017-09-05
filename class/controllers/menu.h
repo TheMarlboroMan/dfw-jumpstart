@@ -20,6 +20,7 @@
 #include "../app/shared_resources.h"
 #include "../app/localization.h"
 #include "../app/menu_representation.h"
+#include "../dfwimpl/app_config.h"
 
 namespace app
 {
@@ -29,7 +30,7 @@ class controller_menu:
 {
 	public:
 
-						controller_menu(shared_resources&);
+						controller_menu(shared_resources&, app_config&, ldv::screen&);
 	virtual void 				preloop(dfw::input&, float, int) {}
 	virtual void 				loop(dfw::input& input, float delta);
 	virtual void 				postloop(dfw::input&, float, int) {}
@@ -40,22 +41,29 @@ class controller_menu:
 
 	private:
 
-	void					mount_menu();
+	void					create_functions();
+	void					mount_menus();
+	void					mount_layout();
+	void					choose_current_menu(menu_representation<std::string>&);
+	void					do_main_menu_input(dfw::input&);
+	void					do_options_menu_input(dfw::input&, float);
+	void					do_controls_menu_input(dfw::input&);
+	std::string				translate_input(const tools::dnot_token&);
+	void					update_options_value(const std::string&);
 
+	//This encapsulates a representation and its logic: the background moving bars.
 	struct bar_struct
 	{
 		bar_struct(ldv::representation& r, float t, float m):
-			rep(r), pos(r.get_position().x),
-			time(t), mult(m)
+			rep(r), pos(r.get_position().x),time(t), mult(m)
 		{}
 
 		void					step(float delta)
 		{
-			time+=delta;
-			pos+=sin(time)*mult;
+			pos+=sin(time+=delta)*mult;
 			rep.go_to({(int)pos, 0});
 		}
-	
+
 		private:
 
 		ldv::representation&			rep;
@@ -63,24 +71,40 @@ class controller_menu:
 
 	};
 
+	enum {rf_txt, rf_empty};
+	enum {df_txt_right_single, df_txt_left_composite, df_txt_right_composite, df_empty};
+	enum {sf_pulse, sf_empty};
+
 	//references...
 	shared_resources&				s_resources;
+	app_config&					config;
+	ldv::screen&					ref_screen;
 
-	//properties
-	tools::options_menu<std::string>		menu;
-	menu_representation<std::string>		menu_rep;
+	std::map<int, menu_representation<std::string>::tfunc_register>	register_funcs;
+	std::map<int, menu_representation<std::string>::tfunc_draw>	draw_funcs;
+	std::map<int, menu_representation<std::string>::tfunc_step>	step_funcs;
+
+	tools::options_menu<std::string>		main_menu,
+							options_menu,
+							controls_menu;
+
+	menu_representation<std::string>		main_menu_rep,
+							options_menu_rep,
+							controls_menu_rep;
+
+	menu_representation<std::string> *		current_menu_ptr=nullptr;
 	tools::view_composer				layout;
 	localization					menu_localization;
+	std::vector<bar_struct>				menu_decorations; //These are the background moving bars...
+	float						key_held_time;
 
-	std::vector<bar_struct>				menu_decorations;
+	//A few single-use structs...
 
 	struct
 	{
-		bool					visible,
-							changed;
+		bool					visible, changed;
 		float					time;
-		
-		void					step(float delta)
+				void					step(float delta)
 		{
 			changed=false;
 			time-=delta;
@@ -91,13 +115,8 @@ class controller_menu:
 		{
 			visible=!visible;
 			changed=true;
-
-			if(visible) time=0.08f;
-			else
-			{
-				tools::int_generator g(500, 3000);
-				time=(float)g() / 1000.f;
-			}
+			tools::int_generator g(visible ? 70 : 500 , visible ? 80 : 3000);
+			time=(float)g() / 1000.f;
 		}
 	}						flicker;
 

@@ -24,6 +24,6 @@ config:{
 	}, meta:{
 		v:1
 	}, video:{
-		double_buffer:1, window_h_px:500, window_h_logical:500, window_w_px:700, window_w_logical:700, window_title:"A test", window_show_cursor:true, vsync:true
+		double_buffer:1, window_h_px:500, window_h_logical:500, window_w_px:700, window_w_logical:700, window_title:"A test", window_show_cursor:true, vsync:true, fullscreen:false
 	}
 }

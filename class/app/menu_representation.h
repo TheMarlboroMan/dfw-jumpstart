@@ -89,6 +89,11 @@ class menu_representation
 {
 	public:
 
+	typedef std::function<void(const T&, std::vector<ldv::representation*>&)> tfunc_register;
+	typedef std::function<void(const T&, size_t, const std::vector<ldv::representation*>&, const std::string&, bool)> tfunc_draw;
+	typedef std::function<void(const T&, size_t, float, const std::vector<ldv::representation*>&, const std::string&, bool)> tfunc_step;
+
+
 	//!Lazy constructor. Needs further calls to assign the functions and a call to "init".
 					menu_representation(tools::options_menu<T>& m)
 		:menu(m), current_index(0), total_options(0), group({0,0})
@@ -98,14 +103,10 @@ class menu_representation
 
 	//!Creates the object with all assorted functions and data.
 					menu_representation(
-			tools::options_menu<T>& m, 
-			menu_representation_config cfg,
-			std::function<void(const T&, std::vector<ldv::representation*>&)> frn,
-			std::function<void(const T&, std::vector<ldv::representation*>&)> frv,
-			std::function<void(const T&, size_t, const std::vector<ldv::representation*>&, const std::string&, bool)> fdn,
-			std::function<void(const T&, size_t, const std::vector<ldv::representation*>&, const std::string&, bool)> fdv,
-			std::function<void(const T&, size_t, float, const std::vector<ldv::representation*>&, const std::string&, bool)> fsn,
-			std::function<void(const T&, size_t, float, const std::vector<ldv::representation*>&, const std::string&, bool)> fsv
+			tools::options_menu<T>& m, menu_representation_config cfg,
+			tfunc_register frn, tfunc_register frv,
+			tfunc_draw fdn, tfunc_draw fdv,
+			tfunc_step fsn, tfunc_step fsv
 		):menu(m), 
 		f_register_name(frn), f_register_value(frv), 
 		f_draw_name(fdn), f_draw_value(fdv),
@@ -120,6 +121,7 @@ class menu_representation
 	//!Companion of the lazy constructor, for cases in which the menu has not been mounted before this object is created.
 	void				init()
 	{
+		//TODO: Clear data before...
 		total_options=menu.size();
 		create_data();
 		regenerate_representations();
@@ -132,7 +134,7 @@ class menu_representation
 		{
 			bool current=index_to_t[current_index]==k;
 			f_step_name(k, i, delta, name_representations[k], menu.get_name(k), current);
-			f_step_value(k, i, delta, name_representations[k], menu.get_title(k), current);
+			f_step_value(k, i, delta, value_representations[k], menu.get_title(k), current);
 			++i;
 		}
 	}
@@ -141,14 +143,14 @@ class menu_representation
 	void				set_config(menu_representation_config cfg) {config=cfg;}
 
 	//!Sets the external function. The vector is to be filled with as many representations as needed for the key.
-	void				set_register_name_function(std::function<void(const T&, std::vector<ldv::representation*>&)> frn) {f_register_name=frn;}
-	void				set_register_value_function(std::function<void(const T&, std::vector<ldv::representation*>&)> frv) {f_register_value=frv;}
+	void				set_register_name_function(tfunc_register frn) {f_register_name=frn;}
+	void				set_register_value_function(tfunc_register frv) {f_register_value=frv;}
 	//!Sets the external function. The vector contains the previously inserted representations. A certain amount of static_cast is expected.
-	void 				set_draw_name_function(std::function<void(const T&, size_t, const std::vector<ldv::representation*>&, const std::string&, bool)> fdn) {f_draw_name=fdn;}
-	void				set_draw_value_function(std::function<void(const T&, size_t, const std::vector<ldv::representation*>&, const std::string&, bool)> fdv) {f_draw_value=fdv;}
+	void 				set_draw_name_function(tfunc_draw fdn) {f_draw_name=fdn;}
+	void				set_draw_value_function(tfunc_draw fdv) {f_draw_value=fdv;}
 	//!Sets the external function. Similar to draw, but a delta value. Will be used if the step function is called.
-	void 				set_step_name_function(std::function<void(const T&, size_t, float, const std::vector<ldv::representation*>&, const std::string&, bool)> fsn) {f_step_name=fsn;}
-	void				set_step_value_function(std::function<void(const T&, size_t, float, const std::vector<ldv::representation*>&, const std::string&, bool)> fsv) {f_step_value=fsv;}
+	void 				set_step_name_function(tfunc_step fsn) {f_step_name=fsn;}
+	void				set_step_value_function(tfunc_step fsv) {f_step_value=fsv;}
 
 	//!Advances to the next menu item. Will wrap if allowed.
 	void				next()
@@ -168,6 +170,7 @@ class menu_representation
 		regenerate_representations();
 	}
 
+	void				select_option(size_t v) {select_option(index_to_t[v]);}
 	void				select_option(T k)
 	{
 		for(const auto& p : index_to_t) 
@@ -237,15 +240,15 @@ class menu_representation
 	}
 
 	//references
-	tools::options_menu<T>&		menu;
+	tools::options_menu<T>&				menu;
 
 	//functions
-	std::function<void(const T&, std::vector<ldv::representation*>&)> 	f_register_name;
-	std::function<void(const T&, std::vector<ldv::representation*>&)> 	f_register_value;
-	std::function<void(const T&, size_t, const std::vector<ldv::representation*>&, const std::string&, bool)>	f_draw_name;
-	std::function<void(const T&, size_t, const std::vector<ldv::representation*>&, const std::string&, bool)>	f_draw_value;
-	std::function<void(const T&, size_t, float, const std::vector<ldv::representation*>&, const std::string&, bool)>	f_step_name;
-	std::function<void(const T&, size_t, float, const std::vector<ldv::representation*>&, const std::string&, bool)>	f_step_value;
+	tfunc_register					f_register_name,
+							f_register_value;
+	tfunc_draw					f_draw_name,
+							f_draw_value;
+	tfunc_step					f_step_name,
+							f_step_value;
 
 	//properties
 

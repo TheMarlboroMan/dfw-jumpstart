@@ -72,7 +72,17 @@ main_menu_layout: [
 	},
 	{
 		type:"external",
-		ref:"menu_selections",
+		ref:"menu_main",
+		order:20
+	},
+	{
+		type:"external",
+		ref:"menu_options",
+		order:20
+	},
+	{
+		type:"external",
+		ref:"menu_controls",
 		order:20
 	},
 	{

@@ -51,13 +51,13 @@ void state_driver::prepare_video(dfw::kernel& kernel)
 		wl=config.int_from_path("config:video:window_w_px"),
 		hl=config.int_from_path("config:video:window_h_px");
 
-	screen.init(wf, hf);
+	screen.set_size(wf, hf);
 	screen.set_logical_size(wl, hl);
 }
 
-void state_driver::register_controllers(dfw::kernel& /*kernel*/)
+void state_driver::register_controllers(dfw::kernel& kernel)
 {
-	c_menu.reset(new controller_menu(*s_resources));
+	c_menu.reset(new controller_menu(*s_resources, config, kernel.get_screen()));
 	c_test_2d.reset(new controller_test_2d(*s_resources));
 	c_test_2d_text.reset(new controller_test_2d_text(*s_resources));
 	c_console.reset(new controller_console(*s_resources));

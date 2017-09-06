@@ -28,5 +28,6 @@ controls:[
 	{k:"30_LEFT", m:"string", t:1062},
 	{k:"40_RIGHT", m:"string", t:1063},
 	{k:"50_ACTIVATE", m:"string", t:1064},
+	{k:"55_RESTORE", m:"void", t:1067},
 	{k:"60_BACK", m:"void", t:1065}
 ]

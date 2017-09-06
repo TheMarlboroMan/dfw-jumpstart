@@ -57,37 +57,19 @@ dfw::window_info kernel_config::get_window_info() const
 
 std::vector<dfw::input_pair> kernel_config::get_input_pairs() const
 {
-	auto type_from_config=[](int t)
-	{
-		using namespace dfw;
-
-		switch(t)
-		{
-			case 0: return input_pair::types::keyboard; break;
-			case 1: return input_pair::types::joystick; break;
-			case 2: return input_pair::types::mouse; break;
-		}
-
-		return input_pair::types::keyboard;
-	};
-
 	using namespace dfw;
 
-	std::map<int, app_config::user_input> usr_map {
-		{input_app::left, 	config.token_from_path_input("left")},
-		{input_app::right, 	config.token_from_path_input("right")},
-		{input_app::up, 	config.token_from_path_input("up")},
-		{input_app::down, 	config.token_from_path_input("down")},
-		{input_app::activate, 	config.token_from_path_input("activate")},
-		{input_app::console_newline, 	config.token_from_path_input("console_newline")},
-		{input_app::console_backspace, 	config.token_from_path_input("console_backspace")}
+	return std::vector<input_pair> {
+		{{input_description::types::keyboard, SDL_SCANCODE_ESCAPE, 0}, input_app::escape},
+		{input_description_from_config_token(config.token_from_path("config:input:left")), input_app::left},
+		{input_description_from_config_token(config.token_from_path("config:input:right")), input_app::right},
+		{input_description_from_config_token(config.token_from_path("config:input:up")), input_app::up},
+		{input_description_from_config_token(config.token_from_path("config:input:down")), input_app::down},
+		{input_description_from_config_token(config.token_from_path("config:input:activate")), input_app::activate},
+		{input_description_from_config_token(config.token_from_path("config:input:console_newline")), input_app::console_newline},
+		{input_description_from_config_token(config.token_from_path("config:input:console_backspace")), input_app::console_backspace}
 #ifdef WDEBUG_CODE
-		,{input_app::reload_debug_config, config.token_from_path_input("reload_debug_config")}
+		,{input_description_from_config_token(config.token_from_path("config:input:reload_debug_config")), input_app::reload_debug_config}
 #endif
 	};
-
-	std::vector<input_pair> res{input_pair{input_pair::types::keyboard, input_app::escape, SDL_SCANCODE_ESCAPE, 0}};
-	for(const auto& p : usr_map) res.push_back({type_from_config(p.second.type), p.first, p.second.code, p.second.device});
-
-	return res;
 }

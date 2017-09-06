@@ -22,35 +22,6 @@ class app_config:
 
 	app_config();
 
-	struct user_input
-	{
-		enum devs{keyboard=0, joystick=1, mouse=2, none=3};
-		int type, device, code;
-	};
-
-	static user_input fw_to_config(dfw::input::input_description& e)
-	{
-		int type=user_input::none;
-
-		switch(e.type)
-		{
-			case dfw::input::input_description::types::keyboard: 	type=user_input::keyboard; break;
-			case dfw::input::input_description::types::joystick: 	type=user_input::joystick; break;
-			case dfw::input::input_description::types::mouse:	type=user_input::mouse; break;
-			case dfw::input::input_description::types::none: 	type=user_input::none; break;
-		}
-
-		return user_input{type, e.device, e.code};
-	};
-
-	//Returns a user_input object to get type (key, joy, mouse...), device (for multiple joysticks) and internal code.
-	//The values of the keys (for the config file) can be found in SDL_scancode.h
-	user_input token_from_path_input(const std::string& tipo) const
-	{	
-		const auto& tok=token_from_path("config:input:"+tipo);
-		return user_input{tok[0], tok[1], tok[2]};
-	}
-
 	//Fullfillment of the kernel interface.
 
 	virtual std::string generate_file_version() const {return "1";}
@@ -71,6 +42,11 @@ class app_config:
 
 	std::string get_file_path() const {return "data/config/config.dnot";}
 };
+
+dfw::input_description 		input_description_from_config_token(const tools::dnot_token&);
+tools::dnot_token		config_token_from_input_description(const dfw::input_description&);
+dfw::input_description::types	input_description_type_from_int(int);
+int				input_description_int_from_type(dfw::input_description::types);
 
 }
 #endif

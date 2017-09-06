@@ -33,7 +33,8 @@ enum signal_types{
 	t_signal_video_vsync,
 	t_signal_audio_volume,
 	t_signal_music_volume,
-	t_signal_save_configuration
+	t_signal_save_configuration,
+	t_signal_save_controls
 };
 
 struct signal_text_display:public dfw::broadcast_signal
@@ -75,6 +76,11 @@ struct signal_music_volume:public dfw::broadcast_signal
 struct signal_save_configuration:public dfw::broadcast_signal
 {
 	virtual int 			get_type() const {return t_signal_save_configuration;}
+};
+
+struct signal_save_controls:public dfw::broadcast_signal
+{
+	virtual int 			get_type() const {return t_signal_save_controls;}
 };
 
 }

@@ -72,9 +72,9 @@ void controller_menu::draw(ldv::screen& screen, int fps)
 //be redefined: we check for the app input but also for the fixed scancode.
 void controller_menu::do_main_menu_input(dfw::input& input)
 {
- 	if(input.is_input_down(input_app::escape))	set_leave(true);
+ 	if(input.is_input_down(input_app::escape))						set_leave(true);
 	else if(input.is_input_down(input_app::up) || input().is_key_down(SDL_SCANCODE_UP)) 	main_menu_rep.previous();
-	else if(input.is_input_down(input_app::down) || input().is_key_down(SDL_SCANCODE_DOWN)) 	main_menu_rep.next();
+	else if(input.is_input_down(input_app::down) || input().is_key_down(SDL_SCANCODE_DOWN)) main_menu_rep.next();
 	else if(input.is_input_down(input_app::activate) || input().is_key_down(SDL_SCANCODE_RETURN)) 
 	{
 		switch(main_menu_rep.get_current_index()) //An alternative is to use get_current_key() and use std::strings.
@@ -91,19 +91,17 @@ void controller_menu::do_main_menu_input(dfw::input& input)
 //Logic for the controls menu...
 void controller_menu::do_controls_menu_input(dfw::input& input)
 {
- 	if(input.is_input_down(input_app::escape))	choose_current_menu(main_menu_rep);
-	else if(input.is_input_down(input_app::up) || input().is_key_down(SDL_SCANCODE_UP)) 	controls_menu_rep.previous();
+ 	if(input.is_input_down(input_app::escape))							choose_current_menu(main_menu_rep);
+	else if(input.is_input_down(input_app::up) || input().is_key_down(SDL_SCANCODE_UP)) 		controls_menu_rep.previous();
 	else if(input.is_input_down(input_app::down) || input().is_key_down(SDL_SCANCODE_DOWN)) 	controls_menu_rep.next();
 	else if(input.is_input_down(input_app::activate) || input().is_key_down(SDL_SCANCODE_RETURN)) 
 	{
 		switch(controls_menu_rep.get_current_index())
 		{
-			default:
-				//TODO: This is going to be much more fun!!.
-				//TODO: Save changed stuff...
-			break;
-			case 5: 
-				//broadcaster.send_signal(signal_save_controls);
+			default: learn_control(input); break;
+			case 5: restore_default_controls(input); break;
+			case 6: 
+				broadcaster.send_signal(signal_save_controls{});
 				choose_current_menu(main_menu_rep);
 			break;
 		}
@@ -125,13 +123,12 @@ void controller_menu::do_options_menu_input(dfw::input& input, float delta)
 		key_held_time+=delta;
 	};
 
-
 	//f_dir is returned so key_held_time is not reset.
- 	if(input.is_input_down(input_app::escape))	choose_current_menu(main_menu_rep);
-	else if(input.is_input_down(input_app::up) || input().is_key_down(SDL_SCANCODE_UP)) 	options_menu_rep.previous();
-	else if(input.is_input_down(input_app::down) || input().is_key_down(SDL_SCANCODE_DOWN)) options_menu_rep.next();
-	else if(input.is_input_pressed(input_app::left) || input().is_key_pressed(SDL_SCANCODE_LEFT)) return f_dir(-1);
-	else if(input.is_input_pressed(input_app::right) || input().is_key_down(SDL_SCANCODE_RIGHT)) return f_dir(1);
+ 	if(input.is_input_down(input_app::escape))							choose_current_menu(main_menu_rep);
+	else if(input.is_input_down(input_app::up) || input().is_key_down(SDL_SCANCODE_UP)) 		options_menu_rep.previous();
+	else if(input.is_input_down(input_app::down) || input().is_key_down(SDL_SCANCODE_DOWN)) 	options_menu_rep.next();
+	else if(input.is_input_pressed(input_app::left) || input().is_key_pressed(SDL_SCANCODE_LEFT)) 	return f_dir(-1);
+	else if(input.is_input_pressed(input_app::right) || input().is_key_down(SDL_SCANCODE_RIGHT)) 	return f_dir(1);
 	else if(input.is_input_down(input_app::activate) || input().is_key_down(SDL_SCANCODE_RETURN)) 
 	{
 		if(options_menu_rep.get_current_index()==4)
@@ -144,6 +141,93 @@ void controller_menu::do_options_menu_input(dfw::input& input, float delta)
 	key_held_time=0.f;
 }
 
+void controller_menu::learn_control(dfw::input& input)
+{
+	int it=0;
+	switch(controls_menu_rep.get_current_index())
+	{
+		case 0: it=input_app::up; break;
+		case 1: it=input_app::down; break;
+		case 2: it=input_app::left; break;
+		case 3: it=input_app::right; break;
+		case 4: it=input_app::activate; break;
+	}
+
+	//This is the input learning function...
+	auto f=[this, &input, it](SDL_Event& e, ldi::sdl_input::tf_default& df)
+	{
+		dfw::input_description::types t=dfw::input_description::types::none;
+		int code=0, device=0;
+
+		if(e.type==SDL_KEYDOWN)
+		{
+			t=dfw::input_description::types::keyboard;
+			code=e.key.keysym.scancode;
+		}
+		else if(e.type==SDL_MOUSEBUTTONDOWN)
+		{
+			t=dfw::input_description::types::mouse;
+			code=e.button.button;
+		}
+		else if(e.type==SDL_JOYBUTTONDOWN)
+		{
+			t=dfw::input_description::types::joystick;
+			code=e.jbutton.button;
+			device=input().get_joystick_index_from_id(e.jbutton.which);
+		}
+		else //Any other thing and we resort to the default treatment.
+		{
+			df(e);
+			return true;
+		}
+
+		//Clear and configure...
+		input.clear(it);
+		input.configure(input.from_description({t, code, device}, it));
+
+		//Set the new value, force refresh.
+		controls_menu.set_string(controls_menu_rep.get_current_key(), translate_input(input.locate_description(it)));
+		controls_menu_rep.refresh();
+
+		//End the "learn" mode.
+		input().reset_event_processing_function();
+		return true;
+	};
+
+	//Begin the "learn" mode.
+	input().set_event_processing_function(f);
+
+	//Show a "learning" message...
+	controls_menu.set_string(controls_menu_rep.get_current_key(), menu_localization.get(1066));
+	controls_menu_rep.refresh();
+}
+
+void controller_menu::restore_default_controls(dfw::input& input)
+{
+	auto f=[&input, this](int it, int code, const std::string& key)
+	{
+		input.clear(it);
+		input.configure(input.from_description({dfw::input_description::types::keyboard, code, 0}, it));
+		try
+		{
+			controls_menu.set_string(key, translate_input(input.locate_description(it)));
+		}
+		catch(std::exception& e)
+		{
+			std::cout<<e.what()<<std::endl;
+			throw;
+		}
+	};
+
+	f(input_app::up, SDL_SCANCODE_UP, "10_UP");
+	f(input_app::down, SDL_SCANCODE_DOWN, "20_DOWN");
+	f(input_app::left, SDL_SCANCODE_LEFT, "30_LEFT");
+	f(input_app::right, SDL_SCANCODE_RIGHT, "40_RIGHT");
+	f(input_app::activate, SDL_SCANCODE_SPACE ,"50_ACTIVATE");
+	controls_menu_rep.refresh();
+}
+
+//Sends signal to update a particular options key.
 void controller_menu::update_options_value(const std::string& key)
 {
 	if(key=="10_VIDEO_SIZE")
@@ -210,7 +294,7 @@ void controller_menu::create_functions()
 	{
 		auto& r=*(static_cast<ldv::ttf_representation*>(v[0]));
 		draw_txt(r, index, val, current, ldv::ttf_representation::text_align::right);
-		r.align({0,0,500,1}, {alh::inner_right, alv::none, 0, 0});
+		r.align({0,0,450,1}, {alh::inner_right, alv::none, 0, 0});
 	};
 
 	//Draws the value part of a menu with key and value.
@@ -219,7 +303,7 @@ void controller_menu::create_functions()
 		if(!v.size()) return; //Some options may not have a value...
 		auto& r=*(static_cast<ldv::ttf_representation*>(v[0]));
 		draw_txt(r, index, val, current, ldv::ttf_representation::text_align::left);
-		r.align({520,0,700,1}, {alh::inner_left, alv::none, 0, 0});
+		r.align({470,0,700,1}, {alh::inner_left, alv::none, 0, 0});
 	};
 
 	draw_funcs[df_empty]=[](const std::string& , size_t, const std::vector<ldv::representation*>&, const std::string&, bool) {};
@@ -287,11 +371,11 @@ void controller_menu::mount_menus()
 	//Control menus...
 	mount_menu(controls_menu, "data/app_data/menus.dat", "controls");
 
-	controls_menu.set_string("10_UP", translate_input(config.token_from_path("config:input:up")));
-	controls_menu.set_string("20_DOWN", translate_input(config.token_from_path("config:input:down")));
-	controls_menu.set_string("30_LEFT", translate_input(config.token_from_path("config:input:left")));
-	controls_menu.set_string("40_RIGHT", translate_input(config.token_from_path("config:input:right")));
-	controls_menu.set_string("50_ACTIVATE", translate_input(config.token_from_path("config:input:activate")));
+	controls_menu.set_string("10_UP", translate_input(input_description_from_config_token(config.token_from_path("config:input:up"))));
+	controls_menu.set_string("20_DOWN", translate_input(input_description_from_config_token(config.token_from_path("config:input:down"))));
+	controls_menu.set_string("30_LEFT", translate_input(input_description_from_config_token(config.token_from_path("config:input:left"))));
+	controls_menu.set_string("40_RIGHT", translate_input(input_description_from_config_token(config.token_from_path("config:input:right"))));
+	controls_menu.set_string("50_ACTIVATE", translate_input(input_description_from_config_token(config.token_from_path("config:input:activate"))));
 
 	init_menu(controls_menu_rep, register_funcs[rf_txt], register_funcs[rf_txt], 
 			draw_funcs[df_txt_left_composite], draw_funcs[df_txt_right_composite],
@@ -299,23 +383,22 @@ void controller_menu::mount_menus()
 }
 
 //Translates a token from the config file (input part) to human format.
-std::string controller_menu::translate_input(const tools::dnot_token& tok)
+std::string controller_menu::translate_input(const dfw::input_description& id)
 {
-	const auto& id=dfw::input_description_from_config_token(tok);
 	std::string res;
 
 	switch(id.type)
 	{
-		case dfw::input::input_description::types::none:
+		case dfw::input_description::types::none:
 			res=menu_localization.get(1104);
 		break;
-		case dfw::input::input_description::types::keyboard: 
+		case dfw::input_description::types::keyboard: 
 			res=menu_localization.get(1100)+" "+std::string(SDL_GetKeyName(SDL_GetKeyFromScancode((SDL_Scancode)id.code)));
 		break;
-		case dfw::input::input_description::types::joystick: 
+		case dfw::input_description::types::joystick: 
 			res=menu_localization.get(1101)+" "+compat::to_string(id.device)+" "+menu_localization.get(1102)+" "+compat::to_string(id.code);
 		break;
-		case dfw::input::input_description::types::mouse: 
+		case dfw::input_description::types::mouse: 
 			res=menu_localization.get(1103)+" "+menu_localization.get(1102)+" "+compat::to_string(id.code);
 		break;
 	}

@@ -49,8 +49,10 @@ class controller_menu:
 	void					do_main_menu_input(dfw::input&);
 	void					do_options_menu_input(dfw::input&, float);
 	void					do_controls_menu_input(dfw::input&);
-	std::string				translate_input(const tools::dnot_token&);
+	std::string				translate_input(const dfw::input_description&);
 	void					update_options_value(const std::string&);
+	void					learn_control(dfw::input&);
+	void					restore_default_controls(dfw::input&);
 
 	//This encapsulates a representation and its logic: the background moving bars.
 	struct bar_struct

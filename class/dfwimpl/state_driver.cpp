@@ -172,10 +172,16 @@ void state_driver::receive_signal(dfw::kernel& kernel, const dfw::broadcast_sign
 			config.set<int>("config:audio:music_volume", kernel.get_audio()().get_main_music_volume());
 			config.set("config:video:vsync", ldv::get_vsync());
 			config.set("config:video:fullscreen", kernel.get_screen().is_fullscreen());
-
-//TODO: The video resolution thing is.. failing.
 			config.set<int>("config:video:window_w_px", kernel.get_screen().get_w());
 			config.set<int>("config:video:window_h_px", kernel.get_screen().get_h());                                
+			config.save();
+		break;
+		case t_signal_save_controls:
+			config.set<tools::dnot_token>("config:input:up", 	config_token_from_input_description(kernel.get_input().locate_description(input_app::up)));
+			config.set<tools::dnot_token>("config:input:down",  	config_token_from_input_description(kernel.get_input().locate_description(input_app::down)));
+			config.set<tools::dnot_token>("config:input:left", 	config_token_from_input_description(kernel.get_input().locate_description(input_app::left)));
+			config.set<tools::dnot_token>("config:input:right", 	config_token_from_input_description(kernel.get_input().locate_description(input_app::right)));
+			config.set<tools::dnot_token>("config:input:activate", 	config_token_from_input_description(kernel.get_input().locate_description(input_app::activate)));
 			config.save();
 		break;
 	}

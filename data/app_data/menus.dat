@@ -10,11 +10,8 @@ options:[
 	{k:"10_VIDEO_SIZE", m:"templated", t:1010, mt:"string", o:[
 		{k:"10_WINDOW_SIZE_10", v: "700x500", t:1011},
 		{k:"10_WINDOW_SIZE_20", v: "1100x750", t:1012},
-		{k:"10_WINDOW_SIZE_30", v: "1400x1000", t:1013}]
-	},
-	{k:"20_VIDEO_FULLSCREEN", m:"templated", t:1020, mt:"bool", o:[
-		{k:"20_VIDEO_FULLSCREEN_10", v: false, t:1022},
-		{k:"20_VIDEO_FULLSCREEN_20", v: true, t:1021}]
+		{k:"10_WINDOW_SIZE_30", v: "1400x1000", t:1013},
+		{k:"10_WINDOW_SIZE_40", v: "fullscreen", t:1014}]
 	},
 	{k:"25_VIDEO_VSYNC", m:"templated", t:1025, mt:"bool", o:[
 		{k:"25_VIDEO_VSYNC_10", v: false, t:1027},

@@ -17,6 +17,7 @@
 #include "../controllers/test_2d_text.h"
 #include "../controllers/fps_test.h"
 #include "../controllers/console.h"
+#include "../controllers/signals.h"
 
 //Specific app_config
 #include "../app/shared_resources.h"
@@ -38,14 +39,20 @@ class state_driver:
 	virtual void					prepare_state(int, int);
 	virtual float					get_max_timestep() const {return 0.03f;}
 
+	void						receive_signal(dfw::kernel&, const dfw::broadcast_signal&);
+
 	private:
 
 	void						prepare_video(dfw::kernel&);
 	void						register_controllers(dfw::kernel&);
 	void 						virtualize_input(dfw::input& input);
+	void						setup_signal_receiver(dfw::kernel&);
 
+	//references
 	app::app_config&				config;
 	ldt::log&					log;
+
+	app_receiver					receiver;
 
 	std::unique_ptr<shared_resources>		s_resources;
 	std::unique_ptr<controller_menu>		c_menu;

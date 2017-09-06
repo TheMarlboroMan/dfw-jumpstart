@@ -11,12 +11,13 @@
 
 using namespace app;
 
-controller_test_2d_text::controller_test_2d_text(shared_resources& sr)
+controller_test_2d_text::controller_test_2d_text(shared_resources& sr, dfw::signal_dispatcher& sd)
 try
-	:s_resources(sr), 
+	:s_resources(sr), receiver(sd),
 	state(tstates::dictate), current_index(0),
 	time_text(0.f), time_blink(0.f)
 {
+	setup_signal_receiver();
 	layout.map_font("main_text_font", s_resources.get_ttf_manager().get("consola-mono", 16));
 	layout.parse("data/app_data/layouts.dat", "text_bubble_layout");
 }
@@ -108,20 +109,29 @@ void controller_test_2d_text::request_draw(dfw::controller_view_manager& cvm)
 	cvm.add_ptr(this);
 }
 
-void controller_test_2d_text::receive(const dfw::broadcast_message& msg)
+void controller_test_2d_text::receive(const dfw::broadcast_signal& signal)
 {
-	if(msg.type==0)
+	switch(signal.get_type())
 	{
-		text_buffer=tools::explode(msg.tok["data"]["txt"], "[@np]");
-		current_index=0;
-		state=tstates::dictate;
-		time_blink=0.f;
-		time_text=0.f;
-		redraw_text();
+		case t_signal_text_display:
+			text_buffer=tools::explode(static_cast<const signal_text_display&>(signal).text, "[@np]");
+			current_index=0;
+			state=tstates::dictate;
+			time_blink=0.f;
+			time_text=0.f;
+			redraw_text();
+		break;
 	}
 }
+
 
 void controller_test_2d_text::redraw_text()
 {
 	static_cast<ldv::ttf_representation *>(layout.get_by_id("main_text"))->set_text(std::begin(text_buffer)->substr(0, current_index));
+}
+
+//Forwards...
+void controller_test_2d_text::setup_signal_receiver()
+{
+	receiver.f=[this](const dfw::broadcast_signal& s) {receive(s);};
 }

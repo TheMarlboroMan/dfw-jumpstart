@@ -14,6 +14,7 @@
 
 //framework
 #include <class/controller_interface.h>
+#include <class/signal_broadcasting.h>
 
 //local
 #include "states.h"
@@ -30,7 +31,7 @@ class controller_menu:
 {
 	public:
 
-						controller_menu(shared_resources&, app_config&, ldv::screen&);
+						controller_menu(shared_resources&, dfw::signal_dispatcher&, app_config&);
 	virtual void 				preloop(dfw::input&, float, int) {}
 	virtual void 				loop(dfw::input& input, float delta);
 	virtual void 				postloop(dfw::input&, float, int) {}
@@ -78,7 +79,9 @@ class controller_menu:
 	//references...
 	shared_resources&				s_resources;
 	app_config&					config;
-	ldv::screen&					ref_screen;
+
+	//Broadcasting...
+	dfw::signal_broadcaster				broadcaster;
 
 	std::map<int, menu_representation<std::string>::tfunc_register>	register_funcs;
 	std::map<int, menu_representation<std::string>::tfunc_draw>	draw_funcs;

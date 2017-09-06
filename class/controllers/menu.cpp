@@ -7,13 +7,14 @@
 #include <templates/compatibility_patches.h>
 
 //local
+#include "signals.h"
 #include "../input.h"
 #include "../app/audio_defs.h"
 
 using namespace app;
 
-controller_menu::controller_menu(shared_resources& s, app_config& c, ldv::screen& sc)
-	:s_resources(s), config(c), ref_screen(sc),
+controller_menu::controller_menu(shared_resources& s, dfw::signal_dispatcher& sd, app_config& c)
+	:s_resources(s), config(c), broadcaster(sd),
 	main_menu_rep(main_menu),
 	options_menu_rep(options_menu),
 	controls_menu_rep(controls_menu),
@@ -21,6 +22,8 @@ controller_menu::controller_menu(shared_resources& s, app_config& c, ldv::screen
 	key_held_time{0.f},
 	flicker{false, false, 1.f}
 {
+	
+
 	create_functions();
 	mount_menus();
 	mount_layout();
@@ -74,7 +77,7 @@ void controller_menu::do_main_menu_input(dfw::input& input)
 	else if(input.is_input_down(input_app::down) || input().is_key_down(SDL_SCANCODE_DOWN)) 	main_menu_rep.next();
 	else if(input.is_input_down(input_app::activate) || input().is_key_down(SDL_SCANCODE_RETURN)) 
 	{
-		switch(main_menu_rep.get_current_index()) 		//An alternative is to use get_current_key() and use std::strings.
+		switch(main_menu_rep.get_current_index()) //An alternative is to use get_current_key() and use std::strings.
 		{
 			case 0: /*start*/ break;
 			case 1: /*continue*/break;
@@ -99,7 +102,10 @@ void controller_menu::do_controls_menu_input(dfw::input& input)
 				//TODO: This is going to be much more fun!!.
 				//TODO: Save changed stuff...
 			break;
-			case 5: choose_current_menu(main_menu_rep);	break;
+			case 5: 
+				//broadcaster.send_signal(signal_save_controls);
+				choose_current_menu(main_menu_rep);
+			break;
 		}
 	}
 }
@@ -107,36 +113,30 @@ void controller_menu::do_controls_menu_input(dfw::input& input)
 //Logic for the options menu...
 void controller_menu::do_options_menu_input(dfw::input& input, float delta)
 {
+	auto f_dir=[delta, this](int dir) -> void
+	{
+		if(!key_held_time) s_resources.get_audio().play_sound(s_resources.get_audio_resource_manager().get_sound(sound_defs::menu_change));
+
+		if(key_held_time > 0.4f || !key_held_time) 
+		{
+			options_menu_rep.browse_current(dir);
+			update_options_value(options_menu_rep.get_current_key());
+		}
+		key_held_time+=delta;
+	};
+
+
+	//f_dir is returned so key_held_time is not reset.
  	if(input.is_input_down(input_app::escape))	choose_current_menu(main_menu_rep);
 	else if(input.is_input_down(input_app::up) || input().is_key_down(SDL_SCANCODE_UP)) 	options_menu_rep.previous();
 	else if(input.is_input_down(input_app::down) || input().is_key_down(SDL_SCANCODE_DOWN)) options_menu_rep.next();
-	else if(input.is_input_pressed(input_app::left) || input().is_key_pressed(SDL_SCANCODE_LEFT))
-	{
-		if(key_held_time > 0.4f || !key_held_time) 
-		{
-			s_resources.get_audio().play_sound(s_resources.get_audio_resource_manager().get_sound(sound_defs::menu_change));
-			options_menu_rep.browse_current(-1);
-			update_options_value(options_menu_rep.get_current_key());
-		}
-		key_held_time+=delta;
-		return; //So key held time does not reset.
-	}
-	else if(input.is_input_pressed(input_app::right) || input().is_key_down(SDL_SCANCODE_RIGHT))
-	{
-		if(key_held_time > 0.4f || !key_held_time) 
-		{
-			s_resources.get_audio().play_sound(s_resources.get_audio_resource_manager().get_sound(sound_defs::menu_change));
-			options_menu_rep.browse_current(1);
-			update_options_value(options_menu_rep.get_current_key());
-		}
-		key_held_time+=delta;
-		return;
-	}
+	else if(input.is_input_pressed(input_app::left) || input().is_key_pressed(SDL_SCANCODE_LEFT)) return f_dir(-1);
+	else if(input.is_input_pressed(input_app::right) || input().is_key_down(SDL_SCANCODE_RIGHT)) return f_dir(1);
 	else if(input.is_input_down(input_app::activate) || input().is_key_down(SDL_SCANCODE_RETURN)) 
 	{
 		if(options_menu_rep.get_current_index()==4)
 		{
-			//TODO: Save changes!!!!!!
+			broadcaster.send_signal(signal_save_configuration{});
 			choose_current_menu(main_menu_rep); 
 		}
 	}
@@ -146,30 +146,21 @@ void controller_menu::do_options_menu_input(dfw::input& input, float delta)
 
 void controller_menu::update_options_value(const std::string& key)
 {
-	//TODO: Why don't send a message down the manager for these things?.
-	//we could call it a "signal". 
-	//It would be better than to inject this reference...
-
 	if(key=="10_VIDEO_SIZE")
 	{
-		const auto& parts=tools::explode(options_menu.get_value_templated<std::string>(key), 'x');
-		ref_screen.set_size(std::atoi(parts[0].c_str()), std::atoi(parts[1].c_str()));
-	}
-	else if(key=="20_VIDEO_FULLSCREEN")
-	{
-		ref_screen.set_fullscreen(options_menu.get_value_templated<bool>(key));
+		broadcaster.send_signal(signal_video_size(options_menu.get_value_templated<std::string>(key)));
 	}
 	else if(key=="25_VIDEO_VSYNC")
 	{
-		ldv::set_vsync(options_menu.get_value_templated<bool>(key));
+		broadcaster.send_signal(signal_video_vsync{options_menu.get_value_templated<bool>(key)});
 	}
 	else if(key=="30_SOUND_VOLUME")
 	{
-		s_resources.get_audio()().set_main_sound_volume(options_menu.get_int(key));
+		broadcaster.send_signal(signal_audio_volume{options_menu.get_int(key)});
 	}
 	else if(key=="40_MUSIC_VOLUME")
 	{
-		s_resources.get_audio()().set_main_music_volume(options_menu.get_int(key));
+		broadcaster.send_signal(signal_music_volume{options_menu.get_int(key)});
 	}
 }
 
@@ -278,11 +269,13 @@ void controller_menu::mount_menus()
 	//Options menu..
 	mount_menu(options_menu, "data/app_data/menus.dat", "options");
 
-	std::string window_size=compat::to_string(config.int_from_path("config:video:window_w_px"))
+
+	std::string window_size=config.bool_from_path("config:video:fullscreen")
+		? "fullscreen"
+		: compat::to_string(config.int_from_path("config:video:window_w_px"))
 				+"x"+compat::to_string(config.int_from_path("config:video:window_h_px"));
 
 	options_menu.set_by_value_templated("10_VIDEO_SIZE", window_size);
-	options_menu.set_by_value_templated("20_VIDEO_FULLSCREEN", config.bool_from_path("config:video:fullscreen"));
 	options_menu.set_by_value_templated("25_VIDEO_VSYNC", config.bool_from_path("config:video:vsync"));
 	options_menu.set_int("30_SOUND_VOLUME", config.int_from_path("config:audio:sound_volume"));
 	options_menu.set_int("40_MUSIC_VOLUME", config.int_from_path("config:audio:music_volume"));

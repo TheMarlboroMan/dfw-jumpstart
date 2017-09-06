@@ -13,6 +13,7 @@
 
 //local
 #include "states.h"
+#include "signals.h"
 
 //app
 #include "../app/room.h"
@@ -31,7 +32,7 @@ class controller_test_2d:
 {
 	public:
 
-						controller_test_2d(shared_resources&);
+						controller_test_2d(shared_resources&, dfw::signal_dispatcher&);
 
 	virtual void 				preloop(dfw::input&, float, int) {}
 	virtual void 				loop(dfw::input& input, float delta);
@@ -40,9 +41,6 @@ class controller_test_2d:
 	virtual void 				awake(dfw::input&) {}
 	virtual void 				slumber(dfw::input&) {}
 	virtual bool				can_leave_state() const;
-
-	// message broadcasting
-	virtual bool				is_broadcaster() const {return true;}
 
 	// Action dispatchers.
 	void					do_room_change(const std::string&, int);
@@ -56,6 +54,9 @@ class controller_test_2d:
 
 	//references...
 	shared_resources&				s_resources;
+
+	//broadcasting
+	dfw::signal_broadcaster				broadcaster;
 
 	//properties
 	ldv::camera					game_camera;

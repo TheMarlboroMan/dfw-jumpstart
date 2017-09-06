@@ -18,9 +18,9 @@ There are a few controllers here:
 - a very simple console with four commands or so (first try to implement one) 
 	- Demonstrates a very simple controller with text input.
 - a little game-like thing in axonometric 2d perspective (think snes rpg). 
-	- Demonstrates screen-coordinates camera, implementation of application classes, use of animations and frames, screen representations, input, SAT collision, message broadcasting...
+	- Demonstrates screen-coordinates camera, implementation of application classes, use of animations and frames, screen representations, input, SAT collision, signal broadcasting...
 - a game thing companion that displays texts along the previous controller.
-	- Demonstrates multi-controller drawing and message broadcasting.
+	- Demonstrates multi-controller drawing and signal broadcasting.
 - a very simple frames-per-second test, not accesible.
 
 The rest of this text file includes:
@@ -58,48 +58,48 @@ Here are a few things that need to be done in a regular basis.
 
 It is a bit clunky, but does not take more than 5 minutes.
 
-###Do message broadcasting between controllers:
+###Do signal broadcasting between controllers and with the state_driver
 
-Message broadcasting is a way to share scalar information between controllers,
-like for example, strings, integers or data types that can be represented from
-primitives. Controllers can be setup as broadcasters and receivers separatedly.
-Information is broadcast in two data items:
+There are a few classes in the dfw header "signal_broadcasting.h" which allow
+to setup a signal system. The concepts are:
 
-	- an integer type.
-	- a dnot for the rest.
+- a broadcast_signal: the message to be sent. It is virtual since each message
+	may have its own data.
+- a receiver: the entity that receives a message. It may later choose to discard
+	or interpret it. Since the receiver is designed to work by composition,
+	you will need to use a lambda to make your controller's method accesible
+	to it.
+- sender: the entity that sends.
+- a dispatcher: registers all receivers and senders alike. Through it, the
+	sender may send a signal that will be dispatched to all receivers.
 
-For each controller that can broadcast add this method (if you fail, an exception will be thrown when broadcasting).
+The easiest thing to do here is:
 
-	// message broadcasting
+- Create you own signal header (usually in the controllers directory). In there:
+	- Extend the receiver with your own (so, for example, injects automatically).
+	- Setup your signals, extended from the original.
+- When you need to setup a sender:
+	- In your state driver, inject the dispatcher (get_signal_dispatcher())
+	into your controller.
+	- In your controller, create a sender object (dfw::signal_broadcaster)
+	and use the dispatcher to construct it.
+	- Send a message through the sender object.
+- When you need to setup a receiver:
+ 	- In your state driver, inject the dispatcher (get_signal_dispatcher())
+	into your controller.
+	- In your controller, use your own receiver object with the dispatcher.
+	- In your controller, set up a lambda function into the receiver so it
+	forwards to your own controller logic.
+	- In your controller, setup your controller logic for receiving a 
+	signal (it will usually involve checking the message type (get_type())
+	and later doing static casting.
 
-	public:
+There's an example of this between the test_2d and test_2d_text controllers.
 
-	virtual bool			is_broadcaster() const {return true;}
-
-For each controller that can receive add these ones (if you fail to add a receive method an exception will be thrown when broadcasting).
-
-	// message broadcasting
-
-	public:
-
-	virtual bool			is_receiver() const {return true;}
-	virtual void			receive(const dfw::broadcast_message& msg)
-	{
-		//msg has two members: an int "type" and a dnot_token "tok"...
-		//do what you need to do here.
-	}
-
-From a controller that can broadcast, do this:
-
-	int type=1;
-	tools::dnot_token tok=tools::dnot_parse_string{"data:{key: "value", thing: true}"};
-	broadcast({type, tok});
-
-An example can be seen in the test_2d controller which uses this information to broadcast text strings to test_2d_text.
-
-If you need to share complex objects you can set up alternatives, like public
-setters and getters in you controllers that can be accessed from your state_driver
-"prepare_state" method.
+The fun part is that mostly everything should be able to latch to this system.
+For example, the state driver partakes in it so the screen size or audio
+properties can be updated. On this particular example the lambda is spiffed up
+so the kernel can be captured.
 
 ###Use a menu
 

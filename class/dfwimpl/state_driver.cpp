@@ -17,7 +17,7 @@ extern ldt::log LOG;
 
 state_driver::state_driver(dfw::kernel& kernel, app::app_config& c)
 	:state_driver_interface(t_states::state_menu, std::function<bool(int)>([](int v){return v > state_min && v < state_max;})),
-	config(c), log(kernel.get_log())
+	config(c), log(kernel.get_log()), receiver(get_signal_dispatcher())
 {
 	log<<"init state driver building: preparing video..."<<std::endl;
 	prepare_video(kernel);
@@ -33,6 +33,9 @@ state_driver::state_driver(dfw::kernel& kernel, app::app_config& c)
 			kernel.get_arg_manager()
 			));
 
+	log<<"registering signal receiver..."<<std::endl;
+	setup_signal_receiver(kernel);
+
 	log<<"registering controllers..."<<std::endl;
 	register_controllers(kernel);
 
@@ -46,20 +49,25 @@ void state_driver::prepare_video(dfw::kernel& kernel)
 {
 	auto& screen=kernel.get_screen();
 
-	int wf=config.int_from_path("config:video:window_w_logical"),
-		hf=config.int_from_path("config:video:window_h_logical"),
-		wl=config.int_from_path("config:video:window_w_px"),
-		hl=config.int_from_path("config:video:window_h_px");
+	int wlg=config.int_from_path("config:video:window_w_logical"),
+		hlg=config.int_from_path("config:video:window_h_logical"),
+		wpx=config.int_from_path("config:video:window_w_px"),
+		hpx=config.int_from_path("config:video:window_h_px");
 
-	screen.set_size(wf, hf);
-	screen.set_logical_size(wl, hl);
+	log<<"logical size "<<wlg<<"x"<<hlg<<std::endl;
+	screen.set_logical_size(wlg, hlg);
+	log<<"window size "<<wpx<<"x"<<hpx<<std::endl;
+	screen.set_size(wpx, hpx);
+	screen.set_fullscreen(config.bool_from_path("config:video:fullscreen"));
 }
 
-void state_driver::register_controllers(dfw::kernel& kernel)
+void state_driver::register_controllers(dfw::kernel& /*kernel*/)
 {
-	c_menu.reset(new controller_menu(*s_resources, config, kernel.get_screen()));
-	c_test_2d.reset(new controller_test_2d(*s_resources));
-	c_test_2d_text.reset(new controller_test_2d_text(*s_resources));
+	auto& dispatcher=get_signal_dispatcher();
+
+	c_menu.reset(new controller_menu(*s_resources, dispatcher, config));
+	c_test_2d.reset(new controller_test_2d(*s_resources, dispatcher));
+	c_test_2d_text.reset(new controller_test_2d_text(*s_resources, dispatcher));
 	c_console.reset(new controller_console(*s_resources));
 	c_fps.reset(new controller_fps_test(*s_resources));
 
@@ -122,5 +130,53 @@ void state_driver::virtualize_input(dfw::input& input)
 		input().virtualize_joystick_hats(i);
 		input().virtualize_joystick_axis(i, 15000);
 		log<<"Joystick virtualized "<<i<<std::endl;
+	}
+}
+
+void state_driver::setup_signal_receiver(dfw::kernel& kernel)
+{
+	receiver.f=[this, &kernel](const dfw::broadcast_signal& s) {receive_signal(kernel, s);};
+}
+
+void state_driver::receive_signal(dfw::kernel& kernel, const dfw::broadcast_signal& s)
+{
+	switch(s.get_type())
+	{
+		case t_signal_video_size:
+		{
+			const std::string& val=static_cast<const signal_video_size&>(s).value;
+			if(val=="fullscreen")
+			{
+				kernel.get_screen().set_size(config.int_from_path("config:video:window_h_logical"), config.int_from_path("config:video:window_h_logical"));
+				kernel.get_screen().set_fullscreen(true);
+			}
+			else
+			{
+				const auto& parts=tools::explode(val, 'x');
+				kernel.get_screen().set_fullscreen(false);
+				kernel.get_screen().set_size(std::atoi(parts[0].c_str()), std::atoi(parts[1].c_str()));
+			}
+		}
+		break;
+		case t_signal_video_vsync:
+			ldv::set_vsync(static_cast<const signal_video_vsync&>(s).value);
+		break;
+		case t_signal_audio_volume:
+			kernel.get_audio()().set_main_sound_volume(static_cast<const signal_audio_volume&>(s).value);
+		break;
+		case t_signal_music_volume:
+			kernel.get_audio()().set_main_music_volume(static_cast<const signal_music_volume&>(s).value);
+		break;
+		case t_signal_save_configuration:
+			config.set<int>("config:audio:sound_volume", kernel.get_audio()().get_main_sound_volume());
+			config.set<int>("config:audio:music_volume", kernel.get_audio()().get_main_music_volume());
+			config.set("config:video:vsync", ldv::get_vsync());
+			config.set("config:video:fullscreen", kernel.get_screen().is_fullscreen());
+
+//TODO: The video resolution thing is.. failing.
+			config.set<int>("config:video:window_w_px", kernel.get_screen().get_w());
+			config.set<int>("config:video:window_h_px", kernel.get_screen().get_h());                                
+			config.save();
+		break;
 	}
 }

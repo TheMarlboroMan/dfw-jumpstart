@@ -14,9 +14,9 @@
 
 using namespace app;
 
-controller_test_2d::controller_test_2d(shared_resources& sr)
+controller_test_2d::controller_test_2d(shared_resources& sr, dfw::signal_dispatcher& sd)
 try
-	:s_resources(sr),
+	:s_resources(sr), broadcaster(sd),
 	game_camera{{0,0,700,500},{0,0}}, //This means that the camera always gets a 700x500 box, even with a larger window.
 	m_fader(sr.get_audio()(), sr.get_audio_resource_manager()),
 	game_audio_dispatcher(sr.get_audio(), sr.get_audio_resource_manager(), game_camera.get_focus_box(), game_player.get_poly().get_center()),
@@ -291,10 +291,7 @@ void controller_test_2d::do_room_change(const room_action_exit& a)
 
 void controller_test_2d::do_text_display(const room_action_text& a)
 {
-	//TODO: Perhaps stop sounds, right? Or maybe we just leave them. Try it.
-	std::string dnotstr("data:{txt: \""+game_localization.get(a.text_id)+"\"}");
-	auto tok=tools::dnot_parse_string(dnotstr);
-	broadcast({0, tok}); //TODO: This may just be the message type, the 0.
+	broadcaster.send_signal(signal_text_display{game_localization.get(a.text_id)});
 	set_state(state_test_2d_text);
 }
 

@@ -9,15 +9,13 @@
 <1004$>Exit<#>
 
 <1010$>Window size<#>
-<1011$>700x500<#>
-<1012$>1100x750<#>
-<1013$>1400x1000<#>
-<1020$>Fullscreen<#>
-<1021$>Yes<#>
-<1022$>No<#>
+<1011$>original 700x500<#>
+<1012$>scaled 1100x750<#>
+<1013$>scaled 1400x1000<#>
+<1014$>fullscreen<#>
 <1025$>VSync<#>
-<1026$>Enabled<#>
-<1027$>Disabled<#>
+<1026$>enabled<#>
+<1027$>disabled<#>
 <1030$>Sound volume<#>
 <1040$>Music volume<#>
 <1050$>Back<#>

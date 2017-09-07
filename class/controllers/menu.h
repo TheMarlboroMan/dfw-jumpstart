@@ -39,6 +39,8 @@ class controller_menu:
 	virtual void 				awake(dfw::input&) {}
 	virtual void 				slumber(dfw::input&) {}
 	virtual bool				can_leave_state() const {return true;}
+	
+	void					set_continue_state(int v) {continue_state=v;}
 
 	private:
 
@@ -102,6 +104,8 @@ class controller_menu:
 	localization					menu_localization;
 	std::vector<bar_struct>				menu_decorations; //These are the background moving bars...
 	float						key_held_time;
+	bool						started=false;	//Just controls if "continue" can be selected.
+	int						continue_state=0; //State to be selected when continuing...
 
 	//A few single-use structs...
 

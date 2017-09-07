@@ -79,8 +79,15 @@ void controller_menu::do_main_menu_input(dfw::input& input)
 	{
 		switch(main_menu_rep.get_current_index()) //An alternative is to use get_current_key() and use std::strings.
 		{
-			case 0: /*start*/ break;
-			case 1: /*continue*/break;
+			case 0: //Restart. As a courtesy we force selection of "continue", in case we return.
+				broadcaster.send_signal(signal_reset_state{});
+				started=true;
+				main_menu_rep.select_option("20_CONTINUE");
+				set_state(state_test_2d);
+			break;
+			case 1: //Continue...
+				if(started) set_state(continue_state);
+			break;
 			case 2: choose_current_menu(controls_menu_rep);	break;
 			case 3: choose_current_menu(options_menu_rep);	break;
 			case 4: set_leave(true); break;
@@ -208,15 +215,7 @@ void controller_menu::restore_default_controls(dfw::input& input)
 	{
 		input.clear(it);
 		input.configure(input.from_description({dfw::input_description::types::keyboard, code, 0}, it));
-		try
-		{
-			controls_menu.set_string(key, translate_input(input.locate_description(it)));
-		}
-		catch(std::exception& e)
-		{
-			std::cout<<e.what()<<std::endl;
-			throw;
-		}
+		controls_menu.set_string(key, translate_input(input.locate_description(it)));
 	};
 
 	f(input_app::up, SDL_SCANCODE_UP, "10_UP");
@@ -231,21 +230,13 @@ void controller_menu::restore_default_controls(dfw::input& input)
 void controller_menu::update_options_value(const std::string& key)
 {
 	if(key=="10_VIDEO_SIZE")
-	{
 		broadcaster.send_signal(signal_video_size(options_menu.get_value_templated<std::string>(key)));
-	}
 	else if(key=="25_VIDEO_VSYNC")
-	{
 		broadcaster.send_signal(signal_video_vsync{options_menu.get_value_templated<bool>(key)});
-	}
 	else if(key=="30_SOUND_VOLUME")
-	{
 		broadcaster.send_signal(signal_audio_volume{options_menu.get_int(key)});
-	}
 	else if(key=="40_MUSIC_VOLUME")
-	{
 		broadcaster.send_signal(signal_music_volume{options_menu.get_int(key)});
-	}
 }
 
 
@@ -382,7 +373,7 @@ void controller_menu::mount_menus()
 			step_funcs[sf_pulse], step_funcs[sf_pulse]);
 }
 
-//Translates a token from the config file (input part) to human format.
+//Translates a token from the config file (input part) to std::string, human readable.
 std::string controller_menu::translate_input(const dfw::input_description& id)
 {
 	std::string res;
@@ -424,6 +415,7 @@ void controller_menu::mount_layout()
 	menu_decorations.push_back({*(layout.get_by_id("boxb")), 0.6f, 1.2f});
 }
 
+//Sets visibility of menus and updates the current_menu_ptr...
 void controller_menu::choose_current_menu(menu_representation<std::string>& m)
 {
 	main_menu_rep.get_representation().set_visible(false);

@@ -29,9 +29,14 @@ catch(std::exception& e)
 
 void controller_test_2d_text::loop(dfw::input& input, float delta)
 {
-	if(input().is_exit_signal() || input.is_input_down(input_app::escape))
+	if(input().is_exit_signal())
 	{ 
 		set_leave(true);
+		return;
+	}
+	else  if(input.is_input_down(input_app::escape))
+	{
+		set_state(state_menu);
 		return;
 	}
 
@@ -121,9 +126,15 @@ void controller_test_2d_text::receive(const dfw::broadcast_signal& signal)
 			time_text=0.f;
 			redraw_text();
 		break;
+		case t_signal_reset_state:
+			text_buffer.clear();
+			current_index=0;
+			state=tstates::dictate;
+			time_blink=0.f;
+			time_text=0.f;
+		break;
 	}
 }
-
 
 void controller_test_2d_text::redraw_text()
 {

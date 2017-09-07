@@ -16,29 +16,20 @@ using namespace app;
 
 controller_test_2d::controller_test_2d(shared_resources& sr, dfw::signal_dispatcher& sd)
 try
-	:s_resources(sr), broadcaster(sd),
+	:s_resources(sr), broadcaster(sd), receiver(sd),
 	game_camera{{0,0,700,500},{0,0}}, //This means that the camera always gets a 700x500 box, even with a larger window.
 	m_fader(sr.get_audio()(), sr.get_audio_resource_manager()),
 	game_audio_dispatcher(sr.get_audio(), sr.get_audio_resource_manager(), game_camera.get_focus_box(), game_player.get_poly().get_center()),
 	game_localization(0, {"data/app_data/localization/descriptions"})
 {
+	setup_signal_receiver();
 	game_camera.set_center_margin({300, 200, 100, 100});
 	game_camera.clear_limits();
 
 	//TODO: I'd actually like to have this in the constructor.
 	game_player.inject_dispatcher(game_audio_dispatcher);
 
-	const auto& am=sr.get_arg_manager();
-
-	//The thing starts at map01, terminus_id 0.
-	if(am.value_exists_for("map") && am.value_exists_for("terminus"))
-	{
-		do_room_change(am.get_value("map"), std::atoi(am.get_value("terminus").c_str()));
-	}
-	else
-	{
-		do_room_change("map01.dat", 0);
-	}
+	do_room_change("map01.dat", 0);	
 }
 catch(std::exception& e)
 {
@@ -48,9 +39,14 @@ catch(std::exception& e)
 
 void controller_test_2d::loop(dfw::input& input, float delta)
 {
-	if(input().is_exit_signal() || input.is_input_down(input_app::escape))
-	{
+	if(input().is_exit_signal())
+	{ 
 		set_leave(true);
+		return;
+	}
+	else  if(input.is_input_down(input_app::escape))
+	{
+		set_state(state_menu);
 		return;
 	}
 
@@ -297,12 +293,12 @@ void controller_test_2d::do_text_display(const room_action_text& a)
 
 void controller_test_2d::do_console_transition(const room_action_console&)
 {
-
+	//TODO
 }
 
 void controller_test_2d::do_arcade_transition(const room_action_arcade&)
 {
-
+	//TODO
 }
 
 void controller_test_2d::do_trigger(const object_trigger& trig)
@@ -338,4 +334,30 @@ void controller_test_2d::do_trigger(const object_trigger& trig)
 		controller_test_2d *	c;
 	}ad(this);
 	act->dispatch(ad);
+}
+
+/*	const auto& am=sr.get_arg_manager();
+
+	//The thing starts at map01, terminus_id 0.
+	if(am.value_exists_for("map") && am.value_exists_for("terminus"))
+	{
+		do_room_change(am.get_value("map"), std::atoi(am.get_value("terminus").c_str()));
+	}
+	else
+	{
+*/
+//			do_room_change("map01.dat", 0);	
+/*	}
+*/
+
+void controller_test_2d::setup_signal_receiver()
+{
+	receiver.f=[this](const dfw::broadcast_signal& s) 
+	{
+		if(s.get_type()==t_signal_reset_state)
+		{
+			unique_actions.clear();
+			do_room_change("map01.dat", 0);
+		}
+	};
 }

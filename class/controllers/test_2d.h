@@ -51,12 +51,14 @@ class controller_test_2d:
 
 	private:
 	void					do_trigger(const object_trigger&);
+	void					setup_signal_receiver();
 
 	//references...
 	shared_resources&				s_resources;
 
 	//broadcasting
 	dfw::signal_broadcaster				broadcaster;
+	app_receiver					receiver;
 
 	//properties
 	ldv::camera					game_camera;

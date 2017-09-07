@@ -22,14 +22,20 @@ controller_console::controller_console(shared_resources& sr)
 
 void controller_console::loop(dfw::input& input, float delta)
 {
-	time+=delta;
-	if(time > 1.f) time=0.f;
-
-	if(input().is_exit_signal() || input.is_input_down(input_app::escape))
-	{
+	if(input().is_exit_signal())
+	{ 
 		set_leave(true);
 		return;
 	}
+	else  if(input.is_input_down(input_app::escape))
+	{
+		set_state(state_menu);
+		return;
+	}
+
+	//TODO: Learn to use mod?
+	time+=delta;
+	if(time > 1.f) time=0.f;
 
 	//Keyboard control... Newline (enter) and backspace are controlled separatedly 
 	//from text and do not trigger text inputs.

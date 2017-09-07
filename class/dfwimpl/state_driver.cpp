@@ -16,9 +16,14 @@ using namespace app;
 extern ldt::log LOG;
 
 state_driver::state_driver(dfw::kernel& kernel, app::app_config& c)
-	:state_driver_interface(t_states::state_menu, std::function<bool(int)>([](int v){return v > state_min && v < state_max;})),
+	:state_driver_interface(t_states::state_menu),
 	config(c), log(kernel.get_log()), receiver(get_signal_dispatcher())
 {
+	log<<"setting state check function..."<<std::endl;
+	states.set_function([](int v){
+		return v > state_min && v < state_max;
+	});
+
 	log<<"init state driver building: preparing video..."<<std::endl;
 	prepare_video(kernel);
 
@@ -78,11 +83,13 @@ void state_driver::register_controllers(dfw::kernel& /*kernel*/)
 	register_controller(t_states::state_fps_test, *c_fps);
 }
 
-void state_driver::prepare_state(int next, int /*current*/)
+void state_driver::prepare_state(int next, int current)
 {
 	switch(next)
 	{
 		case t_states::state_menu:
+			c_menu->set_continue_state(current);
+		break;
 		case t_states::state_test_2d:
 		case t_states::state_test_2d_text:
 		case t_states::state_console:

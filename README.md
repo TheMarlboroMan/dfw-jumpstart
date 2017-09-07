@@ -1,7 +1,4 @@
 #TODO:
-	- Redefine keys.
-	- Options menu: music and audio volume, screen size.
-	- Save configurations.
 	- Add a cartesian camera example, with polys.
 	- Comment the cartesian vs screen system.
 
@@ -161,6 +158,12 @@ but these need to be manually rolled... In any case, complex menu systems
 (like one with submenus, specific actions taking place upon selection of an
 option and so on) are sinonym with grunt work... The menu controller is a good
 example of things that can be done.
+
+###Redefine keys.
+
+This is bound to exist on every game... The particulars are complex and the
+classes involved many, so just check the "menu" controller. There's an entire
+family of stuff there.
 
 ###Draw a controller different than the active one:
 

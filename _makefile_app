@@ -17,6 +17,7 @@ $(DIR_O)app_config.o \
 $(DIR_O)controller_menu.o \
 $(DIR_O)controller_test_2d.o \
 $(DIR_O)controller_test_2d_text.o \
+$(DIR_O)controller_test_poly.o \
 $(DIR_O)controller_console.o \
 $(DIR_O)controller_test_fps.o \
 
@@ -75,6 +76,7 @@ $(DIR_O)state_driver.o :\
 $(DIR_O)shared_resources.o \
 $(DIR_O)controller_menu.o \
 $(DIR_O)controller_test_2d.o \
+$(DIR_O)controller_test_poly.o \
 $(DIR_O)controller_test_2d_text.o \
 $(DIR_O)controller_console.o \
 $(DIR_O)controller_test_fps.o \
@@ -99,6 +101,11 @@ $(DIR_O)controller_menu.o :\
 $(DIR_CONTROLLERS)menu.h \
 $(DIR_CONTROLLERS)menu.cpp
 	$(CC) $(CFLAGS) $(INCLUDES) $(DIR_CONTROLLERS)menu.cpp -o $(DIR_O)controller_menu.o
+
+$(DIR_O)controller_test_poly.o :\
+$(DIR_CONTROLLERS)test_poly.h \
+$(DIR_CONTROLLERS)test_poly.cpp
+	$(CC) $(CFLAGS) $(INCLUDES) $(DIR_CONTROLLERS)test_poly.cpp -o $(DIR_O)controller_test_poly.o
 
 $(DIR_O)controller_test_2d.o :\
 $(DIR_CONTROLLERS)test_2d.h \

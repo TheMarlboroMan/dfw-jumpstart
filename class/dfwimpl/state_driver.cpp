@@ -16,7 +16,8 @@ using namespace app;
 extern ldt::log LOG;
 
 state_driver::state_driver(dfw::kernel& kernel, app::app_config& c)
-	:state_driver_interface(t_states::state_menu),
+//	:state_driver_interface(t_states::state_menu),
+	:state_driver_interface(t_states::state_test_poly),
 	config(c), log(kernel.get_log()), receiver(get_signal_dispatcher())
 {
 	log<<"setting state check function..."<<std::endl;
@@ -73,14 +74,17 @@ void state_driver::register_controllers(dfw::kernel& /*kernel*/)
 	c_menu.reset(new controller_menu(*s_resources, dispatcher, config));
 	c_test_2d.reset(new controller_test_2d(*s_resources, dispatcher));
 	c_test_2d_text.reset(new controller_test_2d_text(*s_resources, dispatcher));
+	c_test_poly.reset(new controller_test_poly(*s_resources, dispatcher));
 	c_console.reset(new controller_console(*s_resources));
 	c_fps.reset(new controller_fps_test(*s_resources));
 
 	register_controller(t_states::state_menu, *c_menu);
 	register_controller(t_states::state_test_2d, *c_test_2d);
 	register_controller(t_states::state_test_2d_text, *c_test_2d_text);
+	register_controller(t_states::state_test_poly, *c_test_poly);
 	register_controller(t_states::state_console, *c_console);
 	register_controller(t_states::state_fps_test, *c_fps);
+
 }
 
 void state_driver::prepare_state(int next, int current)
@@ -91,6 +95,7 @@ void state_driver::prepare_state(int next, int current)
 			c_menu->set_continue_state(current);
 		break;
 		case t_states::state_test_2d:
+		case t_states::state_test_poly:
 		case t_states::state_test_2d_text:
 		case t_states::state_console:
 		case t_states::state_fps_test:    

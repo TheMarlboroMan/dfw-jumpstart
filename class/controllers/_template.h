@@ -22,13 +22,13 @@ class controller_template:
 	public:
 
 						controller_template(ldt::log&);
-	virtual void 				preloop(dfw::input& input, float delta, int);
-	virtual void 				loop(dfw::input& input, float delta);
-	virtual void 				postloop(dfw::input& input, float delta, int);
-	virtual void 				draw(ldv::screen& screen, int);
-	virtual void 				awake(dfw::input& input);
-	virtual void 				slumber(dfw::input& input);
-	virtual bool				can_leave_state() const;
+	virtual void 				preloop(dfw::input& /*input*/, float /*delta*/, int /*fps*/) {}
+	virtual void 				loop(dfw::input&, float);
+	virtual void 				postloop(dfw::input& /*input*/, float /*delta*/, int /*fps*/) {}
+	virtual void 				draw(ldv::screen&, int);
+	virtual void 				awake(dfw::input& /*input*/) {}
+	virtual void 				slumber(dfw::input& /*input*/) {}
+	virtual bool				can_leave_state() const {return true;}
 
 	private:
 

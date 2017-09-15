@@ -69,6 +69,7 @@ class controller_test_poly:
 	void					editor_draw(ldv::screen&);
 	void					editor_draw_grid(ldv::screen&);
 	void					editor_draw_vertex(ldv::screen&, ldt::point_2d<int>);
+	void					editor_draw_line(ldv::screen&, ldt::point_2d<int>, ldt::point_2d<int>, ldv::rgb_color);
 	void					editor_draw_current_poly(ldv::screen&);
 	editor_pt				editor_cursor_position(bool=true);
 	void					editor_close_poly();
@@ -82,6 +83,8 @@ class controller_test_poly:
 	std::vector<ldv::rgb_color>		editor_colors;
 	int					editor_color_index;
 	ldv::box_representation 		editor_vertex_rep;
+	ldv::line_representation 		editor_line_rep;
+	
 };
 
 }

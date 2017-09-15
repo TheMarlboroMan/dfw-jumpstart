@@ -10,7 +10,8 @@ using namespace app;
 controller_test_poly::controller_test_poly(shared_resources& sr, dfw::signal_dispatcher& /*sd*/)
 	:s_resources(sr),
 	camera{{0,0,700,500},{0,0}},
-	editor_vertex_rep{ldv::polygon_representation::type::fill, {0,0,10,10}, ldv::rgb8(0,0,128)}
+	editor_vertex_rep{ldv::polygon_representation::type::fill, {0,0,10,10}, ldv::rgb8(0,0,128)},
+	editor_line_rep({0,0}, {0,0}, ldv::rgb8(0,0,64))
 {
 	camera.set_coordinate_system(ldv::camera::tsystem::cartesian);
 	editor_load();
@@ -80,7 +81,7 @@ void controller_test_poly::editor_loop(dfw::input& input)
 	if(input.is_input_pressed(input_app::activate))
 	{
 //TODO: Zooming is awful, as it adjusts from the top and breaks as the camera moves.
-//TODO: Perhaps that needs to be fixed in the libdan.
+//TODO: Perhaps that needs to be fixed in the libdan... Also, as zoom is done, the camera position breaks somewhat and objects do not appear..
 
 		if(input.is_input_down(input_app::left) && camera.get_zoom() > 0.2) 	camera.set_zoom(camera.get_zoom()-0.1);
 		else if(input.is_input_down(input_app::right)) 				camera.set_zoom(camera.get_zoom()+0.1);
@@ -189,43 +190,37 @@ void controller_test_poly::editor_draw(ldv::screen& screen)
 
 void controller_test_poly::editor_draw_grid(ldv::screen& screen)
 {
+	//TODO: Still a bit fussy on the last part of th grid.
+
 	const auto fb=camera.get_focus_box();
-	const auto pb=camera.get_pos_box();
+	auto color=ldv::rgb8(64,64,64);
 
-	ldv::line_representation grid_line({0,0}, {0,0}, ldv::rgb8(64,64,64));
+	//What is the first and last lines we have to draw in the x coordinate?
+	int 	fbar=ceil(fb.origin.x / editor_grid_size),
+		lbar=ceil(fb.origin.x+(int)fb.w) / editor_grid_size;
 
-	for(int x=abs(fb.origin.x % editor_grid_size)*camera.get_zoom(); x<(int)pb.w; x+=editor_grid_size*camera.get_zoom())
-	{
-		grid_line.set_points({x,0}, {x,(int)pb.h});
-		grid_line.draw(screen);
-	}
+	//Multiply the first line for the grid and get to it.
+	for(int x=fbar*editor_grid_size; x < lbar * editor_grid_size; x+=editor_grid_size)
+		editor_draw_line(screen, {x,fb.origin.y}, {x,fb.origin.y+(int)fb.h}, color);
 
-//TODO: This doesn't REALLY work.
-	//So much meh.
-	for(int y=pb.h-abs(fb.origin.y % editor_grid_size)*camera.get_zoom(); y>0; y-=(int)(editor_grid_size*camera.get_zoom()))
-	{
-		grid_line.set_points({0,y}, {(int)pb.w, y});
-		grid_line.draw(screen);
-	}
+	//And now with the y...
+	fbar=fb.origin.y / editor_grid_size;
+	lbar=ceil(fb.origin.y+(int)fb.h) / editor_grid_size;
+
+	for(int y=fbar*editor_grid_size; y < lbar * editor_grid_size; y+=editor_grid_size)
+		editor_draw_line(screen, {fb.origin.x,y}, {fb.origin.x+(int)fb.w,y}, color);
 }
 
 void controller_test_poly::editor_draw_current_poly(ldv::screen& screen)
 {
-	ldv::line_representation editor_line({0,0}, {0,0}, ldv::rgb8(0,0,64));
-	auto draw_line=[&editor_line, &screen, this](editor_pt p1, editor_pt p2)
-	{
-		editor_line.set_points({p1.x, -p1.y}, {p2.x, -p2.y});
-		editor_line.draw(screen, camera);
-	};
-
 	for(const auto& pt: editor_current_poly) editor_draw_vertex(screen, pt);
 
+	auto color=ldv::rgb8(0,0,64);
 	if(editor_current_poly.size() >= 1)
 	{
 		for(size_t i=1; i<editor_current_poly.size(); ++i)
-			draw_line(editor_current_poly[i-1], editor_current_poly[i]);
-
-		draw_line(editor_current_poly.back(), editor_cursor_position());
+			editor_draw_line(screen, editor_current_poly[i-1], editor_current_poly[i], color); 
+		editor_draw_line(screen, editor_current_poly.back(), editor_cursor_position(), color);
 	}
 }
 
@@ -274,4 +269,11 @@ void controller_test_poly::editor_select_color(int d)
 	editor_color_index+=d;
 	if(editor_color_index < 0) editor_color_index=editor_colors.size()-1;
 	else if((size_t)editor_color_index==editor_colors.size()) editor_color_index=0;
+}
+
+void controller_test_poly::editor_draw_line(ldv::screen& screen, ldt::point_2d<int> pt1, ldt::point_2d<int> pt2, ldv::rgb_color color)
+{
+	editor_line_rep.set_color(color);
+	editor_line_rep.set_points({pt1.x, -pt1.y}, {pt2.x, -pt2.y});
+	editor_line_rep.draw(screen, camera);
 }

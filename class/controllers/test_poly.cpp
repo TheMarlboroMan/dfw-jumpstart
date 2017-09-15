@@ -10,6 +10,7 @@ using namespace app;
 controller_test_poly::controller_test_poly(shared_resources& sr, dfw::signal_dispatcher& /*sd*/)
 	:s_resources(sr),
 	camera{{0,0,700,500},{0,0}},
+	editor_mode(editor_modes::obstacles),
 	editor_vertex_rep{ldv::polygon_representation::type::fill, {0,0,10,10}, ldv::rgb8(0,0,128)},
 	editor_line_rep({0,0}, {0,0}, ldv::rgb8(0,0,64))
 {
@@ -22,7 +23,6 @@ controller_test_poly::controller_test_poly(shared_resources& sr, dfw::signal_dis
 		ldv::rgb8(0,0,51),	ldv::rgb8(0,0,153),	ldv::rgb8(0,0,204),
 		ldv::rgb8(51,51,51),	ldv::rgb8(153,153,153),	ldv::rgb8(204,204,204)
 	};
-	editor_color_index=0;
 }
 
 void controller_test_poly::loop(dfw::input& input, float /*delta*/)
@@ -70,24 +70,33 @@ void controller_test_poly::editor_loop(dfw::input& input)
 			auto p=editor_cursor_position(false);
 			ldt::point_2d<double> point{(double)p.x, (double)p.y};
 
-			auto it=std::remove_if(std::begin(obstacles), std::end(obstacles),
-				[point](const obstacle& o) {return ldt::point_in_polygon<double>(o.poly, point);});
-			if(it!=std::end(obstacles)) obstacles.erase(it);
+			switch(editor_mode)
+			{
+				case editor_modes::obstacles: editor_delete_item(obstacles, point); break;
+				case editor_modes::waypoints: editor_delete_item(waypoints, point); break;
+			}
 		}
 	}
 
 	if(input.is_input_down(input_app::console_backspace)) editor_save();
+	if(input.is_input_down(input_app::console_newline)) editor_change_state();
 
 	if(input.is_input_pressed(input_app::activate))
 	{
-//TODO: Zooming is awful, as it adjusts from the top and breaks as the camera moves.
-//TODO: Perhaps that needs to be fixed in the libdan... Also, as zoom is done, the camera position breaks somewhat and objects do not appear..
-
 		if(input.is_input_down(input_app::left) && camera.get_zoom() > 0.2) 	camera.set_zoom(camera.get_zoom()-0.1);
 		else if(input.is_input_down(input_app::right)) 				camera.set_zoom(camera.get_zoom()+0.1);
 		
-		if(input.is_input_down(input_app::up)) 		editor_select_color(-1);
-		else if(input.is_input_down(input_app::down)) 	editor_select_color(1);
+		switch(editor_mode)
+		{
+			case editor_modes::obstacles:
+				if(input.is_input_down(input_app::up)) 		editor_select_color(-1);
+				else if(input.is_input_down(input_app::down)) 	editor_select_color(1);
+			break;
+			case editor_modes::waypoints:
+				if(input.is_input_down(input_app::up)) 		editor_select_waypoint(-1);
+				else if(input.is_input_down(input_app::down)) 	editor_select_waypoint(1);
+			break;
+		}
 	}
 	else
 	{
@@ -111,16 +120,31 @@ void controller_test_poly::editor_save()
 
 	//Building the second level maps.
 	dnot_token::t_map second_level;
+
+	auto fill_vertexes=[](ldt::polygon_2d<double> poly, tools::dnot_token& tok)
+	{
+		for(const auto& p: poly.get_vertexes())
+			tok.get_vector().push_back(dnot_token(dnot_token::t_vector({dnot_token(p.x), dnot_token(p.y)})));
+	};
+
 	second_level["obstacles"]=dnot_token(dnot_token::t_vector());
 	for(const auto& o : obstacles)
 	{
 		dnot_token::t_map data;
 		data["color"]=dnot_token(dnot_token::t_vector{dnot_token(o.color.r), dnot_token(o.color.g), dnot_token(o.color.b)});
 		data["poly"]=dnot_token(dnot_token::t_vector());
-		for(const auto& p: o.poly.get_vertexes())
-			data["poly"].get_vector().push_back(dnot_token(dnot_token::t_vector({dnot_token(p.x), dnot_token(p.y)})));
-
+		fill_vertexes(o.poly, data["poly"]);
 		second_level["obstacles"].get_vector().push_back(dnot_token{data});
+	}
+
+	second_level["waypoints"]=dnot_token(dnot_token::t_vector());
+	for(const auto& w : waypoints)
+	{
+		dnot_token::t_map data;
+		data["index"]=dnot_token(w.index);
+		data["poly"]=dnot_token(dnot_token::t_vector());
+		fill_vertexes(w.poly, data["poly"]);
+		second_level["waypoints"].get_vector().push_back(dnot_token{data});
 	}
 
 	//Adding it all up.
@@ -142,6 +166,7 @@ void controller_test_poly::editor_load()
 	{
 		auto root=tools::dnot_parse("data/app_data/arcade_data.dnot");
 		obstacles.clear();
+		waypoints.clear();
 
 		for(const auto& t : root["data"]["obstacles"].get_vector())
 		{
@@ -149,6 +174,13 @@ void controller_test_poly::editor_load()
 			ldt::polygon_2d<double> poly;
 			for(const auto& v: t["poly"].get_vector()) poly.add_vertex({v[0],v[1]});
 			obstacles.push_back({poly, color});
+		}
+
+		for(const auto& t : root["data"]["waypoints"].get_vector())
+		{
+			ldt::polygon_2d<double> poly;
+			for(const auto& v: t["poly"].get_vector()) poly.add_vertex({v[0],v[1]});
+			waypoints.push_back({poly, t["index"]});
 		}
 	}
 	catch(std::exception& e)
@@ -159,22 +191,51 @@ void controller_test_poly::editor_load()
 
 void controller_test_poly::editor_draw(ldv::screen& screen)
 {
-	auto transform=[&screen](const ldt::polygon_2d<double>& p, ldv::rgb_color color)
-	{
-		std::vector<ldv::point> points;
-		for(const auto& pt : p.get_vertexes()) points.push_back({(int)pt.x, (int)-pt.y});
-		return ldv::polygon_representation{ldv::polygon_representation::type::fill, points, color};
-	};
-
 	editor_draw_grid(screen);
 
-	for(const auto& o : obstacles) transform(o.poly, o.color).draw(screen, camera);
-	editor_draw_vertex(screen, editor_cursor_position()); //Draw current mouse position.
+	//Draw obstacles and waypoints...
+	for(const auto& o : obstacles) editor_draw_polygon(screen, o.poly, o.color, 255);
+	for(const auto& w : waypoints) 
+	{
+		editor_draw_polygon(screen, w.poly, ldv::rgb8(255, 200, 0), 128);
+		ldv::ttf_representation wi{
+				s_resources.get_ttf_manager().get("consola-mono", 32), 
+				ldv::rgba8(0, 0, 0, 255), compat::to_string(w.index)};
+
+		//Center the text on the polygon...
+		auto vt=w.poly.get_vertexes();
+		int minx=vt[0].x, maxx=minx, miny=vt[0].y, maxy=miny;
+		auto f=[](int v, int& min, int& max) {if(v < min) min=v; else if(v > max) max=v;};
+		for(const auto& p : vt) {f(p.x, minx, maxx); f(p.y, miny, maxy);}
+		wi.align({minx, miny, unsigned(maxx-minx), unsigned(maxy-miny)}, {ldv::representation_alignment::h::center, ldv::representation_alignment::v::center, 0, 0});
+		editor_draw_raster(screen, wi);
+	}
+
+	//Draw current mouse position and polygon in progress...
+	editor_draw_vertex(screen, editor_cursor_position()); 
 	editor_draw_current_poly(screen);
 
-	ldv::box_representation color_box{ldv::polygon_representation::type::fill, {20,20,20,20}, editor_colors[editor_color_index]};
-	color_box.draw(screen);
+	//Other information...
+	switch(editor_mode)
+	{
+		case editor_modes::obstacles:
+		{
+			ldv::box_representation color_box{ldv::polygon_representation::type::fill, {20,20,20,20}, editor_colors[editor_color_index]};
+			color_box.draw(screen);
+		}
+		break;
+		case editor_modes::waypoints:
+		{
+			ldv::ttf_representation txt_way{
+				s_resources.get_ttf_manager().get("consola-mono", 16), 
+				ldv::rgba8(0, 255, 255, 255), "index:"+compat::to_string(editor_waypoint_index)};
+			txt_way.go_to({0,50});
+			txt_way.draw(screen);
+		}
+		break;
+	}
 
+	//HUD data.
 	auto pos=editor_cursor_position();
 	std::string cdata=
 		"cam: "+compat::to_string(camera.get_x())+","+compat::to_string(camera.get_y())
@@ -238,7 +299,18 @@ void controller_test_poly::editor_close_poly()
 	std::vector<ldt::point_2d<double>> vt;
 	for(const auto& p : editor_current_poly) vt.push_back(pt(p));
 	auto poly=ldt::polygon_2d<double>{vt, {pt(editor_current_poly[0])}};
-	if(poly.is_clockwise() && !poly.is_concave()) obstacles.push_back({poly, editor_colors[editor_color_index]});
+	if(poly.is_clockwise() && !poly.is_concave()) 
+	{
+		switch(editor_mode)
+		{
+			case editor_modes::obstacles:
+				obstacles.push_back({poly, editor_colors[editor_color_index]});
+			break;
+			case editor_modes::waypoints:
+				waypoints.push_back({poly, editor_waypoint_index});
+			break;
+		}
+	}
 
 	editor_current_poly.clear();
 }
@@ -269,9 +341,44 @@ void controller_test_poly::editor_select_color(int d)
 	else if((size_t)editor_color_index==editor_colors.size()) editor_color_index=0;
 }
 
+void controller_test_poly::editor_select_waypoint(int d)
+{
+	editor_waypoint_index+=d;
+	if(editor_waypoint_index < 1) editor_waypoint_index=1;
+	else if(editor_waypoint_index > 100) editor_waypoint_index=100;
+}
+
 void controller_test_poly::editor_draw_line(ldv::screen& screen, ldt::point_2d<int> pt1, ldt::point_2d<int> pt2, ldv::rgb_color color)
 {
 	editor_line_rep.set_color(color);
 	editor_line_rep.set_points({pt1.x, -pt1.y}, {pt2.x, -pt2.y});
 	editor_line_rep.draw(screen, camera);
 }
+
+void controller_test_poly::editor_draw_polygon(ldv::screen& screen, const ldt::polygon_2d<double>& p, ldv::rgb_color color, int alpha)
+{
+	std::vector<ldv::point> points;
+	for(const auto& pt : p.get_vertexes()) points.push_back({(int)pt.x, (int)-pt.y});
+	ldv::polygon_representation poly{ldv::polygon_representation::type::fill, points, color};
+	poly.set_blend(ldv::representation::blends::alpha);
+	poly.set_alpha(alpha);
+	poly.draw(screen, camera);
+}
+
+void controller_test_poly::editor_draw_raster(ldv::screen& screen, ldv::raster_representation& r)
+{
+	auto pos=r.get_position();
+	r.go_to(ldv::point(pos.x, -pos.y-r.get_view_position().h));
+	r.draw(screen, camera);
+	r.go_to(pos);
+}
+
+void controller_test_poly::editor_change_state()
+{
+	switch(editor_mode)
+	{
+		case editor_modes::obstacles: editor_mode=editor_modes::waypoints; break;
+		case editor_modes::waypoints: editor_mode=editor_modes::obstacles; break;
+	}
+}
+

@@ -190,14 +190,13 @@ void controller_test_poly::editor_draw(ldv::screen& screen)
 
 void controller_test_poly::editor_draw_grid(ldv::screen& screen)
 {
-	//TODO: Still a bit fussy on the last part of th grid.
-
 	const auto fb=camera.get_focus_box();
 	auto color=ldv::rgb8(64,64,64);
 
 	//What is the first and last lines we have to draw in the x coordinate?
-	int 	fbar=ceil(fb.origin.x / editor_grid_size),
-		lbar=ceil(fb.origin.x+(int)fb.w) / editor_grid_size;
+	double 	fbar=ceil(fb.origin.x / editor_grid_size),
+	//All these doubles are there for a reason: to prevent int casting that won't give us good results.
+		lbar=ceil( ( (double)fb.origin.x+(double)fb.w) / (double)editor_grid_size);
 
 	//Multiply the first line for the grid and get to it.
 	for(int x=fbar*editor_grid_size; x < lbar * editor_grid_size; x+=editor_grid_size)
@@ -205,8 +204,7 @@ void controller_test_poly::editor_draw_grid(ldv::screen& screen)
 
 	//And now with the y...
 	fbar=fb.origin.y / editor_grid_size;
-	lbar=ceil(fb.origin.y+(int)fb.h) / editor_grid_size;
-
+	lbar=ceil( ((double)fb.origin.y+(double)fb.h) / (double)editor_grid_size);
 	for(int y=fbar*editor_grid_size; y < lbar * editor_grid_size; y+=editor_grid_size)
 		editor_draw_line(screen, {fb.origin.x,y}, {fb.origin.x+(int)fb.w,y}, color);
 }

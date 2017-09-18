@@ -19,7 +19,7 @@ try
 	:s_resources(sr), broadcaster(sd), receiver(sd),
 	game_camera{{0,0,700,500},{0,0}}, //This means that the camera always gets a 700x500 box, even with a larger window.
 	m_fader(sr.get_audio()(), sr.get_audio_resource_manager()),
-	game_audio_dispatcher(sr.get_audio(), sr.get_audio_resource_manager(), game_camera.get_focus_box(), game_player.get_poly().get_center()),
+	game_audio_dispatcher(sr.get_audio(), sr.get_audio_resource_manager(), game_camera.get_focus_box(), game_player.get_poly().get_centroid()),
 	game_localization(0, {"data/app_data/localization/descriptions"})
 {
 	setup_signal_receiver();

@@ -74,7 +74,7 @@ void controller_fps_test::draw(ldv::screen& screen, int fps)
 	{
 		std::vector<ldv::point> pts;
 		for(const auto& v : poly.get_vertexes())
-			pts.push_back({(int)v.x, (int)v.y});
+			pts.push_back({(int)v.x, -(int)v.y+400});
 
 		ldv::polygon_representation rep(ldv::polygon_representation::type::fill, pts, color);
 		rep.draw(screen);
@@ -82,30 +82,23 @@ void controller_fps_test::draw(ldv::screen& screen, int fps)
 
 
 	//We shall use cartesian space for this.
-	ldt::polygon_2d<double> poly1{ 
-		{
-			{100,100}, {200, 100}, {200,200}, {100,200}
-		}, {150,150}},
-	poly2{
-		{
-			{100, 300}, {200, 400}, {100, 400}
-		}, {150, 350}};
+	ldt::polygon_2d<double> poly1{ {{100, 100}, {200, 200}, {200, 100}}},
+				poly2{ {{100, 0}, {100, 100}, {200, 0}}};
 
 	ldt::polygon_2d<double> poly3{poly1}, poly4{poly2};
 
-	poly3.move({150,150});
+	poly3.move({150,-50});
 	poly4.move({150,0});
 
 	ldt::polygon_2d<double> poly5{poly3}, poly6{poly4};
 
-	auto sat_response=SAT_collision_check_mtv(poly5, poly6, true);
-	vector_2d<double> vec=vector_from_angle_and_magnitude((double)sat_response.angle, (double)sat_response.magnitude);
+	auto sat_response=SAT_collision_check_mtv(poly6, poly5);
 
 	poly5.move({150,0});
 	poly6.move({150,0});
 
 	//Now adjust...
-	poly5.move({vec.x, vec.y});
+	poly5.move({sat_response.mtv.x, sat_response.mtv.y});
 
 	draw_polygon(poly1, ldv::rgb8(255, 0 ,0));
 	draw_polygon(poly2, ldv::rgb8(0, 255,0));
@@ -113,6 +106,12 @@ void controller_fps_test::draw(ldv::screen& screen, int fps)
 	draw_polygon(poly4, ldv::rgb8(0, 255,0));
 	draw_polygon(poly5, ldv::rgb8(255, 0 ,0));
 	draw_polygon(poly6, ldv::rgb8(0, 255,0));
+
+	ldv::ttf_representation txt{
+		s_resources.get_ttf_manager().get("consola-mono", 32), 
+		ldv::rgba8(255, 255, 255, 255), "mtv:"+compat::to_string(sat_response.mtv.x)+","+compat::to_string(sat_response.mtv.y)};
+	txt.go_to({0, 50});
+	txt.draw(screen);
 }
 
 void controller_fps_test::awake(dfw::input& /*input*/)

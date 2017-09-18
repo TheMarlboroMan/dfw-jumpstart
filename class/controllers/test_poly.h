@@ -51,8 +51,9 @@ class controller_test_poly:
 	struct player
 	{
 		ldt::polygon_2d<double>	poly;
+		ldt::vector_2d<double>	velocity;
 		double			bearing,
-					speed;
+					thrust;
 	};
 
 	//references...
@@ -60,8 +61,29 @@ class controller_test_poly:
 		
 	//properties
 	ldv::camera				camera;
+	player					player;
+	ldv::rgb_color				player_color;
 	std::vector<obstacle>			obstacles;
 	std::vector<waypoint>			waypoints;
+
+	void					load();
+	void					reset();
+	void					draw_polygon(ldv::screen&, const ldt::polygon_2d<double>&, ldv::rgb_color, int);
+	void					draw_raster(ldv::screen&, ldv::raster_representation&);
+
+	void					player_accelerate(float);
+	void					player_brake(float);
+	void					player_idle(float);
+	void					player_turn(float, int);
+	void					player_step(float);
+
+
+#ifdef WDEBUG_CODE
+	//Debug
+	ldt::point_2d<double>			debug_collision_line_pt1, 
+						debug_collision_line_pt2,
+						debug_collision_normal_pt1,
+						debug_collision_normal_pt2;
 
 	//Editor trash...
 	typedef ldt::point_2d<int>		editor_pt;
@@ -69,15 +91,12 @@ class controller_test_poly:
 	void 					editor_loop(dfw::input&);
 	void					editor_draw(ldv::screen&);
 	void					editor_draw_grid(ldv::screen&);
-	void					editor_draw_vertex(ldv::screen&, ldt::point_2d<int>);
+	void					editor_draw_vertex(ldv::screen&, ldt::point_2d<int>, ldv::rgb_color);
 	void					editor_draw_line(ldv::screen&, ldt::point_2d<int>, ldt::point_2d<int>, ldv::rgb_color);
-	void					editor_draw_polygon(ldv::screen&, const ldt::polygon_2d<double>&, ldv::rgb_color, int);
 	void					editor_draw_current_poly(ldv::screen&);
-	void					editor_draw_raster(ldv::screen&, ldv::raster_representation&);
 	editor_pt				editor_cursor_position(bool=true);
 	void					editor_close_poly();
 	void					editor_save();
-	void					editor_load();
 	void					editor_select_color(int);
 	void					editor_select_waypoint(int);
 	void					editor_change_state();
@@ -87,6 +106,7 @@ class controller_test_poly:
 		if(it!=std::end(v)) v.erase(it);
 	}
 
+	bool					editor_active=true;
 	static const int			editor_grid_size=64;
 	enum class 				editor_modes{obstacles, waypoints} editor_mode;
 	ldi::sdl_input::mouse_position		editor_mouse_position;
@@ -96,7 +116,7 @@ class controller_test_poly:
 						editor_waypoint_index=1;
 	ldv::box_representation 		editor_vertex_rep;
 	ldv::line_representation 		editor_line_rep;
-	
+#endif
 };
 
 }

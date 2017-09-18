@@ -46,7 +46,7 @@ void player::step(float delta)
 				channel.play({
 					dispatcher->request_sound_resource(step_sounds[sndindex]),
 					v(), 0, //Volume and repeats.
-					calculate_panning(dispatcher->request_view_rect(), polygon.get_center()), 0}); //Panning and fade.
+					calculate_panning(dispatcher->request_view_rect(), polygon.get_centroid()), 0}); //Panning and fade.
 
 				++step_sounds_index;
 				next_step_sound+=0.4f;

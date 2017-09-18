@@ -24,8 +24,8 @@ void spatiable::center_on(app::tpoint p)
 
 void spatiable::center_on(app::tpoly p)
 {
-	//Now... p.get_center may not be the spatial center.
-	get_poly_ptr()->center_in(p.get_center());
+	//Now... p.get_centroid may not be the spatial center.
+	get_poly_ptr()->center_in(p.get_centroid());
 }
 
 app::tbox app_interfaces::coarse_bounding_box(const app::tpoly& p)

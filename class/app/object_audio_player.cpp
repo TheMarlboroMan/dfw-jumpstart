@@ -73,7 +73,7 @@ void object_audio_player::do_play_logic()
 		break;
 		case ttype::source:
 		{
-			auto center=get_poly().get_center();
+			auto center=get_poly().get_centroid();
 			channel.set_stereo_volume(calculate_panning(dispatcher->request_view_rect(), center));
 			channel.set_volume(calculate_volume(data.volume, data.max_radius, data.min_radius, center, dispatcher->request_player_pos()));
 		}
@@ -113,7 +113,7 @@ void object_audio_player::play_audio()
 		break;
 		case ttype::source:
 		{
-			auto center=get_poly().get_center();
+			auto center=get_poly().get_centroid();
 			panning=calculate_panning(dispatcher->request_view_rect(), center);
 			volume=calculate_volume(data.volume, data.max_radius, data.min_radius, center, dispatcher->request_player_pos());
 		}

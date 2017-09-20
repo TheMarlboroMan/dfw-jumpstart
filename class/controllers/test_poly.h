@@ -7,6 +7,9 @@
 //libdansdl2
 #include <def_video.h>
 
+//tools
+#include <templates/ranged_value.h>
+
 //framework
 #include <class/controller_interface.h>
 
@@ -51,9 +54,11 @@ class controller_test_poly:
 	struct player
 	{
 		ldt::polygon_2d<double>	poly;
-		ldt::vector_2d<double>	velocity;
+		ldt::vector_2d<double>	velocity,
+					external_force;
 		double			bearing,
 					thrust;
+//		tools::ranged_value<double>	multiplier;
 	};
 
 	//references...
@@ -65,17 +70,28 @@ class controller_test_poly:
 	ldv::rgb_color				player_color;
 	std::vector<obstacle>			obstacles;
 	std::vector<waypoint>			waypoints;
+	struct	{
+		double				current,
+						next;
+	}					camera_val;
+	struct  {
+		int				current=0,
+						total=0;
+	}					waypoint_val;
 
 	void					load();
 	void					reset();
 	void					draw_polygon(ldv::screen&, const ldt::polygon_2d<double>&, ldv::rgb_color, int);
 	void					draw_raster(ldv::screen&, ldv::raster_representation&);
 
-	void					player_accelerate(float);
-	void					player_brake(float);
+	void					do_camera(float);
+	void					do_waypoint();
+
+	void					player_accelerate(float, int);
 	void					player_idle(float);
 	void					player_turn(float, int);
 	void					player_step(float);
+
 
 
 #ifdef WDEBUG_CODE

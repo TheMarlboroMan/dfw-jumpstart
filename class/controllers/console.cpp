@@ -20,7 +20,7 @@ controller_console::controller_console(shared_resources& sr)
 
 }
 
-void controller_console::loop(dfw::input& input, float delta)
+void controller_console::loop(dfw::input& input, float delta, int /*step*/)
 {
 	if(input().is_exit_signal())
 	{ 

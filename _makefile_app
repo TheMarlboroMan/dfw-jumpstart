@@ -46,6 +46,7 @@ $(DIR_O)audio_tools.o \
 #External dependencies...
 
 DEP_TOOLS=\
+$(DIR_O_TOOLS)fps_counter.o \
 $(DIR_O_TOOLS)text_reader.o \
 $(DIR_O_TOOLS)arg_manager.o \
 $(DIR_O_TOOLS)string_utils.o \

@@ -29,9 +29,7 @@ class controller_console:
 	public:
 
 						controller_console(shared_resources&);
-	virtual void 				preloop(dfw::input&, float, int) {}
-	virtual void 				loop(dfw::input& input, float delta);
-	virtual void 				postloop(dfw::input&, float, int) {}
+	virtual void 				loop(dfw::input& input, float delta, int step);
 	virtual void 				draw(ldv::screen& screen, int);
 	virtual void 				awake(dfw::input&);
 	virtual void 				slumber(dfw::input&);

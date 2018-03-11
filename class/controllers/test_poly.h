@@ -28,9 +28,7 @@ class controller_test_poly:
 	public:
 
 						controller_test_poly(shared_resources&, dfw::signal_dispatcher&);
-	virtual void 				preloop(dfw::input&, float, int) {}
-	virtual void 				loop(dfw::input&, float);
-	virtual void 				postloop(dfw::input&, float, int) {}
+	virtual void 				loop(dfw::input&, float, int);
 	virtual void 				draw(ldv::screen&, int);
 	virtual void 				awake(dfw::input&) {}
 	virtual void 				slumber(dfw::input&) {}
@@ -55,47 +53,56 @@ class controller_test_poly:
 	{
 		ldt::polygon_2d<double>	poly;
 		ldt::vector_2d<double>	velocity,
-					external_force;
-		double			bearing,
 					thrust;
-//		tools::ranged_value<double>	multiplier;
+		double			bearing;
+		int			health;
 	};
 
-	//references...
-	shared_resources&			s_resources;
-		
-	//properties
-	ldv::camera				camera;
-	player					player;
-	ldv::rgb_color				player_color;
-	std::vector<obstacle>			obstacles;
-	std::vector<waypoint>			waypoints;
-	struct	{
-		double				current,
-						next;
-	}					camera_val;
-	struct  {
-		int				current=0,
-						total=0;
-	}					waypoint_val;
+	struct stimer
+	{
+		int			ms=0, seconds=0, minutes=0;
+		void			reset() {ms=0; seconds=0; minutes=0;}
+		void			step(double d)
+		{
+			ms+=d*1000.;
+			if(ms >= 1000) 
+			{	
+				ms=0; ++seconds;
+				if(seconds >= 60)
+				{
+					seconds=0; ++minutes;
+				}
+			}
+		}
+					operator bool() const {return minutes || seconds || ms;}
+		bool 			operator<(const stimer& o) const
+		{
+			if(minutes!=o.minutes) return minutes < o.minutes;
+			else if(seconds!=o.seconds) return seconds < o.seconds;
+			else return ms < o.ms;
+		}
+	};
+
+	//Methods
 
 	void					load();
+	void					soft_reset();
 	void					reset();
 	void					draw_polygon(ldv::screen&, const ldt::polygon_2d<double>&, ldv::rgb_color, int);
 	void					draw_raster(ldv::screen&, ldv::raster_representation&);
+	void					draw_hud(ldv::screen&);
 
 	void					do_camera(float);
 	void					do_waypoint();
 
-	void					player_accelerate(float, int);
+	void					player_accelerate(float, double);
 	void					player_idle(float);
 	void					player_turn(float, int);
 	void					player_step(float);
 
-
-
 #ifdef WDEBUG_CODE
 	//Debug
+	void					reload_physics_values();
 	ldt::point_2d<double>			debug_collision_line_pt1, 
 						debug_collision_line_pt2,
 						debug_collision_normal_pt1,
@@ -121,6 +128,52 @@ class controller_test_poly:
 		auto it=std::remove_if(std::begin(v), std::end(v), [point](const T& o) {return ldt::point_in_polygon<double>(o.poly, point);});
 		if(it!=std::end(v)) v.erase(it);
 	}
+#endif
+
+//references...
+	shared_resources&			s_resources;
+
+	//consts... not so much in debug mode :P.
+#ifdef WDEBUG_CODE
+#define const /* */
+#endif
+
+	const int				max_health=3;
+	const double				min_zoom,
+						max_zoom,
+						max_zoom_velocity,
+						player_full_stop_threshold,
+						player_acceleration,
+						player_base_turn_factor,
+						player_max_turn_velocity,
+						player_max_thrust,
+						player_min_thrust,
+						friction_coeficient;
+
+#ifdef WDEBUG_CODE
+#undef const
+#endif
+		
+	//properties
+	enum class tstates{intro, play, game_over} state;
+	ldv::camera				camera;
+	stimer					timer,
+						best_time;
+	player					player;
+	ldv::rgb_color				player_color;
+	std::vector<obstacle>			obstacles;
+	std::vector<waypoint>			waypoints;
+	struct	{
+		double				current,
+						next;
+	}					camera_val;
+	struct  {
+		int				current=0,
+						total=0;
+	}					waypoint_val;
+
+#ifdef WDEBUG_CODE
+	//Editor properties.
 
 	bool					editor_active=true;
 	static const int			editor_grid_size=64;

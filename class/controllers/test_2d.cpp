@@ -37,7 +37,7 @@ catch(std::exception& e)
 	//This would still propagate: initialization lists and exceptions work like that.
 }
 
-void controller_test_2d::loop(dfw::input& input, float delta)
+void controller_test_2d::loop(dfw::input& input, float delta, int /*step*/)
 {
 	if(input().is_exit_signal())
 	{ 

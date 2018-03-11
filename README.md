@@ -220,13 +220,15 @@ This is the main application flow:
 - Do common step (virtual function for your own state driver).
 - Do common input (virtual function for your own state driver).
 - Preloop of your state (input has yet not looped, thus there are not events accessible).
+	(preloop will probably be looped off XD).
 - Begin consuming loop time:
 	- Loop the input (now there are events... this is actually sdl_input::loop).
 	- Loop the state. (this is the main loop of your state).
 	- Process message queue.
 	- Evaluate possible state change. Break out of this loop if needed.
 	- 
-- Postloop of your state.
+- Postloop of your state 
+	(Same, I am removing the whole pre and post loop... The application is one continuous loop damn it.
 - If change state
 	- Confirm state change.
 - If not change state

@@ -30,7 +30,7 @@ controller_menu::controller_menu(shared_resources& s, dfw::signal_dispatcher& sd
 	choose_current_menu(main_menu_rep);
 }
 
-void controller_menu::loop(dfw::input& input, float delta)
+void controller_menu::loop(dfw::input& input, float delta, int /*step*/)
 {
 	if(input().is_exit_signal())
 	{

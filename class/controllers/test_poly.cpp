@@ -1,5 +1,8 @@
 #include "test_poly.h"
 
+#include <sstream>
+#include <iomanip>
+
 #include <templates/compatibility_patches.h>
 
 //local
@@ -9,8 +12,14 @@ using namespace app;
 
 controller_test_poly::controller_test_poly(shared_resources& sr, dfw::signal_dispatcher& /*sd*/)
 	:s_resources(sr),
+	//TODO: Adjust the last...
+	min_zoom{0.3}, max_zoom{1.0}, max_zoom_velocity{600.},
+	player_full_stop_threshold{30.}, player_acceleration{1000.},
+	player_base_turn_factor{200.}, player_max_turn_velocity{1100.},
+	player_max_thrust{15.}, player_min_thrust{-2.5},
+	friction_coeficient{1.5},
+	state{tstates::play},
 	camera{{0,0,700,500},{0,0}},
-//	player{ {}, {0.,0.}, {0.,0.}, 0., 0., {0.,1.,1.}},
 	player_color(ldv::rgb8(64,64,128)),
 	camera_val{1., 1.}
 #ifdef WDEBUG_CODE
@@ -29,13 +38,15 @@ controller_test_poly::controller_test_poly(shared_resources& sr, dfw::signal_dis
 		ldv::rgb8(0,0,51),	ldv::rgb8(0,0,153),	ldv::rgb8(0,0,204),
 		ldv::rgb8(51,51,51),	ldv::rgb8(153,153,153),	ldv::rgb8(204,204,204)
 	};
+	reload_physics_values();
 #endif
 }
 
-void controller_test_poly::loop(dfw::input& input, float delta)
+void controller_test_poly::loop(dfw::input& input, float delta, int /*step*/)
 {
 	if(input().is_exit_signal() || input.is_input_down(input_app::escape))
 	{
+		//TODO: Nope, back to the previous state.
 		set_leave(true);
 		return;
 	}
@@ -47,22 +58,32 @@ void controller_test_poly::loop(dfw::input& input, float delta)
 		return;
 	}
 
-	if(input.is_input_down(input_app::console_newline)) editor_active=!editor_active;;
+	if(input.is_input_down(input_app::console_newline)) editor_active=!editor_active;
+
+	if(input.is_input_down(input_app::console_backspace)) reload_physics_values();
 #endif
 
-	camera.center_on(ldv::point(player.poly.get_centroid().x, player.poly.get_centroid().y));
+	switch(state)
+	{
+		case tstates::intro:
+			//TODO. Hit any key to start.
+		break;
+		case tstates::play:
+			if(input.is_input_pressed(input_app::down))	player_accelerate(delta, -1);
+			else if(input.is_input_pressed(input_app::up)) 	player_accelerate(delta, 1);
+			else						player_idle(delta);
+		
+			if(input.is_input_pressed(input_app::left))	player_turn(delta, 1);
+			else if(input.is_input_pressed(input_app::right)) player_turn(delta, -1);
 
-	if(input.is_input_pressed(input_app::down))	player_accelerate(delta, -1);
-	else if(input.is_input_pressed(input_app::up)) 	player_accelerate(delta, 1);
-	else						player_idle(delta);
-	
-	if(input.is_input_pressed(input_app::left))	player_turn(delta, 1);
-	else if(input.is_input_pressed(input_app::right)) player_turn(delta, -1);
-
-	player_step(delta);
-	do_camera(delta);
-
-	//TODO: Arrow pointing to next waypoint.
+			timer.step(delta);
+			player_step(delta);
+			do_camera(delta);
+		break;
+		case tstates::game_over:
+			//TODO. hit any key to restart
+		break;
+	}
 }
 
 void controller_test_poly::draw(ldv::screen& screen, int /*fps*/)
@@ -77,17 +98,22 @@ void controller_test_poly::draw(ldv::screen& screen, int /*fps*/)
 	}
 #endif
 
-	auto it=std::find_if(std::begin(waypoints), std::end(waypoints), [this](const waypoint& w) {return w.index==waypoint_val.current;});
-	if(it!=std::end(waypoints)) draw_polygon(screen, it->poly, ldv::rgb8(255, 200, 0), 128);
+	//Draw world... always drawn...
+	for(const auto& o : obstacles) draw_polygon(screen, o.poly, o.color, 255); 
 
-	for(const auto& o : obstacles) draw_polygon(screen, o.poly, o.color, 255);
-	draw_polygon(screen, player.poly, player_color, 255);
-
-	ldv::ttf_representation txt{
-		s_resources.get_ttf_manager().get("consola-mono", 16), 
-		ldv::rgba8(255, 255, 255, 255), "thrust:"+compat::to_string(player.thrust)+" mag: "+compat::to_string(player.velocity.magnitude())};
-	txt.go_to({0,0});
-	txt.draw(screen);
+	switch(state)
+	{
+		case tstates::intro:
+			//TODO. draw logo and hit any key
+		break;
+		case tstates::play: 
+			draw_polygon(screen, player.poly, player_color, 255);
+			draw_hud(screen);
+		break;
+		case tstates::game_over: 
+			//TODO. draw particles and hit any key
+		break;
+	}
 
 #if WDEBUG_CODE
 	editor_draw_line(screen, 
@@ -102,21 +128,43 @@ void controller_test_poly::draw(ldv::screen& screen, int /*fps*/)
 #endif
 }
 
+void controller_test_poly::draw_hud(ldv::screen& screen)
+{
+	//Draw timer.
+	auto timer_str=[](const stimer& t)
+	{
+		std::stringstream ss;
+		ss<<std::setfill('0')<<std::setw(2)<<t.minutes<<":"<<std::setw(2)<<t.seconds<<":"<<std::setw(3)<<t.ms;
+		return ss.str();
+	};
+	ldv::ttf_representation txt_timer{
+		s_resources.get_ttf_manager().get("consola-mono", 16), 
+		ldv::rgba8(255, 255, 255, 255), "time: "+timer_str(timer)+"\nbest: "+timer_str(best_time)};
+	txt_timer.align(screen.get_rect(), {ldv::representation_alignment::h::inner_right, ldv::representation_alignment::v::inner_top, 50, 10});
+	txt_timer.draw(screen);
+
+	//Draw health.
+	ldv::polygon_representation poly_health{ldv::polygon_representation::type::fill, { {0,0}, {40, 0}, {40,10}, {0,10} }, ldv::rgba8(255, 0, 0, 128)};
+	poly_health.set_blend(ldv::representation::blends::alpha);
+	for(int i=0; i<player.health; ++i)
+	{
+		poly_health.align(screen.get_rect(), {ldv::representation_alignment::h::inner_right, ldv::representation_alignment::v::inner_top, 0, 10+(14*i)});
+		poly_health.draw(screen);
+	}	
+}
+
 void controller_test_poly::do_camera(float delta)
 {
 	typedef ldt::point_2d<double>	pnt;
 	auto solve_for_x=[](pnt p1, pnt p2, double x)
 	{	
-		//TODO: This, of course, fails for straight or vertical lines.
+		//This, of course, fails for straight or vertical lines.
 		double m=(p2.y-p1.y) / (p2.x-p1.x); 	//m=(y2-y1) / (x2-x1)
 		double b=p1.y-(m*p1.x); 		//y=mx+b, thus b=y-mx
 		return (m*x) + b; 			//y=mx+b.
 	};
 
-	double 	max_zoom=1.0,
-		min_zoom=0.3;
-
-	camera_val.next=solve_for_x({0., max_zoom}, {600., min_zoom}, player.velocity.magnitude());
+	camera_val.next=solve_for_x({0., max_zoom}, {max_zoom_velocity, min_zoom}, player.velocity.magnitude());
 	camera_val.current+=(camera_val.current < camera_val.next ? 1. : -1. ) * delta * 0.15;
 	camera.set_zoom(tools::ranged_value<double>{min_zoom, max_zoom, camera_val.current});
 	camera.center_on({(int)player.poly.get_centroid().x, (int)player.poly.get_centroid().y});
@@ -124,44 +172,44 @@ void controller_test_poly::do_camera(float delta)
 
 void controller_test_poly::reset()
 {
+	soft_reset();
+	best_time.reset();
+}
+
+void controller_test_poly::soft_reset()
+{
 	//Reset player.
 	player={
 		{{ {-16.,-16.},{-16.,16.},{0.,64.},{16.,16.},{16.,-16.} } },
 		{0.,0.}, {0.,0.},
-		90., 0.,
-//		{0., 1., 0.}
+		90., 
+		max_health
 	};
 	//Reset camera.
 	camera.set_zoom(1.);
-	camera.go_to({0,0});
+	camera.center_on({(int)player.poly.get_centroid().x, (int)player.poly.get_centroid().y});
 	waypoint_val.current=1;
-	//TODO: Reset state... like timers and health.
+	timer.reset();
 }
 
-void controller_test_poly::player_accelerate(float delta, int direction)
+void controller_test_poly::player_accelerate(float delta, double direction)
 {
-	const double 	player_acceleration_factor=direction > 0 ? 100. : 50,
-			player_speed_limit=direction > 0 ? 600. : 200.;
-
-	if(abs(player.thrust) < player.velocity.magnitude()) player.thrust=(player.velocity.magnitude())*(double)direction;
-
-	player.thrust+=player_acceleration_factor*delta*(double)direction;
-
-	if((direction > 0 && player.thrust > player_speed_limit) ||
-	(direction < 0 && player.thrust < player_speed_limit))
-		player.thrust=player_speed_limit;
+	double thrust_factor=(direction*player_acceleration)*delta;
+	player.thrust=ldt::vector_from_angle(player.bearing)*thrust_factor;
 }
 
 void controller_test_poly::player_idle(float /*delta*/)
 {
-	player.thrust=0.;
+	player.thrust={0., 0.};
 }
-
 
 void controller_test_poly::player_turn(float delta, int dir)
 {
-	const double	player_turn_factor=140. - (100. * (player.thrust / 600.));
-	double factor=(double)dir * player_turn_factor * delta;
+	//Turning just becomes impossible at certain speeds.
+	double	turn_factor=player_base_turn_factor - (player_base_turn_factor * (player.velocity.magnitude() / player_max_turn_velocity));
+	if(turn_factor < 0.) return;
+	double factor=(double)dir * turn_factor * delta;
+
 	player.poly.rotate(factor);
 
 	//If there's any collision, we undo it and exit early so as to not change the bearing.
@@ -175,34 +223,30 @@ void controller_test_poly::player_turn(float delta, int dir)
 	}
 
 	player.bearing+=factor;
+
+	//Clamp to 0-360.
+	if(player.bearing < 0.) player.bearing+=360.;
+	else if(player.bearing > 360.) player.bearing-=360.;
 }
 
 void controller_test_poly::player_step(float delta)
 {
-	//Thrust is the main force acting on velocity here...
-	if(player.thrust)
+	//There comes a moment where velocity*friction_coeficient*delta == current_acceleration, at which moment we stop accelerating.
+	player.velocity-=(player.velocity*friction_coeficient*delta);
+
+	if(!player.thrust.magnitude())
 	{
-		ldt::vector_2d<double> vbearing=ldt::vector_from_angle(player.bearing);
-		player.velocity=(vbearing * player.thrust);
+		if(player.velocity.magnitude() < player_full_stop_threshold) player.velocity={0., 0.};
+//		else 
+//		{
+			//TODO: This is problematic: we keep it, reverse becomes forward once key is lifted. We remove it, forget about steering!!!
+			//player.velocity=ldt::vector_from_angle(player.bearing)*player.velocity.magnitude();
+//		}
 	}
-	else
-	{
-		//TODO: No turning???
-		player.velocity-=(player.velocity*0.2); //Friction coeficient.
-		//Perhaps substract from magnitude and then turn??? TODO?
-	}
+	else player.velocity+=player.thrust;
 
 	//Keep maximum speed constant...
-//	double max_magnitude=player.thrust > 0. ? 600. : 200.;
 //	if(player.velocity.magnitude() > max_magnitude) player.velocity*=max_magnitude / player.velocity.magnitude();
-
-	//But there may be a external force applied too.
-	//TODO: This is not really working either.
-	if(player.external_force.x || player.external_force.y)
-	{
-		player.velocity+=player.external_force;
-		player.external_force={0., 0.};
-	}
 
 	//Collision detection and response...
 	if(player.velocity.x || player.velocity.y)
@@ -210,16 +254,39 @@ void controller_test_poly::player_step(float delta)
 		ldt::point_2d<double> p(player.velocity.x * delta, player.velocity.y * delta);
 		player.poly.move(p);
 
+#ifdef WDEBUG_CODE
+		const auto& dc=s_resources.get_debug_config();
+		double 	wrap_max_x=dc.double_from_path("debug:physics:wrap_max_x"),
+			wrap_min_x=dc.double_from_path("debug:physics:wrap_min_x"),
+			wrap_max_y=dc.double_from_path("debug:physics:wrap_max_y"),
+			wrap_min_y=dc.double_from_path("debug:physics:wrap_min_y");
+		auto cntrd=player.poly.get_centroid();
+
+		if(cntrd.x > wrap_max_x) player.poly.center_in({wrap_min_x, cntrd.y});
+		else if(cntrd.x < wrap_min_x) player.poly.center_in({wrap_max_x, cntrd.y});
+
+		if(cntrd.y > wrap_max_y) player.poly.center_in({cntrd.x, wrap_min_y});
+		else if(cntrd.y < wrap_min_y) player.poly.center_in({cntrd.x, wrap_max_y});
+#endif
+
 		auto it=std::find_if(std::begin(waypoints), std::end(waypoints), [this](const waypoint& w) {return w.index==waypoint_val.current;});
-		if(it!=std::end(waypoints) && ldt::SAT_collision_check(player.poly, it->poly))
-		{
-			do_waypoint();
-		}
+		if(it!=std::end(waypoints) && ldt::SAT_collision_check(player.poly, it->poly)) do_waypoint();
+
 
 		for(const auto& o :obstacles)
 		{
 			if(ldt::SAT_collision_check(player.poly, o.poly))
 			{
+				--player.health;
+				//TODO: Some effect or explosion would be nice to end the game, instead of a flicker.
+				//TODO: Do a explosion and pan back to the origin.
+				if(!player.health) 
+				{
+					//TODO: Change state.
+					soft_reset();
+				}
+
+
 				auto d=ldt::SAT_collision_check_edge(player.poly, o.poly);
 
 				//Undo movement...
@@ -232,8 +299,7 @@ void controller_test_poly::player_step(float delta)
 
 				vector_normal.normalize();
 				auto new_vector=player.velocity + (vector_normal * player.velocity.magnitude() * 2.);
-//				player.velocity=new_vector / 3.;
-				player.external_force=new_vector / 3.;
+				player.velocity=new_vector / 3.;
 				player.thrust/=3.;
 
 #ifdef WDEBUG_CODE
@@ -254,8 +320,10 @@ void controller_test_poly::do_waypoint()
 	++waypoint_val.current;
 	if(waypoint_val.current > waypoint_val.total) 
 	{
-		//TODO: This is a completed lap. Save the time, or something.
 		waypoint_val.current=1;
+		if(!best_time || timer < best_time) best_time=timer;
+		timer.reset();
+		player.health=max_health;
 	}
 }
 
@@ -322,6 +390,19 @@ void controller_test_poly::draw_raster(ldv::screen& screen, ldv::raster_represen
 //****************************************************
 
 #ifdef WDEBUG_CODE
+
+void controller_test_poly::reload_physics_values()
+{
+	player_acceleration=s_resources.get_debug_config().double_from_path("debug:physics:player_acceleration");
+	player_base_turn_factor=s_resources.get_debug_config().double_from_path("debug:physics:player_base_turn_factor");
+	player_max_turn_velocity=s_resources.get_debug_config().double_from_path("debug:physics:player_max_turn_velocity");
+	player_full_stop_threshold=s_resources.get_debug_config().double_from_path("debug:physics:player_full_stop_threshold");
+	player_max_thrust=s_resources.get_debug_config().double_from_path("debug:physics:player_max_thrust");
+	player_min_thrust=s_resources.get_debug_config().double_from_path("debug:physics:player_min_thrust");
+	friction_coeficient=s_resources.get_debug_config().double_from_path("debug:physics:friction_coeficient");
+
+	std::cout<<"physics values reloaded (if values didn't change remember to hit r):"<<std::endl;
+}
 
 void controller_test_poly::editor_loop(dfw::input& input)
 {

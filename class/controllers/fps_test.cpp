@@ -18,12 +18,7 @@ controller_fps_test::controller_fps_test(shared_resources& sr)
 
 }
 
-void controller_fps_test::preloop(dfw::input& /*input*/, float /*delta*/, int /*fps*/)
-{
-
-}
-
-void controller_fps_test::loop(dfw::input& input, float /*delta*/)
+void controller_fps_test::loop(dfw::input& input, float /*delta*/, int /*step*/)
 {
 	if(input().is_exit_signal() || input.is_input_down(input_app::escape))
 	{
@@ -31,11 +26,6 @@ void controller_fps_test::loop(dfw::input& input, float /*delta*/)
 		return;
 	}
 	
-}
-
-void controller_fps_test::postloop(dfw::input& /*input*/, float /*delta*/, int /*fps*/)
-{
-
 }
 
 void controller_fps_test::draw(ldv::screen& screen, int fps)

@@ -10,7 +10,6 @@ DEBUG=-g
 WARNING_FLAGS=-Wall -Wextra -Wundef -Wcast-align -Wwrite-strings -Wlogical-op -Wmissing-declarations -Wredundant-decls -Wshadow -Woverloaded-virtual -fno-rtti 
 #-Wfatal-errors 
 
-
 FLAGS_BASE=$(WARNING_FLAGS) $(OTHER_WARNING_FLAGS) $(DISABLE_ASSERT) $(WITH_DEBUG_CODE) -ansi -pedantic -std=c++11
 CFLAGS=-c $(DEBUG) $(OPTIMIZATION) $(FLAGS_BASE)
 CFLAGS_TARGET_FINAL=$(DEBUG) $(OPTIMIZATION) $(FLAGS_BASE)
@@ -31,4 +30,3 @@ INCLUDES=-I $(DIR_LIBDAN2) -I $(DIR_TOOLS) -I $(DIR_DFW)
 LIBRARIES=
 
 include makefile_common
-

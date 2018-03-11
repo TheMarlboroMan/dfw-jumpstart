@@ -18,6 +18,7 @@
 #include "../controllers/fps_test.h"
 #include "../controllers/console.h"
 #include "../controllers/test_poly.h"
+#include "../controllers/step.h"
 #include "../controllers/signals.h"
 
 //Specific app_config
@@ -62,6 +63,7 @@ class state_driver:
 	std::unique_ptr<controller_test_poly>		c_test_poly;
 	std::unique_ptr<controller_console>		c_console;
 	std::unique_ptr<controller_fps_test>		c_fps;
+	std::unique_ptr<controller_step>		c_step;
 };
 
 }

@@ -36,6 +36,9 @@ class controller_step:
 
 	//properties
 	struct {int r=128,g=64,b=20;}			color;
+	struct {
+		float pos, speed, max_limit, elapsed;
+	}						data;
 };
 
 }

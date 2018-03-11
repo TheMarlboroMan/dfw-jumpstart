@@ -19,6 +19,7 @@ There are a few controllers here:
 - a game thing companion that displays texts along the previous controller.
 	- Demonstrates multi-controller drawing and signal broadcasting.
 - a very simple frames-per-second test, not accesible.
+- a very simple step test, not accesible, created to see how the timestep keeps up in different computers.
 
 The rest of this text file includes:
 	- a getting started guide.
@@ -213,22 +214,18 @@ The documentation of the class if fairly complete in any case.
 
 - From the controller code use set_state(state), as in set_state(state_main). Use a state defined in states.h. 
 
-###Use "loop", "preloop", "postloop" and application step.
+###Use "loop" and application step.
 
 This is the main application flow:
 
 - Do common step (virtual function for your own state driver).
 - Do common input (virtual function for your own state driver).
-- Preloop of your state (input has yet not looped, thus there are not events accessible).
-	(preloop will probably be looped off XD).
 - Begin consuming loop time:
 	- Loop the input (now there are events... this is actually sdl_input::loop).
 	- Loop the state. (this is the main loop of your state).
 	- Process message queue.
 	- Evaluate possible state change. Break out of this loop if needed.
 	- 
-- Postloop of your state 
-	(Same, I am removing the whole pre and post loop... The application is one continuous loop damn it.
 - If change state
 	- Confirm state change.
 - If not change state
@@ -239,9 +236,7 @@ This is the main application flow:
 
 Thus:
 
-- Preloop happens once before loop time is consumed.
-- Postloop happens right before drawing the state.
-- Controller loop happens X times, as much as needed to fill N seconds of logic.
+- Controller loop happens X times, as much as needed to fill N seconds of logic before drawing.
 	- This time is measured by a ldt::fps_counter, property of the kernel. 
 	- The value "delta_step" on the kernel represents the 0.01 seconds of logic.
 	- Once N seconds of logic are run, the screen is refreshed.
@@ -327,7 +322,6 @@ since you can:
 - Once the sound is done, execute the callback.
 - In the callback, clear the channel callback, unmonitor it and free it so it
 can be acquired again.
-
 
 Notice that the callback function will be called only if a lda::audio_callback_interface
 is attached. It will be executed either when the sound ends "naturally" or 

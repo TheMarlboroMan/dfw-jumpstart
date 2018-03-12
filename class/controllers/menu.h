@@ -32,7 +32,7 @@ class controller_menu:
 	public:
 
 						controller_menu(shared_resources&, dfw::signal_dispatcher&, app_config&);
-	virtual void 				loop(dfw::input& input, float delta, int);
+	virtual void 				loop(dfw::input& input, const dfw::loop_iteration_data&);
 	virtual void 				draw(ldv::screen& screen, int);
 	virtual void 				awake(dfw::input&) {}
 	virtual void 				slumber(dfw::input&) {}

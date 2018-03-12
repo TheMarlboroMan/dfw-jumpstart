@@ -42,7 +42,7 @@ controller_test_poly::controller_test_poly(shared_resources& sr, dfw::signal_dis
 #endif
 }
 
-void controller_test_poly::loop(dfw::input& input, float delta, int /*step*/)
+void controller_test_poly::loop(dfw::input& input, const dfw::loop_iteration_data& lid)
 {
 	if(input().is_exit_signal() || input.is_input_down(input_app::escape))
 	{
@@ -69,16 +69,16 @@ void controller_test_poly::loop(dfw::input& input, float delta, int /*step*/)
 			//TODO. Hit any key to start.
 		break;
 		case tstates::play:
-			if(input.is_input_pressed(input_app::down))	player_accelerate(delta, -1);
-			else if(input.is_input_pressed(input_app::up)) 	player_accelerate(delta, 1);
-			else						player_idle(delta);
+			if(input.is_input_pressed(input_app::down))	player_accelerate(lid.delta, -1);
+			else if(input.is_input_pressed(input_app::up)) 	player_accelerate(lid.delta, 1);
+			else						player_idle(lid.delta);
 		
-			if(input.is_input_pressed(input_app::left))	player_turn(delta, 1);
-			else if(input.is_input_pressed(input_app::right)) player_turn(delta, -1);
+			if(input.is_input_pressed(input_app::left))	player_turn(lid.delta, 1);
+			else if(input.is_input_pressed(input_app::right)) player_turn(lid.delta, -1);
 
-			timer.step(delta);
-			player_step(delta);
-			do_camera(delta);
+			timer.step(lid.delta);
+			player_step(lid.delta);
+			do_camera(lid.delta);
 		break;
 		case tstates::game_over:
 			//TODO. hit any key to restart

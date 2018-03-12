@@ -18,7 +18,7 @@ controller_fps_test::controller_fps_test(shared_resources& sr)
 
 }
 
-void controller_fps_test::loop(dfw::input& input, float /*delta*/, int /*step*/)
+void controller_fps_test::loop(dfw::input& input, const dfw::loop_iteration_data& /*lid*/)
 {
 	if(input().is_exit_signal() || input.is_input_down(input_app::escape))
 	{

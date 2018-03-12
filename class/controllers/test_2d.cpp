@@ -37,7 +37,7 @@ catch(std::exception& e)
 	//This would still propagate: initialization lists and exceptions work like that.
 }
 
-void controller_test_2d::loop(dfw::input& input, float delta, int /*step*/)
+void controller_test_2d::loop(dfw::input& input, const dfw::loop_iteration_data& lid)
 {
 	if(input().is_exit_signal())
 	{ 
@@ -51,10 +51,10 @@ void controller_test_2d::loop(dfw::input& input, float delta, int /*step*/)
 	}
 
 	//Music...
-	m_fader.loop(delta);
+	m_fader.loop(lid.delta);
 
 	//World processing... First the audio players. So far roles are separate.
-	for(auto& ap : game_room.get_audio_players()) ap.loop(delta);
+	for(auto& ap : game_room.get_audio_players()) ap.loop(lid.delta);
 
 	//Input processing and player logic.
 	game_input gi;
@@ -68,10 +68,10 @@ void controller_test_2d::loop(dfw::input& input, float delta, int /*step*/)
 	if(input.is_input_down(input_app::activate)) gi.activate=true;
 
 	game_player.set_input(gi);
-	game_player.step(delta);
+	game_player.step(lid.delta);
 
 	//Player movement...
-	auto movement_phase=[this, delta](motion::axis axis)
+	auto movement_phase=[this, lid](motion::axis axis)
 	{
 		//This is the laziest approach: revert the movement as soon as 
 		//a collision is detected, opting for an early exit.
@@ -92,7 +92,7 @@ void controller_test_2d::loop(dfw::input& input, float delta, int /*step*/)
 				}
 		};
 
-		game_player.integrate_motion(delta, axis);
+		game_player.integrate_motion(lid.delta, axis);
 
 		auto obstacle_collisions=game_room.get_obstacles();
 		solve_collisions(obstacle_collisions);

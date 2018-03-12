@@ -30,7 +30,7 @@ controller_menu::controller_menu(shared_resources& s, dfw::signal_dispatcher& sd
 	choose_current_menu(main_menu_rep);
 }
 
-void controller_menu::loop(dfw::input& input, float delta, int /*step*/)
+void controller_menu::loop(dfw::input& input, const dfw::loop_iteration_data& lid)
 {
 	if(input().is_exit_signal())
 	{
@@ -41,15 +41,15 @@ void controller_menu::loop(dfw::input& input, float delta, int /*step*/)
 	if(input().is_event_input_with_pressed())
 	{
 		if(current_menu_ptr==&main_menu_rep) 		do_main_menu_input(input);
-		else if(current_menu_ptr==&options_menu_rep) 	do_options_menu_input(input, delta);
+		else if(current_menu_ptr==&options_menu_rep) 	do_options_menu_input(input, lid.delta);
 		else if(current_menu_ptr==&controls_menu_rep) 	do_controls_menu_input(input);
 	}
 
 	//There are a few steps...
-	current_menu_ptr->step(delta);
-	for(auto& b : menu_decorations) b.step(delta);
-	pulse.step(delta);
-	flicker.step(delta);
+	current_menu_ptr->step(lid.delta);
+	for(auto& b : menu_decorations) b.step(lid.delta);
+	pulse.step(lid.delta);
+	flicker.step(lid.delta);
 	if(flicker.changed)
 	{
 		tools::int_generator g(0, 300);

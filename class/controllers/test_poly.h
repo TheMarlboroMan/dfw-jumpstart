@@ -28,7 +28,7 @@ class controller_test_poly:
 	public:
 
 						controller_test_poly(shared_resources&, dfw::signal_dispatcher&);
-	virtual void 				loop(dfw::input&, float, int);
+	virtual void 				loop(dfw::input&, const dfw::loop_iteration_data&);
 	virtual void 				draw(ldv::screen&, int);
 	virtual void 				awake(dfw::input&) {}
 	virtual void 				slumber(dfw::input&) {}

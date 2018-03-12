@@ -22,7 +22,7 @@ class controller_template:
 	public:
 
 						controller_template(ldt::log&);
-	virtual void 				loop(dfw::input&, float, int);
+	virtual void 				loop(dfw::input&, const dfw::loop_iteration_data&);
 	virtual void 				draw(ldv::screen&, int);
 	virtual void 				awake(dfw::input& /*input*/) {}
 	virtual void 				slumber(dfw::input& /*input*/) {}

@@ -23,7 +23,7 @@ class controller_fps_test:
 	public:
 
 						controller_fps_test(shared_resources&);
-	virtual void 				loop(dfw::input& input, float delta, int);
+	virtual void 				loop(dfw::input& input, const dfw::loop_iteration_data&);
 	virtual void 				draw(ldv::screen& screen, int);
 	virtual void 				awake(dfw::input& input);
 	virtual void 				slumber(dfw::input& input);

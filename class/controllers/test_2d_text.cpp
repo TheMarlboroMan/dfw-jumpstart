@@ -27,7 +27,7 @@ catch(std::exception& e)
 	//This would still propagate: initialization lists and exceptions work like that.
 }
 
-void controller_test_2d_text::loop(dfw::input& input, float delta, int /*step*/)
+void controller_test_2d_text::loop(dfw::input& input, const dfw::loop_iteration_data& lid)
 {
 	if(input().is_exit_signal())
 	{ 
@@ -51,7 +51,7 @@ void controller_test_2d_text::loop(dfw::input& input, float delta, int /*step*/)
 			}
 			else
 			{
-				time_text+=delta;
+				time_text+=lid.delta;
 				if(time_text >= 0.05f)
 				{
 					++current_index;
@@ -70,7 +70,7 @@ void controller_test_2d_text::loop(dfw::input& input, float delta, int /*step*/)
 
 		case tstates::wait:
 
-			time_blink+=delta;
+			time_blink+=lid.delta;
 
 			if(input.is_input_down(input_app::activate))
 			{

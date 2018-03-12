@@ -20,7 +20,7 @@ controller_console::controller_console(shared_resources& sr)
 
 }
 
-void controller_console::loop(dfw::input& input, float delta, int /*step*/)
+void controller_console::loop(dfw::input& input, const dfw::loop_iteration_data& lid)
 {
 	if(input().is_exit_signal())
 	{ 
@@ -34,7 +34,7 @@ void controller_console::loop(dfw::input& input, float delta, int /*step*/)
 	}
 
 	//TODO: Learn to use mod?
-	time+=delta;
+	time+=lid.delta;
 	if(time > 1.f) time=0.f;
 
 	//Keyboard control... Newline (enter) and backspace are controlled separatedly 

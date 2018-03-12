@@ -24,7 +24,7 @@ class controller_step:
 	public:
 
 						controller_step(shared_resources&);
-	virtual void 				loop(dfw::input&, float, int);
+	virtual void 				loop(dfw::input&, const dfw::loop_iteration_data&);
 	virtual void 				draw(ldv::screen&, int);
 	virtual void 				awake(dfw::input& /*input*/);
 	virtual void 				slumber(dfw::input& /*input*/) {}
@@ -39,7 +39,7 @@ class controller_step:
 	struct {int r=128,g=64,b=20;}			color;
 	struct {
 		float pos, speed, max_limit, elapsed;
-		int				grit=10;
+		int				grit=10, steps=0;
 		tools::chrono			chrono;
 	}						data;
 };

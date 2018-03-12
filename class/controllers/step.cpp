@@ -12,7 +12,7 @@ controller_step::controller_step(shared_resources& sr)
 	:s_resources(sr)
 {
 	data.pos=0.f;
-	data.speed=500.f;
+	data.speed=100.f;
 	data.max_limit=500.f;
 	data.elapsed=0.f;
 }
@@ -21,10 +21,7 @@ void controller_step::awake(dfw::input&) {
 	data.chrono.start();
 }
 
-//TODO: Apart from the step, it would be nice to get the amount
-//of time we are consuming, as per the fps_counter.
-
-void controller_step::loop(dfw::input& input, float delta, int /*step*/)
+void controller_step::loop(dfw::input& input, const dfw::loop_iteration_data& lid)
 {
 	if(input().is_exit_signal() || input.is_input_down(input_app::escape))
 	{
@@ -33,26 +30,28 @@ void controller_step::loop(dfw::input& input, float delta, int /*step*/)
 	}
 
 	if(input.is_input_down(input_app::down)) {
-		if(data.grit > 5) {
-			data.grit-=5;
+		if(data.grit > 2) {
+			data.grit-=2;
 		}
 	}
 	else if(input.is_input_down(input_app::up)) {
-		data.grit+=10;
+		data.grit+=2;
 	}
 
 	if(input.is_input_down(input_app::activate)) {
 		data.elapsed=0.f;
 		data.pos=0.f;
 		data.chrono.start();
+		data.steps=0;
 	}
 
 	//TODO... Interesting... There's a slight difference between the elapsed and the measured.
 	//I seem to be missing like 10ms or something of the like.
 
 	if(data.pos < data.max_limit) {
-		data.elapsed+=delta;
-		data.pos+=data.speed*delta;
+		data.elapsed+=lid.delta;
+		data.pos+=data.speed*lid.delta;
+		++data.steps;
 		if(data.pos >= data.max_limit) {
 			data.chrono.stop();
 		}
@@ -90,10 +89,10 @@ void controller_step::draw(ldv::screen& screen, int fps)
 	goal.draw(screen);
 
 	//Data.
-	std::string fdata="grit:"+compat::to_string(data.grit)+" fps:"+compat::to_string(fps)+" elapsed:"+compat::to_string(data.elapsed)+" measured:"+compat::to_string(data.chrono.get_milliseconds());
+	std::string fdata="grit:"+compat::to_string(data.grit)+" fps:"+compat::to_string(fps)+" elapsed:"+compat::to_string(data.elapsed)+" measured:"+compat::to_string(data.chrono.get_milliseconds())+" steps:"+compat::to_string(data.steps);
 	ldv::ttf_representation fps_text{
 		s_resources.get_ttf_manager().get("consola-mono", 16), 
-		ldv::rgba8(255, 255, 255, 255), fdata};
+		ldv::rgba8(0, 0, 0, 255), fdata};
 
 	fps_text.align(screen.get_rect(), {ldv::representation_alignment::h::inner_right, ldv::representation_alignment::v::inner_top, 10, 10});
 	fps_text.draw(screen);

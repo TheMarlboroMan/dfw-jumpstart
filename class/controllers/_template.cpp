@@ -11,7 +11,7 @@ controller_template::controller_template(ldt::log& plog)
 
 }
 
-void controller_template::loop(dfw::input& /*input*/, float /*delta*/, int /*step*/)
+void controller_template::loop(dfw::input& /*input*/, const dfw::loop_iteration_data& /*lid*/)
 {
 	/*
 	if(input().is_exit_signal() || input.is_input_down(input_app::escape))

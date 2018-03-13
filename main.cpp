@@ -35,7 +35,7 @@ int main(int argc, char ** argv)
 		log_app<<"init kernel config..."<<std::endl;
 		kernel_config kconfig(config);
 
-		log_app<<"init sdl2..."<<std::endl;	
+		log_app<<"init sdl2..."<<std::endl;
 		if(!ldt::sdl_init(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_JOYSTICK))
 		{
 			throw std::runtime_error("unable to init sdl2");
@@ -48,10 +48,10 @@ int main(int argc, char ** argv)
 		kernel.init(kconfig, config);
 
 		log_app<<"create state driver..."<<std::endl;
-		state_driver APP(kernel, config);
+		state_driver sd(kernel, config);
 
 		log_app<<"init state driver..."<<std::endl;
-		APP.init(kernel);
+		sd.init(kernel);
 
 		log_app<<"finish main proccess"<<std::endl;
 	}

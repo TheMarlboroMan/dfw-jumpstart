@@ -65,8 +65,6 @@ void controller_step::draw(ldv::screen& screen, int fps)
 	ldv::box_representation square{ldv::polygon_representation::type::fill, {0,0,data.grit,data.grit}, ldv::rgba8(0, 0, 0, 128)};
 	square.set_blend(ldv::representation::blends::alpha);
 
-	//TODO: Try with very slow shit... Seems to lock up, maybe too much time
-	//is piling up.
 	//Stuff that slows down.
 	for(int x=0; x<(int)screen.get_w(); x+=data.grit/2) {
 		for(int y=0; y<(int)screen.get_h(); y+=data.grit/2) {

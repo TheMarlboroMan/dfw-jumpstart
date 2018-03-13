@@ -48,6 +48,7 @@ state_driver::state_driver(dfw::kernel& kernel, app::app_config& c)
 
 	log<<"virtualizing input..."<<std::endl;
 	virtualize_input(kernel.get_input());
+//	kernel.set_delta_step(0.01f);
 
 	log<<"state driver fully constructed"<<std::endl;
 }

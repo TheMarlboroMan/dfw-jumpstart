@@ -10,7 +10,7 @@
 //culminating point of lazyness... But it is also easy and clear, mind you.
 
 //Libdan
-#include <tools/log/log.h>
+#include <log.h>
 #include <video/resource_manager/resource_manager.h>
 
 //Tools
@@ -35,7 +35,7 @@ class shared_resources
 {
 	public:
 
-						shared_resources(dfw::audio&, lda::resource_manager&, ldv::resource_manager&, ldt::log&, tools::chrono&, tools::arg_manager&);
+						shared_resources(dfw::audio&, lda::resource_manager&, ldv::resource_manager&, tools::log&, tools::chrono&, tools::arg_manager&);
 
 #ifdef WDEBUG_CODE
 	const tools::dnot_config_file&		get_debug_config() const {return debug_config;}
@@ -46,7 +46,7 @@ class shared_resources
 	const lda::resource_manager&		get_audio_resource_manager() const {return a_manager;}
 	const tools::ttf_manager&		get_ttf_manager() const {return ttf_manager;}
 	const ldv::resource_manager&		get_video_resource_manager() const {return v_manager;}
-	ldt::log&				get_log() {return log;}
+	tools::log&				get_log() {return log;}
 	const tools::sprite_table&		get_tilesheet(size_t i) const {return tilesheets[i];}
 	const tools::animation_table&		get_animation(size_t i) const {return animations[i];}
 	tools::chrono&				get_controller_chrono() {return controller_chrono;}
@@ -62,7 +62,7 @@ class shared_resources
 	dfw::audio				audio;
 	lda::resource_manager&			a_manager;
 	ldv::resource_manager&			v_manager;
-	ldt::log&				log;
+	tools::log&				log;
 	tools::chrono&				controller_chrono;
 	tools::arg_manager&			arg_manager;
 

@@ -13,7 +13,7 @@
 
 using namespace app;
 
-extern ldt::log LOG;
+extern tools::log LOG;
 
 state_driver::state_driver(dfw::kernel& kernel, app::app_config& c)
 //	:state_driver_interface(t_states::state_menu),

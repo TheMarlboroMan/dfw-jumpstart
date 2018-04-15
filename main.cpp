@@ -3,9 +3,10 @@
 #include "class/dfwimpl/kernel_config.h"
 #include "class/dfwimpl/app_config.h"
 #include "class/dfwimpl/state_driver.h"
+#include <log.h>
 
 //Global log. Bad practice, but useful.
-ldt::log LOG;
+tools::log LOG;
 
 int main(int argc, char ** argv)
 {
@@ -22,7 +23,7 @@ int main(int argc, char ** argv)
 	tools::arg_manager CARG(argc, argv);
 
 	//Init application log.
-	ldt::log log_app("logs/app.log");
+	tools::log log_app("logs/app.log");
 	log_app<<"starting main process..."<<std::endl;
 
 	//Init...

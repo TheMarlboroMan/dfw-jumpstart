@@ -10,8 +10,8 @@
 namespace app
 {
 
-class motion
-{
+class motion {
+
 	//////////////////////
 	// Definiciones...
 	public:

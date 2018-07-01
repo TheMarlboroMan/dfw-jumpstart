@@ -16,9 +16,8 @@ using namespace app;
 extern ldt::log LOG;
 
 state_driver::state_driver(dfw::kernel& kernel, app::app_config& c)
-//	:state_driver_interface(t_states::state_menu),
+	:state_driver_interface(t_states::state_menu),
 //	:state_driver_interface(t_states::state_test_poly),
-	:state_driver_interface(t_states::state_step),
 	config(c), log(kernel.get_log()), receiver(get_signal_dispatcher())
 {
 	log<<"setting state check function..."<<std::endl;

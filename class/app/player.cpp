@@ -14,31 +14,27 @@ player::player():
 	polygon{ {{0.,0.}, {w,0.}, {w, h}, {0., h}}, {w/2, h/2}},
 	prev_polygon(polygon),
 	player_bearing{2},
-	walk_time{0.f},
-	next_step_sound{0.2f},
+	walk_distance{0.f}, walk_time{0.f},
 	step_sounds{sound_defs::step_01, sound_defs::step_02},
-	step_sounds_index{0}
-{
+	step_sounds_index{0} {
 
 }
 
-//Cam box is used to calculate sound panning.
+void player::step(float _delta) {
 
-//TODO: To have the box here is OUTRAGEOUS. Let the dependency injection handle
-//that. Maybe through another interface, like "location_aware"?. Maybe that's
-//overkill, but we can always have that shit on the same dispatcher... 
+	if(motion_data.has_motion()) {
 
-void player::step(float delta)
-{
-	if(motion_data.has_motion()) 
-	{
-		walk_time+=delta;
+		walk_time+=_delta;
 
 		//In an ideal world, the concern of sound is separated. Not here.
-		if(walk_time >= next_step_sound)
-		{
-			try
-			{
+		//Anyway, this controls the distance walked consecutively, 
+		//which will determine when a step sound is played.
+
+		if(walk_distance >= walk_step_distance) {
+
+			walk_distance=0.f;
+
+			try {
 				//Fire and forget.
 				tools::int_generator v(30,40); //Random volume...
 				size_t sndindex=step_sounds_index % step_sounds.size();
@@ -49,27 +45,19 @@ void player::step(float delta)
 					calculate_panning(dispatcher->request_view_rect(), polygon.get_centroid()), 0}); //Panning and fade.
 
 				++step_sounds_index;
-				next_step_sound+=0.4f;
 			}
-			catch(std::exception &e)
-			{}
+			catch(std::exception &e) {
+			/*Noop*/}
 		}
-	}
-	else 
-	{
-		walk_time=0.f;
-		next_step_sound=0.2f;
 	}
 }
 
-bool player::is_in_camera(const ldv::rect&) const
-{
+bool player::is_in_camera(const ldv::rect&) const {
 	//TODO.
 	return false;
 }
 
-void player::draw(ldv::screen& scr, const ldv::camera& cam, app::draw_struct& ds, const app::shared_resources& sr) const
-{
+void player::draw(ldv::screen& scr, const ldv::camera& cam, app::draw_struct& ds, const app::shared_resources& sr) const {
 	//Now the animation...
 	const auto& frame=sr.get_animation(animation_defs::player).get(choose_animation_frame()).get_for_time(walk_time).frame;
 	const auto& frect=frame.get_rect();
@@ -86,14 +74,13 @@ void player::draw(ldv::screen& scr, const ldv::camera& cam, app::draw_struct& ds
 
 //Receive game input and alter its internal representation as a consequence.
 
-void player::set_input(game_input gi)
-{
-	if(!gi.x && !gi.y)
-	{
+void player::set_input(game_input gi) {
+
+	if(!gi.x && !gi.y) {
 		motion_data.set_vector({0.0, 0.0});
+		walk_distance=0.f;
 	}
-	else
-	{
+	else {
 		motion_data.set_vector(gi.x, motion::axis::x);
 		motion_data.set_vector(gi.y, motion::axis::y);
 
@@ -102,38 +89,35 @@ void player::set_input(game_input gi)
 	}
 }
 
-void player::cancel_movement(motion::axis axis)
-{
+void player::cancel_movement(motion::axis axis) {
+
 	polygon=prev_polygon;
 	motion_data.set_vector(0.0, axis);
-
-	//TODO: There's a bug. Try walking against a wall. If you reset
-	//animation, it fucks up too because now it doesn't animate.
-	//Of course, sounds need to be reset too.
-	next_step_sound=0.2f;
+	walk_distance=0.f;
+	walk_time=0.f;
 }
 
-void player::integrate_motion(float delta, motion::axis axis)
-{
+void player::integrate_motion(float delta, motion::axis axis) {
+
 	prev_polygon=polygon;
 	float v=motion_data.get_vector(axis);
 	float nv=(v*delta)*speed;
 
-	switch(axis)
-	{
+	auto prev_pos=get_poly().get_vertex(0);
+
+	switch(axis) {
 		case motion::axis::x:
-			move_by({nv, 0.});
-		break;
+			move_by({nv, 0.}); break;
 		case motion::axis::y:
-			move_by({0., nv});
-		break;
+			move_by({0., nv}); break;
 	}
+
+	walk_distance+=abs(ldt::distance_between(prev_pos, get_poly().get_vertex(0)));
 }
 
-int player::choose_animation_frame() const
-{
-	switch(player_bearing())
-	{
+int player::choose_animation_frame() const {
+
+	switch(player_bearing()) {
 		case bearing::tbearing::n:
 			if(motion_data.has_motion()) 	return player_animation_defs::walk_n;
 			else 				return player_animation_defs::idle_n;
@@ -160,15 +144,14 @@ int player::choose_animation_frame() const
 	return player_animation_defs::idle_n;
 }
 
-tpoly player::get_activate_poly() const
-{
+tpoly player::get_activate_poly() const {
+
 	const auto& origin=polygon.get_vertex(0);
 	tpos	x=origin.x, y=origin.y;
 	
 	//I am sure there's a more satisfying solution, but well...
 
-	switch(player_bearing())
-	{
+	switch(player_bearing()) {
 		case bearing::tbearing::n: 
 			y-=h;
 		break;

@@ -60,8 +60,9 @@ class player:
 
 	//This controls the vector and integration.
 	motion						motion_data;
-	float						walk_time,
-							next_step_sound;
+	float						walk_distance,
+							walk_time;
+	const int					walk_step_distance=40;
 	std::vector<size_t>				step_sounds;
 	int						step_sounds_index;
 };

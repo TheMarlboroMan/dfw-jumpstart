@@ -1,6 +1,7 @@
 #TODO:
 	- Add a cartesian camera example, with polys.
 	- Comment the cartesian vs screen system.
+	- Fix step sound when walking towards a wall.
 
 	- Center character animation.
 	- Check camera spatiable objects.
@@ -30,7 +31,7 @@ The rest of this text file includes:
 
 ##Getting started:
 
-- Install dependencies and compile them (libdansdl2, dfw, herramientas_proyecto).
+- Install dependencies and compile them (libdansdl2, dfw, tools).
 - Alter makefile_linux/win to set the right paths.
 - Delete the example controllers and class files.
 - Delete the example controllers and classes from _makefile_app (both in dependencies and instructions).

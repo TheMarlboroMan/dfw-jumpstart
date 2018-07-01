@@ -59,12 +59,13 @@ void controller_test_poly::loop(dfw::input& input, const dfw::loop_iteration_dat
 	}
 
 	if(input.is_input_down(input_app::console_newline)) editor_active=!editor_active;
-
 	if(input.is_input_down(input_app::console_backspace)) reload_physics_values();
 #endif
 
 	switch(state)
 	{
+		//TODO: There should be a demo state.
+		//TODO: I could actually make separate objects for each state.
 		case tstates::intro:
 			//TODO. Hit any key to start.
 		break;
@@ -103,6 +104,7 @@ void controller_test_poly::draw(ldv::screen& screen, int /*fps*/)
 
 	switch(state)
 	{
+		//TODO: Read above: maybe use different objects for different states. Add intro state.
 		case tstates::intro:
 			//TODO. draw logo and hit any key
 		break;
@@ -144,6 +146,7 @@ void controller_test_poly::draw_hud(ldv::screen& screen)
 	txt_timer.draw(screen);
 
 	//Draw health.
+	//TODO: I'd rather have small objects I can animate.
 	ldv::polygon_representation poly_health{ldv::polygon_representation::type::fill, { {0,0}, {40, 0}, {40,10}, {0,10} }, ldv::rgba8(255, 0, 0, 128)};
 	poly_health.set_blend(ldv::representation::blends::alpha);
 	for(int i=0; i<player.health; ++i)
@@ -278,6 +281,7 @@ void controller_test_poly::player_step(float delta)
 			if(ldt::SAT_collision_check(player.poly, o.poly))
 			{
 				--player.health;
+				//TODO: Add animation effect to the bar: it expands and loses its alpha.
 				//TODO: Some effect or explosion would be nice to end the game, instead of a flicker.
 				//TODO: Do a explosion and pan back to the origin.
 				if(!player.health) 
@@ -700,4 +704,3 @@ void controller_test_poly::editor_change_state()
 }
 
 #endif
-

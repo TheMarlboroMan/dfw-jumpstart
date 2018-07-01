@@ -9,7 +9,7 @@ using namespace app;
 shared_resources::shared_resources(dfw::audio& au, 
 	lda::resource_manager& am, 
 	ldv::resource_manager& rm, 
-	ldt::log& l, 
+	tools::log& l, 
 	tools::chrono& cc, 
 	tools::arg_manager& argm
 )

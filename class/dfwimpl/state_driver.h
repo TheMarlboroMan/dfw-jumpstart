@@ -52,7 +52,7 @@ class state_driver:
 
 	//references
 	app::app_config&				config;
-	ldt::log&					log;
+	tools::log&					log;
 
 	app_receiver					receiver;
 

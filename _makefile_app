@@ -61,6 +61,7 @@ $(DIR_O_TOOLS)chrono.o\
 $(DIR_O_TOOLS)animation_table.o\
 $(DIR_O_TOOLS)dnot_config_file.o\
 $(DIR_O_TOOLS)view_composer.o\
+$(DIR_LOG)/obj/log.o\
 
 DEP_FRAMEWORK=\
 $(DIR_O_DFW)fw_audio.o \

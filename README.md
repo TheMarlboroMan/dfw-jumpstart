@@ -214,6 +214,9 @@ The documentation of the class if fairly complete in any case.
 ###Change application states (controllers).
 
 - From the controller code use set_state(state), as in set_state(state_main). Use a state defined in states.h. 
+- From the state_driver use states.set(v), where v is a state defined in states.h. "states" is a protected property of the state_driver_interface.
+
+There are examples of both: you can see it done in main.cpp/state_driver.cpp and in the controllers.
 
 ###Use "loop" and application step.
 

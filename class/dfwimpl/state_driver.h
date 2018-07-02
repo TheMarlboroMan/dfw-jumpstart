@@ -41,6 +41,7 @@ class state_driver:
 	virtual float					get_max_timestep() const {return 0.03f;}
 
 	void						receive_signal(dfw::kernel&, const dfw::broadcast_signal&);
+	void						startup_set_state(int v) {states.set(v);}
 
 	private:
 

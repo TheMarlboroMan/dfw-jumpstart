@@ -45,10 +45,6 @@ app::tbox app_interfaces::coarse_bounding_box(const app::tpoly& p)
 		cmp(v.y, miny, maxy);
 	}
 
-//if(3==vt.size()) {
-//	std::cout<<minx<<" "<<miny<<" "<<maxx<<" "<<maxy<<std::endl;
-//}	
-
 	return app::tbox(minx, miny, maxx-minx, maxy-miny);
 }
 

@@ -31,8 +31,7 @@
 namespace app
 {
 
-class shared_resources
-{
+class shared_resources {
 	public:
 
 						shared_resources(dfw::audio&, lda::resource_manager&, ldv::resource_manager&, tools::log&, tools::chrono&, tools::arg_manager&);

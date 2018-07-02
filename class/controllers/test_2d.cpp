@@ -20,8 +20,8 @@ try
 	game_camera{{0,0,700,500},{0,0}}, //This means that the camera always gets a 700x500 box, even with a larger window.
 	m_fader(sr.get_audio()(), sr.get_audio_resource_manager()),
 	game_audio_dispatcher(sr.get_audio(), sr.get_audio_resource_manager(), game_camera.get_focus_box(), game_player.get_poly().get_centroid()),
-	game_localization(0, {"data/app_data/localization/descriptions"})
-{
+	game_localization(0, {"data/app_data/localization/descriptions"}) {
+
 	setup_signal_receiver();
 	game_camera.set_center_margin({300, 200, 100, 100});
 	game_camera.clear_limits();
@@ -29,23 +29,20 @@ try
 	//TODO: I'd actually like to have this in the constructor.
 	game_player.inject_dispatcher(game_audio_dispatcher);
 
-	do_room_change("map01.dat", 0);	
+	do_room_change("map01.dat", 0);
 }
-catch(std::exception& e)
-{
+catch(std::exception& e) {
 	sr.get_log()<<"Unable to create main controller: "<<e.what()<<std::endl;
 	//This would still propagate: initialization lists and exceptions work like that.
 }
 
-void controller_test_2d::loop(dfw::input& input, const dfw::loop_iteration_data& lid)
-{
-	if(input().is_exit_signal())
-	{ 
+void controller_test_2d::loop(dfw::input& input, const dfw::loop_iteration_data& lid) {
+
+	if(input().is_exit_signal()) { 
 		set_leave(true);
 		return;
 	}
-	else  if(input.is_input_down(input_app::escape))
-	{
+	else if(input.is_input_down(input_app::escape)) {
 		set_state(state_menu);
 		return;
 	}
@@ -71,8 +68,7 @@ void controller_test_2d::loop(dfw::input& input, const dfw::loop_iteration_data&
 	game_player.step(lid.delta);
 
 	//Player movement...
-	auto movement_phase=[this, lid](motion::axis axis)
-	{
+	auto movement_phase=[this, lid](motion::axis axis) {
 		//This is the laziest approach: revert the movement as soon as 
 		//a collision is detected, opting for an early exit.
 		//Works with walls of different shapes but may leave the player
@@ -80,16 +76,16 @@ void controller_test_2d::loop(dfw::input& input, const dfw::loop_iteration_data&
 		//axis aligned boxes are taken into account too.
 
 		//Lambda within a lambda :D.
-		auto solve_collisions=[this, axis](const std::vector<const app_interfaces::spatiable *>& collisions) 
-		{
+		auto solve_collisions=[this, axis](const std::vector<const app_interfaces::spatiable *>& collisions) {
+
 			if(!collisions.size()) return;
 
-			for(const auto& c: collisions)
-				if(game_player.is_colliding_with(*c))
-				{
+			for(const auto& c: collisions) {
+				if(game_player.is_colliding_with(*c)) {
 					game_player.cancel_movement(axis);
 					break;
 				}
+			}
 		};
 
 		game_player.integrate_motion(lid.delta, axis);
@@ -111,38 +107,37 @@ void controller_test_2d::loop(dfw::input& input, const dfw::loop_iteration_data&
 	if(gi.y) movement_phase(motion::axis::y);
 
 	//Now effect collisions... These only apply to the final position, by design. Not like level design allows crazy things...
-	if(gi.x || gi.y)
-	{
+	if(gi.x || gi.y) {
+
 		//Check if there was trigger memory and if we need to clear it.
 		auto ttm=game_room.get_trigger_memory();
 		if(ttm && !game_player.is_colliding_with(*ttm)) game_room.clear_trigger_memory();
 		
 		//Now se if we are colliding with any trigger...ll 
 		const auto& trig=game_room.get_triggers();
-		auto it_touch=std::find_if(std::begin(trig), std::end(trig), [this, ttm](const object_trigger& tr)
-		{
+		auto it_touch=std::find_if(std::begin(trig), std::end(trig), [this, ttm](const object_trigger& tr) {
+
 			return tr.is_touch() 				//Is touch trigger...
 				&& game_player.is_colliding_with(tr)	//The player is touching
 				&& (!ttm || !(*ttm == tr));		//If there's a memory trigger, it is not this one.
 		});
 
-		if(it_touch!=std::end(trig)) 
-		{
+		if(it_touch!=std::end(trig)) {
 			do_trigger(*it_touch);
 			return;
 		}
 	}
 
-	if(gi.activate)
-	{
+	if(gi.activate) {
 		const auto& act_poly=game_player.get_activate_poly();
 		const auto& trig=game_room.get_triggers();
-		auto it_act=std::find_if(std::begin(trig), std::end(trig), [this, &act_poly](const object_trigger& tr)
-		{
+		auto it_act=std::find_if(std::begin(trig), std::end(trig), [this, &act_poly](const object_trigger& tr) {
 			return tr.is_activate()				//Is activate trigger...
 				&& tr.is_colliding_with(act_poly);	//The player activation box is touching
 		});
-		if(it_act!=std::end(trig)) do_trigger(*it_act);
+		if(it_act!=std::end(trig)) {
+			do_trigger(*it_act);
+		}
 	}
 	
 	game_camera.center_on(
@@ -158,8 +153,7 @@ void controller_test_2d::draw(ldv::screen& screen, int fps)
 	auto dc=game_room.get_drawables();
 
 	//First layer...
-	for(const auto& d: dc.background)
-	{
+	for(const auto& d: dc.background) {
 		d->draw(screen, game_camera, game_draw_struct, s_resources);
 	}
 
@@ -167,8 +161,7 @@ void controller_test_2d::draw(ldv::screen& screen, int fps)
 	dc.main.push_back(&game_player);
 	std::sort(std::begin(dc.main), std::end(dc.main), app_interfaces::drawable_order); 
 
-	for(const auto& d: dc.main)
-	{
+	for(const auto& d: dc.main) {
 		d->draw(screen, game_camera, game_draw_struct, s_resources);
 	}
 
@@ -181,33 +174,27 @@ void controller_test_2d::draw(ldv::screen& screen, int fps)
 
 #else
 
-	if(s_resources.get_debug_config().bool_from_path("debug:video:center_camera"))
-	{
+	if(s_resources.get_debug_config().bool_from_path("debug:video:center_camera")) {
 		game_camera.center_on(
 			game_draw_struct.drawable_box_from_box_polygon(game_player.get_poly()));
 	}
 
-	if(s_resources.get_debug_config().bool_from_path("debug:video:draw_background"))
-	{
-		for(const auto& d: game_room.get_drawables().background)
-		{
+	if(s_resources.get_debug_config().bool_from_path("debug:video:draw_background")) {
+		for(const auto& d: game_room.get_drawables().background) {
 			d->draw(screen, game_camera, game_draw_struct, s_resources);
 		}
 	}
 
-	if(s_resources.get_debug_config().bool_from_path("debug:video:draw_main_plane"))
-	{
+	if(s_resources.get_debug_config().bool_from_path("debug:video:draw_main_plane")) {
 		auto dc=game_room.get_drawables();
 		dc.main.push_back(&game_player);
 		std::sort(std::begin(dc.main), std::end(dc.main), app_interfaces::drawable_order); 
-		for(const auto& d: dc.main)
-		{
+		for(const auto& d: dc.main) {
 			d->draw(screen, game_camera, game_draw_struct, s_resources);
 		}
 	}
 
-	if(s_resources.get_debug_config().bool_from_path("debug:video:draw_fps"))
-	{
+	if(s_resources.get_debug_config().bool_from_path("debug:video:draw_fps")) {
 		ldv::ttf_representation fps_text{
 			s_resources.get_ttf_manager().get("consola-mono", 12), 
 			ldv::rgba8(0, 0, 255, 255), s_resources.get_audio()().debug_state()+" "+compat::to_string(fps)};
@@ -215,8 +202,7 @@ void controller_test_2d::draw(ldv::screen& screen, int fps)
 		fps_text.draw(screen);
 	}	
 
-	auto draw_bounding_box=[this, &screen](const app_interfaces::spatiable& s, ldv::rgb_color col)
-	{
+	auto draw_bounding_box=[this, &screen](const app_interfaces::spatiable& s, ldv::rgb_color col) {
 		game_draw_struct.set_type(app::draw_struct::types::box);
 		game_draw_struct.set_color(col);
 		game_draw_struct.set_alpha(128);
@@ -225,19 +211,16 @@ void controller_test_2d::draw(ldv::screen& screen, int fps)
 		game_draw_struct.rep->draw(screen, game_camera);
 	};
 
-	if(s_resources.get_debug_config().bool_from_path("debug:video:draw_wall_bounding_boxes"))
-	{
+	if(s_resources.get_debug_config().bool_from_path("debug:video:draw_wall_bounding_boxes")) {
 		//Draw collision boxes of all walls.
 		const auto w=game_room.get_all_walls();
-		auto fdraw_walls=[this, &screen, draw_bounding_box](const room_wall& wall)
-		{
+		auto fdraw_walls=[this, &screen, draw_bounding_box](const room_wall& wall) {
 			draw_bounding_box(wall, ldv::rgb8(0,255,0));
 		};
 		w.apply(fdraw_walls);
 	}
 
-	if(s_resources.get_debug_config().bool_from_path("debug:video:draw_player_bounding_boxes"))
-	{
+	if(s_resources.get_debug_config().bool_from_path("debug:video:draw_player_bounding_boxes")) {
 		draw_bounding_box(game_player, ldv::rgb8(255,0,0));
 	}
 
@@ -253,14 +236,13 @@ void controller_test_2d::draw(ldv::screen& screen, int fps)
 #endif
 }
 
-bool controller_test_2d::can_leave_state() const
-{
+bool controller_test_2d::can_leave_state() const {
 	return true;
 }
 
 //TODO: This will dissapear.
-void controller_test_2d::do_room_change(const std::string& map, int terminus_id)
-{
+void controller_test_2d::do_room_change(const std::string& map, int terminus_id) {
+
 	//TODO: Clear any lingering data belonging to this controller...
 
 	game_room.load(map);
@@ -280,42 +262,37 @@ void controller_test_2d::do_room_change(const std::string& map, int terminus_id)
 	//TODO: Set player bearing upon entrance.
 }
 
-void controller_test_2d::do_room_change(const room_action_exit& a)
-{
+void controller_test_2d::do_room_change(const room_action_exit& a) {
 	do_room_change(a.room, a.terminus_id);
 }
 
-void controller_test_2d::do_text_display(const room_action_text& a)
-{
+void controller_test_2d::do_text_display(const room_action_text& a) {
 	broadcaster.send_signal(signal_text_display{game_localization.get(a.text_id)});
 	set_state(state_test_2d_text);
 }
 
-void controller_test_2d::do_console_transition(const room_action_console&)
-{
+void controller_test_2d::do_console_transition(const room_action_console&) {
 	//TODO
 }
 
-void controller_test_2d::do_arcade_transition(const room_action_arcade&)
-{
+void controller_test_2d::do_arcade_transition(const room_action_arcade&) {
 	//TODO
 }
 
-void controller_test_2d::do_trigger(const object_trigger& trig)
-{
-	if(trig.is_touch())
+void controller_test_2d::do_trigger(const object_trigger& trig) {
+
+	if(trig.is_touch()) {
 		game_room.set_trigger_memory(trig);
+	}
  
 	const room_action * act=game_room.get_action(trig.get_action_id());
-	if(!act)
-	{
+	if(!act) {
 		s_resources.get_log()<<"unavailable action "<<trig.get_action_id()<<std::endl;
 		return;
 	}
 	
 	//If it is repeatable we may skip the action.
-	if(!act->repeat)
-	{
+	if(!act->repeat) {
 		if(unique_actions.count(act->action_id)) return;
 		s_resources.get_log()<<"Adding unique trigger "<<act->action_id<<std::endl;
 		unique_actions.insert(act->action_id);
@@ -350,10 +327,8 @@ void controller_test_2d::do_trigger(const object_trigger& trig)
 /*	}
 */
 
-void controller_test_2d::setup_signal_receiver()
-{
-	receiver.f=[this](const dfw::broadcast_signal& s) 
-	{
+void controller_test_2d::setup_signal_receiver() {
+	receiver.f=[this](const dfw::broadcast_signal& s) {
 		if(s.get_type()==t_signal_reset_state)
 		{
 			unique_actions.clear();

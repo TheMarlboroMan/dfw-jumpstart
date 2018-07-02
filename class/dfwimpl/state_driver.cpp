@@ -18,8 +18,7 @@ extern tools::log LOG;
 state_driver::state_driver(dfw::kernel& kernel, app::app_config& c)
 	:state_driver_interface(t_states::state_menu),
 //	:state_driver_interface(t_states::state_test_poly),
-	config(c), log(kernel.get_log()), receiver(get_signal_dispatcher())
-{
+	config(c), log(kernel.get_log()), receiver(get_signal_dispatcher()) {
 	log<<"setting state check function..."<<std::endl;
 	states.set_function([](int v){
 		return v > state_min && v < state_max;
@@ -52,8 +51,7 @@ state_driver::state_driver(dfw::kernel& kernel, app::app_config& c)
 	log<<"state driver fully constructed"<<std::endl;
 }
 
-void state_driver::prepare_video(dfw::kernel& kernel)
-{
+void state_driver::prepare_video(dfw::kernel& kernel) {
 	auto& screen=kernel.get_screen();
 
 	int wlg=config.int_from_path("config:video:window_w_logical"),
@@ -68,8 +66,7 @@ void state_driver::prepare_video(dfw::kernel& kernel)
 	screen.set_fullscreen(config.bool_from_path("config:video:fullscreen"));
 }
 
-void state_driver::register_controllers(dfw::kernel& /*kernel*/)
-{
+void state_driver::register_controllers(dfw::kernel& /*kernel*/) {
 	auto& dispatcher=get_signal_dispatcher();
 
 	c_menu.reset(new controller_menu(*s_resources, dispatcher, config));
@@ -90,10 +87,9 @@ void state_driver::register_controllers(dfw::kernel& /*kernel*/)
 
 }
 
-void state_driver::prepare_state(int next, int current)
-{
-	switch(next)
-	{
+void state_driver::prepare_state(int next, int current) {
+
+	switch(next) {
 		case t_states::state_menu:
 			c_menu->set_continue_state(current);
 		break;
@@ -107,67 +103,55 @@ void state_driver::prepare_state(int next, int current)
 	}
 }
 
-void state_driver::common_pre_loop_input(dfw::input& input, float /*delta*/)
-{
-	if(input().is_event_joystick_connected())
-	{
+void state_driver::common_pre_loop_input(dfw::input& input, float /*delta*/) {
+
+	if(input().is_event_joystick_connected()) {
 		log<<"New joystick detected..."<<std::endl;
 		virtualize_input(input);
 	}
 }
 
-void state_driver::common_loop_input(dfw::input& input, float /*delta*/)
-{
+void state_driver::common_loop_input(dfw::input& input, float /*delta*/) {
 #ifdef WDEBUG_CODE
-	if(input.is_input_down(input_app::reload_debug_config))
-	{
+	if(input.is_input_down(input_app::reload_debug_config)) {
 		log<<"reloading debug configuration"<<std::endl;
 		s_resources->reload_debug_config();
 	}
 #endif
 }
 
-void state_driver::common_pre_loop_step(float /*delta*/)
-{
+void state_driver::common_pre_loop_step(float /*delta*/) {
 
 }
 
-void state_driver::common_loop_step(float /*delta*/)
-{
+void state_driver::common_loop_step(float /*delta*/) {
 
 }
 
-void state_driver::virtualize_input(dfw::input& input)
-{
+void state_driver::virtualize_input(dfw::input& input) {
 	log<<"trying to virtualize "<<input().get_joysticks_size()<<" controllers..."<<std::endl;
 
-	for(size_t i=0; i < input().get_joysticks_size(); ++i)
-	{
+	for(size_t i=0; i < input().get_joysticks_size(); ++i) {
 		input().virtualize_joystick_hats(i);
 		input().virtualize_joystick_axis(i, 15000);
 		log<<"Joystick virtualized "<<i<<std::endl;
 	}
 }
 
-void state_driver::setup_signal_receiver(dfw::kernel& kernel)
-{
+void state_driver::setup_signal_receiver(dfw::kernel& kernel) {
 	receiver.f=[this, &kernel](const dfw::broadcast_signal& s) {receive_signal(kernel, s);};
 }
 
-void state_driver::receive_signal(dfw::kernel& kernel, const dfw::broadcast_signal& s)
-{
-	switch(s.get_type())
-	{
-		case t_signal_video_size:
-		{
+void state_driver::receive_signal(dfw::kernel& kernel, const dfw::broadcast_signal& s) {
+
+	switch(s.get_type()) {
+		case t_signal_video_size: {
 			const std::string& val=static_cast<const signal_video_size&>(s).value;
-			if(val=="fullscreen")
-			{
+			if(val=="fullscreen") {
 				kernel.get_screen().set_size(config.int_from_path("config:video:window_h_logical"), config.int_from_path("config:video:window_h_logical"));
 				kernel.get_screen().set_fullscreen(true);
 			}
-			else
-			{
+			else {
 				const auto& parts=tools::explode(val, 'x');
 				kernel.get_screen().set_fullscreen(false);
 				kernel.get_screen().set_size(std::atoi(parts[0].c_str()), std::atoi(parts[1].c_str()));

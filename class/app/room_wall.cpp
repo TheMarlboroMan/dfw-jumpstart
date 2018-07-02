@@ -4,55 +4,45 @@
 
 using namespace app;
 
-std::vector<tpoly>	room_wall::shapes=
-{
+std::vector<tpoly>	room_wall::shapes={
 	//full
-	{ 
-		{ {0.,0.}, {32.,0.}, {32.,32.}, {0.,32.} },
-		{16., 16.}
+	{ { {0.,0.}, {32.,0.}, {32.,32.}, {0.,32.} },
+		{0., 0.}
 	},
 	//nwcorner
-	{
-		{ {0.,0.}, {32.0,0.}, {0.,32.} },
-		{16., 16.}
+	{ { {0.,0.}, {32.0,0.}, {0.,32.} },
+		{0., 0.}
 	},
 	//necorner
-	{
-		{ {0.,0.}, {32.0,0.}, {32.,32.} },
-		{16., 16.}
+	{ { {0.,0.}, {32.0,0.}, {32.,32.} },
+		{0., 0.}
 	},
 	//secorner
-	{
-		{ {32.,0.}, {32.,32.}, {0.,32.} },
-		{16., 16.}
+	{ { {32.,0.}, {32.,32.}, {0.,32.} },
+		{32., 0.}
 	},
 	//swcorner
-	{
-		{ {0.,0.}, {32.,32.}, {0.,32.} },
-		{16., 16.}
+	{ { {0.,0.}, {32.,32.}, {0.,32.} },
+		{0., 0.}
 	},
 	//wthin
-	{
-		{ {0.,0.}, {4.,0.}, {4.,32.}, {0.,32.} },
-		{16., 16.}
+	{ { {0.,0.}, {16.,0.}, {16.,32.}, {0.,32.} },
+		{0., 0.}
 	},
 	//ethin
-	{
-		{ {28.,0.}, {32.,0.}, {32.,32.}, {28.,32.} },
-		{16., 16.}
+	{ { {24.,0.}, {32.,0.}, {32.,32.}, {24.,32.} },
+		{24., 0.}
 	}
 };
 
 room_wall::room_wall(int cellx, int celly, int t)
-	:type(room_wall_int_to_type(t)), x(cellx), y(celly)
-{
+	:type(room_wall_int_to_type(t)), x(cellx), y(celly) {
+
 
 }
 
-room_wall::twall app::room_wall_int_to_type(int t)
-{
-	switch(t)
-	{
+room_wall::twall app::room_wall_int_to_type(int t) {
+	switch(t) {
 		case 1: 	return room_wall::twall::full; break;
 		case 2: 	return room_wall::twall::nwcorner; break;
 		case 3: 	return room_wall::twall::necorner; break;
@@ -68,18 +58,16 @@ room_wall::twall app::room_wall_int_to_type(int t)
 	return room_wall::twall::full;
 }
 
-const tpoly& room_wall::get_poly() const
-{
+const tpoly& room_wall::get_poly() const {
 	//Fuck lol.
 	return *(const_cast<room_wall*>(this)->get_poly_ptr());
 }
 
-tpoly * room_wall::get_poly_ptr()
-{
+tpoly * room_wall::get_poly_ptr() {
+
 	tpoly * res=&shapes[shape_full];
 
-	switch(type)
-	{
+	switch(type) 	{
 		case room_wall::twall::full: 		res=&shapes[shape_full]; break;
 		case room_wall::twall::nwcorner: 	res=&shapes[shape_nwcorner]; break;
 		case room_wall::twall::necorner: 	res=&shapes[shape_necorner]; break;
@@ -92,9 +80,11 @@ tpoly * room_wall::get_poly_ptr()
 		break;
 	}
 
-	//And now, position on its place we know where the center is so...
-	double 	cx=(x*wall_w)+(wall_w/2),
-		cy=(y*wall_h)+(wall_h/2);
+	//Assume the first vertex as the center and be done: all shapes are 
+	//defined so the first vertex and the center are the same.
+	double 	cx=(x*wall_w), //+(wall_w/2),
+		cy=(y*wall_h); //+(wall_h/2);
+
 	res->center_in({cx, cy});
 
 	return res;

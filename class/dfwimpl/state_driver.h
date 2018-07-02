@@ -28,12 +28,11 @@ namespace app
 {
 
 class state_driver:
-	public dfw::state_driver_interface
-{
-	public:
+	public dfw::state_driver_interface {
 
+	public:
 							state_driver(dfw::kernel& kernel, app::app_config& config);
-	
+
 	virtual void					common_pre_loop_input(dfw::input& input, float delta);
 	virtual void					common_pre_loop_step(float delta);
 	virtual void					common_loop_input(dfw::input& input, float delta);

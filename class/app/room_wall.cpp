@@ -19,19 +19,19 @@ std::vector<tpoly>	room_wall::shapes={
 	},
 	//secorner
 	{ { {32.,0.}, {32.,32.}, {0.,32.} },
-		{32., 0.}
+		{0., 0.}
 	},
 	//swcorner
 	{ { {0.,0.}, {32.,32.}, {0.,32.} },
 		{0., 0.}
 	},
 	//wthin
-	{ { {0.,0.}, {16.,0.}, {16.,32.}, {0.,32.} },
+	{ { {0.,0.}, {8.,0.}, {8.,32.}, {0.,32.} },
 		{0., 0.}
 	},
 	//ethin
 	{ { {24.,0.}, {32.,0.}, {32.,32.}, {24.,32.} },
-		{24., 0.}
+		{0., 0.}
 	}
 };
 
@@ -80,12 +80,16 @@ tpoly * room_wall::get_poly_ptr() {
 		break;
 	}
 
-	//Assume the first vertex as the center and be done: all shapes are 
-	//defined so the first vertex and the center are the same.
+	//Assume the rotation center is always in the top left would-be rect.
 	double 	cx=(x*wall_w), //+(wall_w/2),
 		cy=(y*wall_h); //+(wall_h/2);
 
-	res->center_in({cx, cy});
+//	if(type==room_wall::twall::nwcorner) {
+//std::cout<<x<<" "<<wall_w<<" -> "<<cx<<std::endl;
+//	}
+
+	//TODO: This is likely the fuck up???
+	res->rotation_center_in({cx, cy});
 
 	return res;
 }

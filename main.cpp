@@ -50,11 +50,9 @@ int main(int argc, char ** argv)
 		state_driver sd(kernel, config);
 
 		//Setting the state according to the command line...
-		//TODO: THIS IS SUPPOSED TO THROW IF THERE'S NO NEXT!... 
-		//but that's not being checked... try again... try better.
 		if(carg.arg_follows("-s")) {
 			sd.startup_set_state(std::atoi(carg.get_following("-s").c_str()));
-		}
+		} 
 
 		log_app<<"init state driver..."<<std::endl;
 		sd.init(kernel);

@@ -351,7 +351,7 @@ void controller_menu::mount_menus()
 				+"x"+compat::to_string(config.int_from_path("config:video:window_h_px"));
 
 	options_menu.set_by_value_templated("10_VIDEO_SIZE", window_size);
-	options_menu.set_by_value_templated("25_VIDEO_VSYNC", (bool)config.get_screen_vsync());
+	options_menu.set_by_value_templated("25_VIDEO_VSYNC", config.get_screen_vsync());
 	options_menu.set_int("30_SOUND_VOLUME", config.get_audio_volume());
 	options_menu.set_int("40_MUSIC_VOLUME", config.get_music_volume());
 

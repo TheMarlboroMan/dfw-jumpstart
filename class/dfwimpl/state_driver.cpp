@@ -99,7 +99,7 @@ void state_driver::prepare_state(int next, int current) {
 		case t_states::state_test_2d_text:
 		case t_states::state_console:
 		case t_states::state_fps_test:
-		case t_states::state_step:    
+		case t_states::state_step:
 		break;
 	}
 }
@@ -169,12 +169,12 @@ void state_driver::receive_signal(dfw::kernel& kernel, const dfw::broadcast_sign
 			kernel.get_audio()().set_main_music_volume(static_cast<const signal_music_volume&>(s).value);
 		break;
 		case t_signal_save_configuration:
-			config.set<int>("config:audio:sound_volume", kernel.get_audio()().get_main_sound_volume());
-			config.set<int>("config:audio:music_volume", kernel.get_audio()().get_main_music_volume());
-			config.set("config:video:vsync", ldv::get_vsync());
+			config.set_sound_volume(kernel.get_audio()().get_main_sound_volume());
+			config.set_music_volume(kernel.get_audio()().get_main_music_volume());
+			config.set_screen_vsync(ldv::get_vsync());
 			config.set("config:video:fullscreen", kernel.get_screen().is_fullscreen());
 			config.set<int>("config:video:window_w_px", kernel.get_screen().get_w());
-			config.set<int>("config:video:window_h_px", kernel.get_screen().get_h());                                
+			config.set<int>("config:video:window_h_px", kernel.get_screen().get_h());
 			config.save();
 		break;
 		case t_signal_save_controls:

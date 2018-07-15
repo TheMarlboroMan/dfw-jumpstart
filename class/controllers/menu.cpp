@@ -22,7 +22,7 @@ controller_menu::controller_menu(shared_resources& s, dfw::signal_dispatcher& sd
 	key_held_time{0.f},
 	flicker{false, false, 1.f}
 {
-	
+
 
 	create_functions();
 	mount_menus();
@@ -75,7 +75,7 @@ void controller_menu::do_main_menu_input(dfw::input& input)
  	if(input.is_input_down(input_app::escape))						set_leave(true);
 	else if(input.is_input_down(input_app::up) || input().is_key_down(SDL_SCANCODE_UP)) 	main_menu_rep.previous();
 	else if(input.is_input_down(input_app::down) || input().is_key_down(SDL_SCANCODE_DOWN)) main_menu_rep.next();
-	else if(input.is_input_down(input_app::activate) || input().is_key_down(SDL_SCANCODE_RETURN)) 
+	else if(input.is_input_down(input_app::activate) || input().is_key_down(SDL_SCANCODE_RETURN))
 	{
 		switch(main_menu_rep.get_current_index()) //An alternative is to use get_current_key() and use std::strings.
 		{
@@ -101,13 +101,13 @@ void controller_menu::do_controls_menu_input(dfw::input& input)
  	if(input.is_input_down(input_app::escape))							choose_current_menu(main_menu_rep);
 	else if(input.is_input_down(input_app::up) || input().is_key_down(SDL_SCANCODE_UP)) 		controls_menu_rep.previous();
 	else if(input.is_input_down(input_app::down) || input().is_key_down(SDL_SCANCODE_DOWN)) 	controls_menu_rep.next();
-	else if(input.is_input_down(input_app::activate) || input().is_key_down(SDL_SCANCODE_RETURN)) 
+	else if(input.is_input_down(input_app::activate) || input().is_key_down(SDL_SCANCODE_RETURN))
 	{
 		switch(controls_menu_rep.get_current_index())
 		{
 			default: learn_control(input); break;
 			case 5: restore_default_controls(input); break;
-			case 6: 
+			case 6:
 				broadcaster.send_signal(signal_save_controls{});
 				choose_current_menu(main_menu_rep);
 			break;
@@ -122,7 +122,7 @@ void controller_menu::do_options_menu_input(dfw::input& input, float delta)
 	{
 		if(!key_held_time) s_resources.get_audio().play_sound(s_resources.get_audio_resource_manager().get_sound(sound_defs::menu_change));
 
-		if(key_held_time > 0.4f || !key_held_time) 
+		if(key_held_time > 0.4f || !key_held_time)
 		{
 			options_menu_rep.browse_current(dir);
 			update_options_value(options_menu_rep.get_current_key());
@@ -136,12 +136,12 @@ void controller_menu::do_options_menu_input(dfw::input& input, float delta)
 	else if(input.is_input_down(input_app::down) || input().is_key_down(SDL_SCANCODE_DOWN)) 	options_menu_rep.next();
 	else if(input.is_input_pressed(input_app::left) || input().is_key_pressed(SDL_SCANCODE_LEFT)) 	return f_dir(-1);
 	else if(input.is_input_pressed(input_app::right) || input().is_key_down(SDL_SCANCODE_RIGHT)) 	return f_dir(1);
-	else if(input.is_input_down(input_app::activate) || input().is_key_down(SDL_SCANCODE_RETURN)) 
+	else if(input.is_input_down(input_app::activate) || input().is_key_down(SDL_SCANCODE_RETURN))
 	{
 		if(options_menu_rep.get_current_index()==4)
 		{
 			broadcaster.send_signal(signal_save_configuration{});
-			choose_current_menu(main_menu_rep); 
+			choose_current_menu(main_menu_rep);
 		}
 	}
 
@@ -254,7 +254,7 @@ void controller_menu::create_functions()
 	register_funcs[rf_txt]=[ttfm](const std::string& /*k*/, std::vector<ldv::representation*>& v)
 	{
 		v.push_back(new ldv::ttf_representation{
-			ttfm.get("consola-mono", 16), 
+			ttfm.get("consola-mono", 16),
 			ldv::rgba8(255, 255, 255, 255), "", 1.});
 	};
 
@@ -337,7 +337,7 @@ void controller_menu::mount_menus()
 
 	//Main menu...
 	mount_menu(main_menu, "data/app_data/menus.dat", "main");
-	init_menu(main_menu_rep, register_funcs[rf_txt], register_funcs[rf_empty], 
+	init_menu(main_menu_rep, register_funcs[rf_txt], register_funcs[rf_empty],
 			draw_funcs[df_txt_right_single], draw_funcs[df_empty],
 			step_funcs[sf_pulse], step_funcs[sf_empty]);
 
@@ -351,11 +351,11 @@ void controller_menu::mount_menus()
 				+"x"+compat::to_string(config.int_from_path("config:video:window_h_px"));
 
 	options_menu.set_by_value_templated("10_VIDEO_SIZE", window_size);
-	options_menu.set_by_value_templated("25_VIDEO_VSYNC", config.bool_from_path("config:video:vsync"));
-	options_menu.set_int("30_SOUND_VOLUME", config.int_from_path("config:audio:sound_volume"));
-	options_menu.set_int("40_MUSIC_VOLUME", config.int_from_path("config:audio:music_volume"));
+	options_menu.set_by_value_templated("25_VIDEO_VSYNC", (bool)config.get_screen_vsync());
+	options_menu.set_int("30_SOUND_VOLUME", config.get_audio_volume());
+	options_menu.set_int("40_MUSIC_VOLUME", config.get_music_volume());
 
-	init_menu(options_menu_rep, register_funcs[rf_txt], register_funcs[rf_txt], 
+	init_menu(options_menu_rep, register_funcs[rf_txt], register_funcs[rf_txt],
 			draw_funcs[df_txt_left_composite], draw_funcs[df_txt_right_composite],
 			step_funcs[sf_pulse], step_funcs[sf_pulse]);
 
@@ -368,7 +368,7 @@ void controller_menu::mount_menus()
 	controls_menu.set_string("40_RIGHT", translate_input(input_description_from_config_token(config.token_from_path("config:input:right"))));
 	controls_menu.set_string("50_ACTIVATE", translate_input(input_description_from_config_token(config.token_from_path("config:input:activate"))));
 
-	init_menu(controls_menu_rep, register_funcs[rf_txt], register_funcs[rf_txt], 
+	init_menu(controls_menu_rep, register_funcs[rf_txt], register_funcs[rf_txt],
 			draw_funcs[df_txt_left_composite], draw_funcs[df_txt_right_composite],
 			step_funcs[sf_pulse], step_funcs[sf_pulse]);
 }
@@ -383,13 +383,13 @@ std::string controller_menu::translate_input(const dfw::input_description& id)
 		case dfw::input_description::types::none:
 			res=menu_localization.get(1104);
 		break;
-		case dfw::input_description::types::keyboard: 
+		case dfw::input_description::types::keyboard:
 			res=menu_localization.get(1100)+" "+std::string(SDL_GetKeyName(SDL_GetKeyFromScancode((SDL_Scancode)id.code)));
 		break;
-		case dfw::input_description::types::joystick: 
+		case dfw::input_description::types::joystick:
 			res=menu_localization.get(1101)+" "+compat::to_string(id.device)+" "+menu_localization.get(1102)+" "+compat::to_string(id.code);
 		break;
-		case dfw::input_description::types::mouse: 
+		case dfw::input_description::types::mouse:
 			res=menu_localization.get(1103)+" "+menu_localization.get(1102)+" "+compat::to_string(id.code);
 		break;
 	}

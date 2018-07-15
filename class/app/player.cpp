@@ -78,7 +78,6 @@ void player::set_input(game_input gi) {
 
 	if(!gi.x && !gi.y) {
 		motion_data.set_vector({0.0, 0.0});
-		walk_distance=0.f;
 	}
 	else {
 		motion_data.set_vector(gi.x, motion::axis::x);
@@ -93,17 +92,39 @@ void player::cancel_movement(motion::axis axis) {
 
 	polygon=prev_polygon;
 	motion_data.set_vector(0.0, axis);
-	walk_distance=0.f;
-	walk_time=0.f;
+}
+
+void player::confirm_movement_stage() {
+
+	prev_polygon=polygon;
+}
+
+void player::start_movement_phase() {
+
+	prev_polygon=polygon;
+	prev_position=get_poly().get_vertex(0);
+}
+
+void player::solve_movement_phase() {
+
+	if(!motion_data.has_motion()) {
+
+		walk_time=0.f;
+		walk_distance=0.f;
+	}
+	else {
+		auto pos=get_poly().get_vertex(0);
+
+		if(pos!=prev_position) {
+			walk_distance+=abs(ldt::distance_between(prev_position, pos));
+		}
+	}
 }
 
 void player::integrate_motion(float delta, motion::axis axis) {
 
-	prev_polygon=polygon;
 	float v=motion_data.get_vector(axis);
 	float nv=(v*delta)*speed;
-
-	auto prev_pos=get_poly().get_vertex(0);
 
 	switch(axis) {
 		case motion::axis::x:
@@ -111,8 +132,6 @@ void player::integrate_motion(float delta, motion::axis axis) {
 		case motion::axis::y:
 			move_by({0., nv}); break;
 	}
-
-	walk_distance+=abs(ldt::distance_between(prev_pos, get_poly().get_vertex(0)));
 }
 
 int player::choose_animation_frame() const {

@@ -1,7 +1,6 @@
 #TODO:
 	- Add a cartesian camera example, with polys.
 	- Comment the cartesian vs screen system.
-	- Fix step sound when walking towards a wall.
 
 	- Center character animation.
 	- Check camera spatiable objects.
@@ -19,8 +18,10 @@ There are a few controllers here:
 	- Demonstrates screen-coordinates camera, implementation of application classes, use of animations and frames, screen representations, input, SAT collision, signal broadcasting...
 - a game thing companion that displays texts along the previous controller.
 	- Demonstrates multi-controller drawing and signal broadcasting.
-- a very simple frames-per-second test, not accesible.
-- a very simple step test, not accesible, created to see how the timestep keeps up in different computers.
+- another very simple racing game.
+	- Demonstrates cartesian coordinates, use of polygons and collisions.
+- a very simple frames-per-second test, not accesible unless tampering with the command line.
+- a very simple step test, (not accesible unless command line is used), created to see how the timestep keeps up in different computers.
 
 The rest of this text file includes:
 	- a getting started guide.
@@ -31,17 +32,31 @@ The rest of this text file includes:
 
 ##Getting started:
 
-- Install dependencies and compile them (libdansdl2, dfw, tools).
+- Install dependencies and compile them (libdansdl2, dfw, tools, log).
 - Alter makefile_linux/win to set the right paths.
+
+Now for the ugly part.
+
 - Delete the example controllers and class files.
 - Delete the example controllers and classes from _makefile_app (both in dependencies and instructions).
 - Delete the example controllers from the state_driver files (includes and register_controllers).
+
+And this is where you code your own stuff:
+
 - Modify what you need.
 - Make with make -f makefile_[linux-win] all
 
 ##On coordinate systems.
 
 //TODO.
+
+##A few definitions:
+
+- Controller:
+	TODO.
+- State driver:
+	TODO
+- Signal broadcasting.
 
 ##Howto
 
@@ -66,8 +81,8 @@ to setup a signal system. The concepts are:
 	may have its own data.
 - a receiver: the entity that receives a message. It may later choose to discard
 	or interpret it. Since the receiver is designed to work by composition,
-	you will need to use a lambda to make your controller's method accesible
-	to it.
+	you will need to design and instance it, probably using a lambda to 
+	make your controller's data accesible to it.
 - sender: the entity that sends.
 - a dispatcher: registers all receivers and senders alike. Through it, the
 	sender may send a signal that will be dispatched to all receivers.
@@ -84,7 +99,7 @@ The easiest thing to do here is:
 	and use the dispatcher to construct it.
 	- Send a message through the sender object.
 - When you need to setup a receiver:
- 	- In your state driver, inject the dispatcher (get_signal_dispatcher())
+	- In your state driver, inject the dispatcher (get_signal_dispatcher())
 	into your controller.
 	- In your controller, use your own receiver object with the dispatcher.
 	- In your controller, set up a lambda function into the receiver so it
@@ -130,7 +145,7 @@ Examples are in the code of the controller. It is easier to copy and paste
 than to try and explain. The two things to understand here: 
 
 	- in tools::options_menu terms, get_name is the name of a property and
-	get_title is its volume.
+	get_title is its value.
 	- the "menu_representation" class is just a framework that must be filled 
 	with six functions (for example, with lambdas)
 
@@ -158,14 +173,14 @@ than to try and explain. The two things to understand here:
 There are alternatives, like the tools::grid_list and tools::vertical list
 but these need to be manually rolled... In any case, complex menu systems
 (like one with submenus, specific actions taking place upon selection of an
-option and so on) are sinonym with grunt work... The menu controller is a good
+option and so on) are sinonyms with grunt work... The menu controller is a good
 example of things that can be done.
 
 ###Redefine keys.
 
 This is bound to exist on every game... The particulars are complex and the
 classes involved many, so just check the "menu" controller. There's an entire
-family of stuff there.
+world of stuff there.
 
 ###Draw a controller different than the active one:
 
@@ -200,9 +215,9 @@ file in "data/app_data/layouts.dat". Another is in the menu controller, which
 does things like use external representations and manipulate representations
 in the layout from the code.
 
-The documentation of the class if fairly complete in any case.
+The documentation of the class is fairly complete in any case.
 
-###Add new input:
+###Add new inputs:
 
 - Add it to the enum in class/input.h.
 - In case you need a keyboard input, locate the sdl key mapping in SDL_keycode.h (locate SDK_scancode.h first, usually in /usr/include/SDL2).
@@ -243,15 +258,15 @@ Thus:
 - Controller loop happens X times, as much as needed to fill N seconds of logic before drawing.
 	- This time is measured by a ldt::fps_counter, property of the kernel. 
 	- The value "delta_step" on the kernel represents the 0.01 seconds of logic.
-	- Once N seconds of logic are run, the screen is refreshed.
+	- Once N time units of logic are run, the screen is refreshed.
 	- The loop repeats with N being the time the screen took to refresh or a maximum value set in state_driver::get_max_timestep().	
 
 ###Use and inject resource managers.
 
 In order to obtain any resource (music, sound, texture...) first these must be
 loaded within the framework. The files in "/data/resources" contain all these
-statically loaded resources. Of course, resources can be loaded dinamically too but it just doesn't pay for
-small applications with small memory prints. 
+statically loaded resources. Of course, resources can be loaded dinamically too 
+but it just doesn't pay for small applications with small memory prints. 
 
 Each resource goes into a different resource manager, property of the kernel, 
 thus accesible from the state_driver:
@@ -358,7 +373,7 @@ lda::audio_channel
 
 - About unlinking channels:
 	- Unlink does not affect the real channel.
-	- Unlink signals YOU that you should not use the channel.
+	- Unlink signals the developer (that is, YOU) that the channel should not be used.
 	- If in doubt, use the audio_channel_safe class. It will throw if you mess up.
 	- With long lived and unmonitored channels, your unlinked channel may 
 	end up linked to a channel used by another entity. That's actually ok
@@ -366,13 +381,14 @@ lda::audio_channel
 	things like your sounds not playing because other entity is using the
 	real channel.
 
+Now, a few rules about sound channels for things you might like to do in your
+classes:
+
 - When I am constructed:
 	- My channel is linked
 		=> Do so at constructor.
 	- My channel is unlinked
 		=> Leave things as they are.
-
-- My channel is ...
 
 - When I am destroyed
 	- My channel is playing and...
@@ -401,8 +417,8 @@ lda::audio_channel
 			=> If monitored, unmonitor it. "Free" will be called next.
 			=> Remove the callback listener: else it may execute out of your scope or worse, crash.
 			=> Unlink the channel.
-	- ... I don't have a callback
-		=> Bad choice. Why do you have a lda::audio_channel member?
+	- ... I don't have a callback and I want to do something.
+		=> Bad choice. Why do you have a lda::audio_channel member? You can use fire-and-forget techniques.
 
 ###Implement text input.
 
@@ -424,13 +440,13 @@ The "console" controller includes a full working example, which goes like this:
 A very basic example of localization is shown in the test_2d controller. The class localization extends tools::base_localization. The rules are simple:
 
 - Languages are represented by integers.
-- Strings are stored in files named #file#.#id_language#.dat.
+- Strings are stored in files named #file#.#id_language#.dat. Their format is fixed and simple.
 
 ##Files and directory structure.
 
 The most relevant files are.
 
-- /_makefile_app: This is the real makefile for the application. Things that need tingling are:
+- /_makefile_app: This is the real makefile for the application. Things that need tinkering are:
 	- App dependencies: a list of all your controllers and classes, to make sure they are compiled before building the executable file.
 	- External dependencies: Tools need to be added if they are to be used.
 	- Implementation of DFW: state_driver will depend on all your controllers.

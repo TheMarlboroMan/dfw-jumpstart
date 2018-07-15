@@ -28,6 +28,9 @@ class player:
 						player();
 	void					step(float);
 	void					set_input(game_input);
+	void					start_movement_phase();
+	void					confirm_movement_stage();
+	void					solve_movement_phase();
 	void					integrate_motion(float, motion::axis);
 	void					cancel_movement(motion::axis);
 	tpoly					get_activate_poly() const;
@@ -56,6 +59,7 @@ class player:
 
 	tpoly						polygon,
 							prev_polygon;
+	tpoint						prev_position;
 	bearing						player_bearing;
 
 	//This controls the vector and integration.

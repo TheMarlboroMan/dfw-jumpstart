@@ -41,16 +41,13 @@ int main(int argc, char ** argv)
 		}
 		
 		log_app<<"creating kernel..."<<std::endl;
-		dfw::kernel kernel(log_app, carg);
-
-		log_app<<"init kernel..."<<std::endl;
-		kernel.init(kconfig, config);
+		dfw::kernel kernel(log_app, carg, kconfig, config);
 
 		log_app<<"create state driver..."<<std::endl;
 		state_driver sd(kernel, config);
 
 		//Setting the state according to the command line...
-		if(carg.arg_follows("-s")) {
+		if(carg.exists("-s") && carg.arg_follows("-s")) {
 			sd.startup_set_state(std::atoi(carg.get_following("-s").c_str()));
 		} 
 

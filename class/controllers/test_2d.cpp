@@ -64,11 +64,9 @@ void controller_test_2d::loop(dfw::input& input, const dfw::loop_iteration_data&
 
 	if(input.is_input_down(input_app::activate)) gi.activate=true;
 
-	game_player.set_input(gi);
-	game_player.step(lid.delta);
-
 	//Player movement...
 	auto movement_phase=[this, lid](motion::axis axis) {
+
 		//This is the laziest approach: revert the movement as soon as 
 		//a collision is detected, opting for an early exit.
 		//Works with walls of different shapes but may leave the player
@@ -76,26 +74,33 @@ void controller_test_2d::loop(dfw::input& input, const dfw::loop_iteration_data&
 		//axis aligned boxes are taken into account too.
 
 		//Lambda within a lambda :D.
-		auto solve_collisions=[this, axis](const std::vector<const app_interfaces::spatiable *>& collisions) {
+		auto solve_collisions=[this, axis](const std::vector<const app_interfaces::spatiable *>& collisions) -> bool {
 
-			if(!collisions.size()) return;
+			if(!collisions.size()) {
+				return false;
+			}
 
 			for(const auto& c: collisions) {
 				if(game_player.is_colliding_with(*c)) {
 					game_player.cancel_movement(axis);
-					break;
+					return true;
 				}
 			}
+
+			return false;
 		};
 
 		game_player.integrate_motion(lid.delta, axis);
 
-		auto obstacle_collisions=game_room.get_obstacles();
-		solve_collisions(obstacle_collisions);
+		if(solve_collisions(game_room.get_obstacles())) {
+			return;
+		}
+		
+		if(solve_collisions(game_room.get_walls_by_box(app_interfaces::coarse_bounding_box(game_player)))) {
+			return;
+		}
 
-		//This should not be necessary, actually, as any collision with an object disqualifies collisions with walls but well...
-		auto coarse_collisions=game_room.get_walls_by_box(app_interfaces::coarse_bounding_box(game_player));
-		solve_collisions(coarse_collisions);
+		game_player.confirm_movement_stage();
 
 		//Another option is more complex and cumbersome: a binary search
 		//is conducted to the nearest free position in N iterations
@@ -103,10 +108,16 @@ void controller_test_2d::loop(dfw::input& input, const dfw::loop_iteration_data&
 		//walls. Different shapes work too.
 	};
 
+	game_player.set_input(gi);
+	game_player.step(lid.delta);
+
+	game_player.start_movement_phase();
 	if(gi.x) movement_phase(motion::axis::x);
 	if(gi.y) movement_phase(motion::axis::y);
+	game_player.solve_movement_phase();
 
-	//Now effect collisions... These only apply to the final position, by design. Not like level design allows crazy things...
+	//Now effect collisions... These only apply to the final position, 
+	//by design. Not like level design allows crazy things anyway.
 	if(gi.x || gi.y) {
 
 		//Check if there was trigger memory and if we need to clear it.

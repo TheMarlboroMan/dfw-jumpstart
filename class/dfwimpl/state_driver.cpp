@@ -169,7 +169,7 @@ void state_driver::receive_signal(dfw::kernel& kernel, const dfw::broadcast_sign
 			kernel.get_audio()().set_main_music_volume(static_cast<const signal_music_volume&>(s).value);
 		break;
 		case t_signal_save_configuration:
-			config.set_sound_volume(kernel.get_audio()().get_main_sound_volume());
+			config.set_audio_volume(kernel.get_audio()().get_main_sound_volume());
 			config.set_music_volume(kernel.get_audio()().get_main_music_volume());
 			config.set_screen_vsync(ldv::get_vsync());
 			config.set("config:video:fullscreen", kernel.get_screen().is_fullscreen());

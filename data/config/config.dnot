@@ -2,7 +2,7 @@ config:{
 	app:{
 		dummy:true
 	}, audio:{
-		audio_buffers:1024, audio_channels:16, audio_out:2, audio_ratio:44100, music_volume:64, sound_volume:127
+		audio_buffers:1024, audio_channels:16, audio_out:2, audio_ratio:44100, music_volume:127, sound_volume:127
 	}, input:{
 		activate:[
 			0, 0, 44

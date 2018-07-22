@@ -1,6 +1,5 @@
 #include <libDan2.h>
 #include <class/kernel.h>
-#include "class/dfwimpl/kernel_config.h"
 #include "class/dfwimpl/app_config.h"
 #include "class/dfwimpl/state_driver.h"
 #include <log.h>
@@ -28,20 +27,16 @@ int main(int argc, char ** argv)
 
 	//Init...
 	try {
-		log_app<<"init app config..."<<std::endl;
-		app_config config;
-
-		//Load kernel, load SDL.
-		log_app<<"init kernel config..."<<std::endl;
-		kernel_config kconfig(config);
-
 		log_app<<"init sdl2..."<<std::endl;
 		if(!ldt::sdl_init(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_JOYSTICK)) {
 			throw std::runtime_error("unable to init sdl2");
 		}
 		
 		log_app<<"creating kernel..."<<std::endl;
-		dfw::kernel kernel(log_app, carg, kconfig, config);
+		dfw::kernel kernel(log_app, carg);
+
+		log_app<<"init app config..."<<std::endl;
+		app_config config;
 
 		log_app<<"create state driver..."<<std::endl;
 		state_driver sd(kernel, config);

@@ -1,0 +1,22 @@
+DEP_TOOLS=\
+$(DIR_O_TOOLS)fps_counter.o \
+$(DIR_O_TOOLS)text_reader.o \
+$(DIR_O_TOOLS)arg_manager.o \
+$(DIR_O_TOOLS)string_utils.o \
+$(DIR_O_TOOLS)number_utils.o \
+$(DIR_O_TOOLS)file_utils.o \
+$(DIR_O_TOOLS)dnot_parser.o \
+$(DIR_O_TOOLS)dnot_token.o \
+$(DIR_O_TOOLS)ttf_manager.o \
+$(DIR_O_TOOLS)chrono.o\
+$(DIR_O_TOOLS)dnot_config_file.o\
+$(DIR_LOG)/obj/log.o\
+
+DEP_FRAMEWORK=\
+$(DIR_O_DFW)fw_audio.o \
+$(DIR_O_DFW)fw_input.o \
+$(DIR_O_DFW)fw_state_controller.o \
+$(DIR_O_DFW)fw_base_config.o \
+$(DIR_O_DFW)fw_kernel.o \
+$(DIR_O_DFW)fw_resource_loader.o \
+$(DIR_O_DFW)fw_state_driver_interface.o \

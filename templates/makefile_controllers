@@ -1,0 +1,49 @@
+DIR_CONTROLLERS=./class/controllers/
+
+DEP_CONTROLLERS=\
+$(DIR_O)controller_menu.o \
+$(DIR_O)controller_test_2d.o \
+$(DIR_O)controller_test_2d_text.o \
+$(DIR_O)controller_test_poly.o \
+$(DIR_O)controller_console.o \
+$(DIR_O)controller_test_fps.o \
+$(DIR_O)controller_step.o \
+
+################################################################################
+#Controllers...
+
+$(DIR_O)controller_menu.o :\
+$(DIR_CONTROLLERS)menu.h \
+$(DIR_CONTROLLERS)menu.cpp
+	$(CC) $(CFLAGS) $(INCLUDES) $(DIR_CONTROLLERS)menu.cpp -o $(DIR_O)controller_menu.o
+
+$(DIR_O)controller_test_poly.o :\
+$(DIR_CONTROLLERS)test_poly.h \
+$(DIR_CONTROLLERS)test_poly.cpp
+	$(CC) $(CFLAGS) $(INCLUDES) $(DIR_CONTROLLERS)test_poly.cpp -o $(DIR_O)controller_test_poly.o
+
+$(DIR_O)controller_test_2d.o :\
+$(DIR_CONTROLLERS)test_2d.h \
+$(DIR_CONTROLLERS)test_2d.cpp
+	$(CC) $(CFLAGS) $(INCLUDES) $(DIR_CONTROLLERS)test_2d.cpp -o $(DIR_O)controller_test_2d.o
+
+$(DIR_O)controller_test_2d_text.o :\
+$(DIR_CONTROLLERS)test_2d_text.h \
+$(DIR_CONTROLLERS)test_2d_text.cpp
+	$(CC) $(CFLAGS) $(INCLUDES) $(DIR_CONTROLLERS)test_2d_text.cpp -o $(DIR_O)controller_test_2d_text.o
+
+$(DIR_O)controller_console.o :\
+$(DIR_CONTROLLERS)console.h \
+$(DIR_CONTROLLERS)console.cpp
+	$(CC) $(CFLAGS) $(INCLUDES) $(DIR_CONTROLLERS)console.cpp -o $(DIR_O)controller_console.o
+
+$(DIR_O)controller_step.o :\
+$(DIR_CONTROLLERS)step.h \
+$(DIR_CONTROLLERS)step.cpp
+	$(CC) $(CFLAGS) $(INCLUDES) $(DIR_CONTROLLERS)step.cpp -o $(DIR_O)controller_step.o
+
+$(DIR_O)controller_test_fps.o :\
+$(DIR_CONTROLLERS)fps_test.h \
+$(DIR_CONTROLLERS)fps_test.cpp
+	$(CC) $(CFLAGS) $(INCLUDES) $(DIR_CONTROLLERS)fps_test.cpp -o $(DIR_O)controller_test_fps.o
+

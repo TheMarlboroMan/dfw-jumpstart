@@ -1,0 +1,146 @@
+DIR_APP=./class/app/
+
+DEP_APP=\
+$(DIR_O)shared_resources.o \
+$(DIR_O)draw_struct.o \
+$(DIR_O)spatiable.o \
+$(DIR_O)drawable.o \
+$(DIR_O)tile_decoration.o \
+$(DIR_O)room.o \
+$(DIR_O)motion.o \
+$(DIR_O)player.o \
+$(DIR_O)object_trigger.o \
+$(DIR_O)room_entrance.o \
+$(DIR_O)room_wall.o \
+$(DIR_O)object_decoration.o \
+$(DIR_O)object_decoration_factory.o \
+$(DIR_O)object_logic_factory.o \
+$(DIR_O)object_audio_player.o \
+$(DIR_O)room_action_factory.o \
+$(DIR_O)localization.o \
+$(DIR_O)audio_dispatcher.o \
+$(DIR_O)audio_tools.o \
+
+################################################################################
+#Class...
+
+$(DIR_O)player.o :\
+$(DIR_O)motion.o \
+$(DIR_O)spatiable.o \
+$(DIR_O)drawable.o \
+$(DIR_O)audio_tools.o \
+$(DIR_APP)player.h \
+$(DIR_APP)player.cpp
+	$(CC) $(CFLAGS) $(INCLUDES) $(DIR_APP)player.cpp -o $(DIR_O)player.o
+
+$(DIR_O)room_action_factory.o :\
+$(DIR_APP)room_action.h\
+$(DIR_APP)room_action_factory.h \
+$(DIR_APP)room_action_factory.cpp
+	$(CC) $(CFLAGS) $(INCLUDES) $(DIR_APP)room_action_factory.cpp -o $(DIR_O)room_action_factory.o
+
+$(DIR_O)object_logic_factory.o :\
+$(DIR_O)object_trigger.o\
+$(DIR_O)room_entrance.o\
+$(DIR_APP)object_logic_factory.h \
+$(DIR_APP)object_logic_factory.cpp
+	$(CC) $(CFLAGS) $(INCLUDES) $(DIR_APP)object_logic_factory.cpp -o $(DIR_O)object_logic_factory.o
+
+$(DIR_O)object_decoration_factory.o :\
+$(DIR_O)object_decoration.o\
+$(DIR_APP)object_decoration_factory.h \
+$(DIR_APP)object_decoration_factory.cpp
+	$(CC) $(CFLAGS) $(INCLUDES) $(DIR_APP)object_decoration_factory.cpp -o $(DIR_O)object_decoration_factory.o
+
+$(DIR_O)object_decoration.o :\
+$(DIR_O)spatiable.o \
+$(DIR_O)drawable.o \
+$(DIR_APP)object_decoration.h \
+$(DIR_APP)object_decoration.cpp
+	$(CC) $(CFLAGS) $(INCLUDES) $(DIR_APP)object_decoration.cpp -o $(DIR_O)object_decoration.o
+
+$(DIR_O)object_audio_player.o :\
+$(DIR_O)audio_tools.o\
+$(DIR_APP)object_audio_player.h \
+$(DIR_APP)object_audio_player.cpp
+	$(CC) $(CFLAGS) $(INCLUDES) $(DIR_APP)object_audio_player.cpp -o $(DIR_O)object_audio_player.o
+
+$(DIR_O)object_trigger.o :\
+$(DIR_O)spatiable.o \
+$(DIR_APP)object_trigger.h \
+$(DIR_APP)object_trigger.cpp
+	$(CC) $(CFLAGS) $(INCLUDES) $(DIR_APP)object_trigger.cpp -o $(DIR_O)object_trigger.o
+
+$(DIR_O)motion.o :\
+$(DIR_APP)motion.h \
+$(DIR_APP)motion.cpp
+	$(CC) $(CFLAGS) $(INCLUDES) $(DIR_APP)motion.cpp -o $(DIR_O)motion.o
+
+$(DIR_O)room.o :\
+$(DIR_O)object_decoration.o \
+$(DIR_O)object_trigger.o \
+$(DIR_O)tile_decoration.o \
+$(DIR_O)room_entrance.o \
+$(DIR_O)room_wall.o \
+$(DIR_O)object_logic_factory.o \
+$(DIR_O)object_decoration_factory.o \
+$(DIR_O)room_action_factory.o \
+$(DIR_APP)room.h \
+$(DIR_APP)room.cpp
+	$(CC) $(CFLAGS) $(INCLUDES) $(DIR_APP)room.cpp -o $(DIR_O)room.o
+
+$(DIR_O)room_wall.o :\
+$(DIR_O)spatiable.o \
+$(DIR_APP)room_wall.h \
+$(DIR_APP)room_wall.cpp
+	$(CC) $(CFLAGS) $(INCLUDES) $(DIR_APP)room_wall.cpp -o $(DIR_O)room_wall.o
+
+$(DIR_O)room_entrance.o :\
+$(DIR_O)spatiable.o \
+$(DIR_APP)room_entrance.h \
+$(DIR_APP)room_entrance.cpp
+	$(CC) $(CFLAGS) $(INCLUDES) $(DIR_APP)room_entrance.cpp -o $(DIR_O)room_entrance.o
+
+$(DIR_O)tile_decoration.o :\
+$(DIR_O)drawable.o \
+$(DIR_APP)tile_decoration.h \
+$(DIR_APP)tile_decoration.cpp
+	$(CC) $(CFLAGS) $(INCLUDES) $(DIR_APP)tile_decoration.cpp -o $(DIR_O)tile_decoration.o
+
+$(DIR_O)shared_resources.o :\
+$(DIR_APP)shared_resources.h \
+$(DIR_APP)shared_resources.cpp
+	$(CC) $(CFLAGS) $(INCLUDES) $(DIR_APP)shared_resources.cpp -o $(DIR_O)shared_resources.o
+
+$(DIR_O)draw_struct.o :\
+$(DIR_APP)draw_struct.h \
+$(DIR_APP)draw_struct.cpp
+	$(CC) $(CFLAGS) $(INCLUDES) $(DIR_APP)draw_struct.cpp -o $(DIR_O)draw_struct.o
+
+$(DIR_O)audio_dispatcher.o :\
+$(DIR_APP)audio_dispatcher.h \
+$(DIR_APP)audio_dispatcher.cpp
+	$(CC) $(CFLAGS) $(INCLUDES) $(DIR_APP)audio_dispatcher.cpp -o $(DIR_O)audio_dispatcher.o
+
+$(DIR_O)audio_tools.o :\
+$(DIR_APP)audio_tools.h \
+$(DIR_APP)audio_tools.cpp
+	$(CC) $(CFLAGS) $(INCLUDES) $(DIR_APP)audio_tools.cpp -o $(DIR_O)audio_tools.o
+
+$(DIR_O)localization.o :\
+$(DIR_APP)localization.h \
+$(DIR_APP)localization.cpp
+	$(CC) $(CFLAGS) $(INCLUDES) $(DIR_APP)localization.cpp -o $(DIR_O)localization.o
+
+#Interfaces
+
+$(DIR_O)spatiable.o :\
+$(DIR_APP)spatiable.h \
+$(DIR_APP)spatiable.cpp
+	$(CC) $(CFLAGS) $(INCLUDES) $(DIR_APP)spatiable.cpp -o $(DIR_O)spatiable.o
+
+$(DIR_O)drawable.o :\
+$(DIR_O)draw_struct.o \
+$(DIR_APP)drawable.h \
+$(DIR_APP)drawable.cpp
+	$(CC) $(CFLAGS) $(INCLUDES) $(DIR_APP)drawable.cpp -o $(DIR_O)drawable.o

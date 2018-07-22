@@ -13,8 +13,7 @@ namespace app
 {
 
 class app_config:
-	public dfw::base_config
-{
+	public dfw::base_config {
 	////////////////////////////////
 	// Public interface.
 

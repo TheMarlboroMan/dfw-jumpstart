@@ -1,7 +1,5 @@
-#ifndef STRUCT_INPUT_FRAMEWORK_H
-#define STRUCT_INPUT_FRAMEWORK_H
-
-//This still strikes me as odd. The kernel implementation shares it with the app...
+#ifndef APP_INPUT_H
+#define APP_INPUT_H
 
 namespace app
 {
@@ -13,14 +11,8 @@ escape=0,
 up,
 down,
 left,
-right,
-activate,
-console_newline,
-console_backspace,
-#ifdef WDEBUG_CODE
-reload_debug_config
-#endif
-};
+right
+	};
 
 };
 

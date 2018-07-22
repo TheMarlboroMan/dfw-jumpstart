@@ -27,14 +27,8 @@ rm README.md;\
 rm -rf integration;\
 rm logs/*;\
 rm -rf class;\
-rm -rf data/config;\
-rm -rf data/app_data;\
-rm -rf data/audio;\
-rm -rf data/fonts;\
-rm -rf data/resources;\
-rm -rf data/textures;\
+rm -rf data;\
 rm -rf class/dfwimpl;\
-rm data/config/debug_config.dnot;\
 rm make/makefile_app;\
 rm make/makefile_app_dependencies;\
 rm make/makefile_controllers;\
@@ -46,6 +40,7 @@ mv templates/state_driver.* class/dfwimpl;\
 mkdir class/controllers;\
 mv templates/states.h class/controllers;\
 mv templates/_template.* class/controllers;\
+mkdir data;\
 mkdir data/config;\
 mv templates/config.dnot data/config;\
 mv templates/makefile_app make;\
@@ -54,7 +49,8 @@ mv templates/makefile_controllers make;\
 rmdir templates;\
 if [ -d objects ]; then rm -rf objects; fi;\
 if [ -f $(EXECUTABLE) ]; then rm $(EXECUTABLE); fi;\
-rf -rm .git;\
+rm -rf .git;\
+echo "Ready to start new project!";\n
 
 $(DIR_O):
 	$(DO_DIR_OBJECTS)

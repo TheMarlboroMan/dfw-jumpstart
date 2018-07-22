@@ -4,18 +4,10 @@ config:{
 	}, audio:{
 		audio_buffers:1024, audio_channels:16, audio_out:2, audio_ratio:44100, music_volume:127, sound_volume:127
 	}, input:{
-		activate:[
-			0, 0, 44
-		], console_backspace:[
-			0, 0, 42
-		], console_newline:[
-			0, 0, 40
-		], down:[
+		down:[
 			0, 0, 81
 		], left:[
 			0, 0, 80
-		], reload_debug_config:[
-			0, 0, 21
 		], right:[
 			0, 0, 79
 		], up:[

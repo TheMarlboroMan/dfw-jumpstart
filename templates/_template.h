@@ -17,8 +17,8 @@ namespace app
 {
 
 class controller_template:
-	public dfw::controller_interface
-{
+	public dfw::controller_interface {
+
 	public:
 
 						controller_template(ldt::log&);

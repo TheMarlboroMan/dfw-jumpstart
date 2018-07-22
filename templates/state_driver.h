@@ -11,18 +11,10 @@
 #include "app_config.h"
 
 //Controllers.
-#include "../controllers/states.h"
-#include "../controllers/menu.h"
-#include "../controllers/test_2d.h"
-#include "../controllers/test_2d_text.h"
-#include "../controllers/fps_test.h"
-#include "../controllers/console.h"
-#include "../controllers/test_poly.h"
-#include "../controllers/step.h"
-#include "../controllers/signals.h"
+//#include "../controllers/placeholder.h"
 
 //Specific app_config
-#include "../app/shared_resources.h"
+//#include "../app/placeholder.h"
 
 namespace app
 {
@@ -40,9 +32,6 @@ class state_driver:
 	virtual void					prepare_state(int, int);
 	virtual float					get_max_timestep() const {return 0.03f;}
 
-	void						receive_signal(dfw::kernel&, const dfw::broadcast_signal&);
-	void						startup_set_state(int v) {states.set(v);}
-
 	private:
 
 	void						prepare_video(dfw::kernel&);
@@ -51,22 +40,12 @@ class state_driver:
 	void						prepare_resources(dfw::kernel&);
 	void						register_controllers(dfw::kernel&);
 	void 						virtualize_input(dfw::input& input);
-	void						setup_signal_receiver(dfw::kernel&);
 
 	//references
 	app::app_config&				config;
 	tools::log&					log;
 
-	app_receiver					receiver;
-
-	std::unique_ptr<shared_resources>		s_resources;
-	std::unique_ptr<controller_menu>		c_menu;
-	std::unique_ptr<controller_test_2d>		c_test_2d;
-	std::unique_ptr<controller_test_2d_text>	c_test_2d_text;
-	std::unique_ptr<controller_test_poly>		c_test_poly;
-	std::unique_ptr<controller_console>		c_console;
-	std::unique_ptr<controller_fps_test>		c_fps;
-	std::unique_ptr<controller_step>		c_step;
+	//std::unique_ptr<controller_placeholder>		c_placeholder;
 };
 
 }

@@ -88,13 +88,15 @@ void state_driver::prepare_input(dfw::kernel& kernel) {
 	kernel.init_input_system(pairs);
 }
 
-void state_driver::prepare_resources(dfw::kernel& kernel) {
+void state_driver::prepare_resources(dfw::kernel& /*kernel*/) {
 
+/*
 	dfw::resource_loader r_loader(kernel.get_video_resource_manager(), kernel.get_audio_resource_manager());
 
 	r_loader.generate_textures(tools::explode_lines_from_file(std::string("data/resources/textures.txt")));
 	r_loader.generate_sounds(tools::explode_lines_from_file(std::string("data/resources/audio.txt")));
 	r_loader.generate_music(tools::explode_lines_from_file(std::string("data/resources/music.txt")));
+*/
 }
 
 void state_driver::register_controllers(dfw::kernel& /*kernel*/) {

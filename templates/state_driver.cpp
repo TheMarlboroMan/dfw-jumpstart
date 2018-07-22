@@ -16,8 +16,8 @@ using namespace app;
 extern tools::log LOG;
 
 state_driver::state_driver(dfw::kernel& kernel, app::app_config& c)
-	:state_driver_interface(t_states::state_menu),
-	config(c), log(kernel.get_log()), receiver(get_signal_dispatcher()) {
+	:state_driver_interface(t_states::state_placeholder),
+	config(c), log(kernel.get_log()) {
 
 	log<<"setting state check function..."<<std::endl;
 	states.set_function([](int v){
@@ -82,13 +82,7 @@ void state_driver::prepare_input(dfw::kernel& kernel) {
 		{input_description_from_config_token(config.token_from_path("config:input:left")), input_app::left},
 		{input_description_from_config_token(config.token_from_path("config:input:right")), input_app::right},
 		{input_description_from_config_token(config.token_from_path("config:input:up")), input_app::up},
-		{input_description_from_config_token(config.token_from_path("config:input:down")), input_app::down},
-		{input_description_from_config_token(config.token_from_path("config:input:activate")), input_app::activate},
-		{input_description_from_config_token(config.token_from_path("config:input:console_newline")), input_app::console_newline},
-		{input_description_from_config_token(config.token_from_path("config:input:console_backspace")), input_app::console_backspace}
-#ifdef WDEBUG_CODE
-		,{input_description_from_config_token(config.token_from_path("config:input:reload_debug_config")), input_app::reload_debug_config}
-#endif
+		{input_description_from_config_token(config.token_from_path("config:input:down")), input_app::down}
 	};
 
 	kernel.init_input_system(pairs);
@@ -109,7 +103,7 @@ void state_driver::register_controllers(dfw::kernel& /*kernel*/) {
 	//register_controller(t_states::state_placeholder, *c_placeholder);
 }
 
-void state_driver::prepare_state(int next, int current) {
+void state_driver::prepare_state(int /*next*/, int /*current*/) {
 
 /*
 	switch(next) {
@@ -129,7 +123,7 @@ void state_driver::common_pre_loop_input(dfw::input& input, float /*delta*/) {
 	}
 }
 
-void state_driver::common_loop_input(dfw::input& input, float /*delta*/) {
+void state_driver::common_loop_input(dfw::input& /*input*/, float /*delta*/) {
 
 }
 

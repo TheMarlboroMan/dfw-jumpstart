@@ -46,10 +46,14 @@ mv templates/config.dnot data/config;\
 mv templates/makefile_app make;\
 mv templates/makefile_app_dependencies make;\
 mv templates/makefile_controllers make;\
+rm main.cpp;
+mv templates/main.cpp ./
 rmdir templates;\
 if [ -d objects ]; then rm -rf objects; fi;\
 if [ -f $(EXECUTABLE) ]; then rm $(EXECUTABLE); fi;\
+
 rm -rf .git;\
+
 echo "Ready to start new project!";\
 
 $(DIR_O):

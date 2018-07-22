@@ -5,7 +5,7 @@
 
 using namespace app;
 
-controller_template::controller_template(ldt::log& plog)
+controller_template::controller_template(tools::log& plog)
 	:log(plog)
 {
 

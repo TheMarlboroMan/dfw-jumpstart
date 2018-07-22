@@ -21,7 +21,7 @@ class controller_template:
 {
 	public:
 
-						controller_template(ldt::log&);
+						controller_template(tools::log&);
 	virtual void 				loop(dfw::input&, const dfw::loop_iteration_data&);
 	virtual void 				draw(ldv::screen&, int);
 	virtual void 				awake(dfw::input& /*input*/) {}
@@ -31,7 +31,7 @@ class controller_template:
 	private:
 
 	//references...
-	ldt::log&					log;
+	tools::log&					log;
 
 	//properties
 };

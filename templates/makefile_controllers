@@ -3,11 +3,11 @@ DIR_CONTROLLERS=./class/controllers/
 #Full controller list.
 
 DEP_CONTROLLERS=\
-#$(DIR_O)placeholder.o \
+#$(DIR_O)placeholder_c.o \
 
 #Controller recipes.
 
-#$(DIR_O)controller_placeholder.o :\
+#$(DIR_O)placeholder_c.o :\
 #$(DIR_CONTROLLERS)placeholder.h \
 #$(DIR_CONTROLLERS)placeholder.cpp
-#	$(CC) $(CFLAGS) $(INCLUDES) $(DIR_CONTROLLERS)placeholder.cpp -o $(DIR_O)controller_placeholder.o
+#	$(CC) $(CFLAGS) $(INCLUDES) $(DIR_CONTROLLERS)placeholder.cpp -o $(DIR_O)placeholder_c.o

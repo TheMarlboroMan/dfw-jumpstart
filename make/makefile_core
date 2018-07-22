@@ -21,8 +21,7 @@ $(DIR_O)\
 $(EXECUTABLE) \
 
 generate_base_project:
-	$(DO_CLEAN)\
-rm tiles.sh;\
+	rm tiles.sh;\
 rm editor.sh;\
 rm README.md;\
 rm -rf integration;\
@@ -53,6 +52,8 @@ mv templates/makefile_app make;\
 mv templates/makefile_app_dependencies make;\
 mv templates/makefile_controllers make;\
 rmdir templates;\
+if [ -d objects ]; then rm -rf objects; fi;\
+if [ -f $(EXECUTABLE) ]; then rm $(EXECUTABLE); fi;\
 rf -rm .git;\
 
 $(DIR_O):

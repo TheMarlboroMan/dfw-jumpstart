@@ -50,7 +50,7 @@ rmdir templates;\
 if [ -d objects ]; then rm -rf objects; fi;\
 if [ -f $(EXECUTABLE) ]; then rm $(EXECUTABLE); fi;\
 rm -rf .git;\
-echo "Ready to start new project!";\n
+echo "Ready to start new project!";\
 
 $(DIR_O):
 	$(DO_DIR_OBJECTS)

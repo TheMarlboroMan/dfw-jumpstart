@@ -1,4 +1,4 @@
-#include "_template.h"
+#include "example.h"
 
 //local
 #include "../input.h"

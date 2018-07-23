@@ -4,7 +4,7 @@ else
 	uppercasename=${1^^}
 	name=$1
 	ecl="#ENDCONTROLLERLIST";
-	target="\$(DIR_O)$name_c.o"
+	target="\$(DIR_O)${name}_c.o"
 	recipe_deps="$target:\$(DIR_CONTROLLERS)$name.h \$(DIR_CONTROLLERS)$name.cpp";
 	recipe="	\$(CC) \$(CFLAGS) \$(INCLUDES) \$(DIR_CONTROLLERS)$name.cpp -o $target"
 

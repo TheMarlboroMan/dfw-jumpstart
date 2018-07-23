@@ -34,7 +34,7 @@ rm -rf templates;\
 if [ -d objects ]; then rm -rf objects; fi;\
 if [ -f $(EXECUTABLE) ]; then rm $(EXECUTABLE); fi;\
 rm -rf .git;\
-cat GETTING_STARTED.txt
+cat GETTING_STARTED.txt\
 else;\
 echo "A previous setup was already run!";\
 fi;\

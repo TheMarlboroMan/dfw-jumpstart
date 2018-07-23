@@ -4,7 +4,7 @@ Before compiling you must have built all previous dependencies as stated in the 
 
 Once the dependencies are ready you will be able to compile and try the project with make -f makefile_linux|win all. The flags of the compiler will be set to enable debugging.
 
-
+A good starting point would be to replace the example controller with your own (remove it from the class/controllers directory, the class/controllers/states.h file, the make/controllers file and the class/dfwimpl/state_driver.* implementation).
 
 Happy hacking :).
 

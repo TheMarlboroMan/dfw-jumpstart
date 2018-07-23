@@ -48,7 +48,7 @@ class state_driver:
 
 	typedef std::unique_ptr<dfw::controller_interface>	ptr_controller;
 	ptr_controller					c_example;
-	//new controllers here.
+	//controller instances here.
 };
 
 }

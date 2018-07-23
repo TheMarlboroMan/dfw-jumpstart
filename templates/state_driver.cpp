@@ -106,10 +106,8 @@ void state_driver::register_controllers(dfw::kernel& /*kernel*/) {
 		register_controller(_i, *_ptr);
 	};
 
-//	c_step.reset(new controller_step(*s_resources));
-//	register_controller(t_states::state_menu, *c_menu);
-	
 	reg(c_example, t_states::state_example, new controller_example(log));
+	//register controllers here.
 	//new controllers are registered here.
 }
 

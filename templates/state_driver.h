@@ -12,6 +12,7 @@
 
 //Controllers.
 #include "../controllers/example.h"
+//new controller includes here.
 
 //Specific app_config
 //#include "../app/placeholder.h"
@@ -47,7 +48,7 @@ class state_driver:
 
 	typedef std::unique_ptr<dfw::controller_interface>	ptr_controller;
 	ptr_controller					c_example;
-	//new controllers go here.
+	//new controllers here.
 };
 
 }

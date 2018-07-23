@@ -103,7 +103,7 @@ void state_driver::register_controllers(dfw::kernel& /*kernel*/) {
 
 	auto reg=[this](ptr_controller& _ptr, int _i, dfw::controller_interface * _ci) {
 		_ptr.reset(_ci);
-		register_controller(_i, _ptr);
+		register_controller(_i, *_ptr);
 	};
 	
 	reg(c_example, t_states::state_example, new controller_example(log));

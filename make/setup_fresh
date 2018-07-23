@@ -1,5 +1,5 @@
 generate_base_project:
-	if [ -d templates ]; then;
+	if [ -d templates ]; then
 	rm tiles.sh;\
 rm editor.sh;\
 rm README.md;\

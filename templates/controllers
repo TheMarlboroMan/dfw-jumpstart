@@ -4,6 +4,7 @@ DIR_CONTROLLERS=./class/controllers/
 
 DEP_CONTROLLERS=\
 $(DIR_O)example_c.o \
+#ENDCONTROLLERLIST
 
 #Controller recipes.
 

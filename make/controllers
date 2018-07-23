@@ -8,6 +8,7 @@ $(DIR_O)controller_test_poly.o \
 $(DIR_O)controller_console.o \
 $(DIR_O)controller_test_fps.o \
 $(DIR_O)controller_step.o \
+#ENDCONTROLLERLIST
 
 ################################################################################
 #Controllers...
@@ -46,4 +47,3 @@ $(DIR_O)controller_test_fps.o :\
 $(DIR_CONTROLLERS)fps_test.h \
 $(DIR_CONTROLLERS)fps_test.cpp
 	$(CC) $(CFLAGS) $(INCLUDES) $(DIR_CONTROLLERS)fps_test.cpp -o $(DIR_O)controller_test_fps.o
-

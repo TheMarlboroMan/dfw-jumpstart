@@ -34,7 +34,6 @@ else
 	mv templates/GETTING_STARTED.txt .
 	rm -rf templates;
 	if [ -d objects ]; then rm -rf objects; fi;
-	if [ -f $(EXECUTABLE) ]; then rm $(EXECUTABLE); fi;
 	rm -rf .git;
 	cat GETTING_STARTED.txt;
 fi;

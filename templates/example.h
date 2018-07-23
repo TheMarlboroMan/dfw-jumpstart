@@ -31,7 +31,7 @@ class controller_example:
 	private:
 
 	//references...
-	ldt::log&					log;
+	tools::log&					log;
 
 	//properties
 };

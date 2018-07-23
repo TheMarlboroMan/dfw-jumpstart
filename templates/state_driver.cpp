@@ -16,7 +16,7 @@ using namespace app;
 extern tools::log LOG;
 
 state_driver::state_driver(dfw::kernel& kernel, app::app_config& c)
-	:state_driver_interface(t_states::state_placeholder),
+	:state_driver_interface(t_states::state_example),
 	config(c), log(kernel.get_log()) {
 
 	log<<"setting state check function..."<<std::endl;

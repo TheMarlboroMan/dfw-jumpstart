@@ -8,5 +8,7 @@ A good starting point would be to replace the example controller with your own (
 
 You can find a controller template in the class/controllers/_template.* file and many wonderful examples in the original project.
 
+If you haven't do so yet, please, build the libdansdl2, dfw, log and tools documentation with doxygen!.
+
 Happy hacking :).
 

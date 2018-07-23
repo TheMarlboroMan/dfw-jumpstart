@@ -47,6 +47,7 @@ class state_driver:
 
 	typedef std::unique_ptr<controller_example>	ptr_controller;
 	ptr_controller					c_example;
+	//new controllers go here.
 };
 
 }

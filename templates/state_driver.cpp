@@ -101,8 +101,12 @@ void state_driver::prepare_resources(dfw::kernel& /*kernel*/) {
 
 void state_driver::register_controllers(dfw::kernel& /*kernel*/) {
 
-	c_example.reset(new controller_example(log));
-	register_controller(t_states::state_example, *c_example);
+	auto reg=[this](ptr_controller&, _ptr, int _i, dfw::controller_interface * _ci) {
+		_ptr.reset(_ci);
+		register_controller(_i, _ptr);
+	};
+	
+	reg(c_example, t_states::state_example, new controller_example(log));
 }
 
 void state_driver::prepare_state(int /*next*/, int /*current*/) {

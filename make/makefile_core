@@ -25,13 +25,14 @@ generate_base_project:
 rm editor.sh;\
 rm README.md;\
 rm -rf integration;\
-rm logs/*;\
+rm -rf logs/*;\
 rm -rf class;\
 rm -rf data;\
 rm -rf class/dfwimpl;\
 rm make/makefile_app;\
 rm make/makefile_app_dependencies;\
 rm make/makefile_controllers;\
+mkdir logs;\
 mkdir class;\
 mv templates/input.h class;\
 mkdir class/dfwimpl;\
@@ -76,4 +77,4 @@ $(DEP_APP_DEPENDENCIES) \
 -o $(EXECUTABLE) $(LIBRARIES) $(LINKER)
 
 clean:
-	$(DO_CLEAN)
+	$(DO_CLEAN)	

@@ -45,7 +45,7 @@ class state_driver:
 	app::app_config&				config;
 	tools::log&					log;
 
-	typedef std::unique_ptr<controller_example>	ptr_controller;
+	typedef std::unique_ptr<dfw::controller_interface>	ptr_controller;
 	ptr_controller					c_example;
 	//new controllers go here.
 };

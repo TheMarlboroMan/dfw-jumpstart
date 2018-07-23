@@ -1,0 +1,13 @@
+DIR_CONTROLLERS=./class/controllers/
+
+#Full controller list.
+
+DEP_CONTROLLERS=\
+$(DIR_O)example_c.o \
+
+#Controller recipes.
+
+$(DIR_O)example_c.o :\
+$(DIR_CONTROLLERS)example.h \
+$(DIR_CONTROLLERS)example.cpp
+	$(CC) $(CFLAGS) $(INCLUDES) $(DIR_CONTROLLERS)example.cpp -o $(DIR_O)example_c.o

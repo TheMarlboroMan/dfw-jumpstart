@@ -1,0 +1,3 @@
+The setup was successful!.
+
+You can compile the project now with make -f makefile_linux all

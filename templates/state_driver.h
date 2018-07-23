@@ -11,7 +11,7 @@
 #include "app_config.h"
 
 //Controllers.
-//#include "../controllers/placeholder.h"
+#include "../controllers/example.h"
 
 //Specific app_config
 //#include "../app/placeholder.h"
@@ -45,7 +45,7 @@ class state_driver:
 	app::app_config&				config;
 	tools::log&					log;
 
-	//std::unique_ptr<controller_placeholder>		c_placeholder;
+	std::unique_ptr<controller_example>		c_example;
 };
 
 }

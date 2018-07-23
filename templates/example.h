@@ -16,12 +16,12 @@
 namespace app
 {
 
-class controller_template:
+class controller_example:
 	public dfw::controller_interface {
 
 	public:
 
-						controller_template(tools::log&);
+						controller_example(tools::log&);
 	virtual void 				loop(dfw::input&, const dfw::loop_iteration_data&);
 	virtual void 				draw(ldv::screen&, int);
 	virtual void 				awake(dfw::input& /*input*/) {}
@@ -31,7 +31,7 @@ class controller_template:
 	private:
 
 	//references...
-	tools::log&					log;
+	ldt::log&					log;
 
 	//properties
 };

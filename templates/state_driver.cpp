@@ -101,8 +101,8 @@ void state_driver::prepare_resources(dfw::kernel& /*kernel*/) {
 
 void state_driver::register_controllers(dfw::kernel& /*kernel*/) {
 
-	//c_placeholder.reset(new controller_placeholder());
-	//register_controller(t_states::state_placeholder, *c_placeholder);
+	c_example.reset(new controller_example(log));
+	register_controller(t_states::state_example, *c_example);
 }
 
 void state_driver::prepare_state(int /*next*/, int /*current*/) {

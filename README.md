@@ -37,20 +37,10 @@ The rest of this text file includes:
 
 Now for the ugly part.
 
-- make -f makefile_linux|win generate_base_project;
-- Follow the instructions to make your first controller.
-- Set that controller as the first one to run.
-
-Alternatively...
-
-- Delete the example controllers and class files.
-- Delete the example controllers and classes from _makefile_app (both in dependencies and instructions).
-- Delete the example controllers from the state_driver files (includes and register_controllers).
-
-And this is where you code your own stuff:
-
-- Modify what you need.
-- Make with make -f makefile_[linux-win] all
+- chmod +x scripts/setup_fresh.sh
+- scripts/setup_fresh.sh
+- code your own stuff
+- make -f makefile_[linux-win] all
 
 ##On coordinate systems.
 

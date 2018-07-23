@@ -9,6 +9,7 @@
 
 #ifdef WDEBUG_CODE
 #include "../input.h"
+#include "../controllers/states.h"
 #endif
 
 using namespace app;

@@ -1,0 +1,8 @@
+Setup was succesful!.
+
+You can now compile and try the project with make -f makefile_linux|win all
+
+Remember you must have built all previous dependencies as stated in the original project's README.md file.
+
+Happy hacking :).
+

@@ -1,8 +1,10 @@
 Setup was succesful!.
 
-You can now compile and try the project with make -f makefile_linux|win all. The flags of the compiler will be set to enable debugging.
+Before compiling you must have built all previous dependencies as stated in the original project's README.md file.
 
-Remember you must have built all previous dependencies as stated in the original project's README.md file.
+Once the dependencies are ready you will be able to compile and try the project with make -f makefile_linux|win all. The flags of the compiler will be set to enable debugging.
+
+
 
 Happy hacking :).
 

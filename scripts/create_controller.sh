@@ -15,7 +15,7 @@ else
 	sed -i -e "s/template/$1/g" class/controllers/$1.cpp
 #	sed -i -e "s/$ecl/$target $ecl/g" make/controllers
 
-	echo "DEP_CONTROLLERS=\$(DEP_CONTROLLERS) $target" >> make/controllers;
+	echo "DEP_CONTROLLERS+= $target" >> make/controllers;
 	echo "$recipe_deps" >> make/controllers;
 	echo "$recipe" >> make/controllers;
 	echo "Done";

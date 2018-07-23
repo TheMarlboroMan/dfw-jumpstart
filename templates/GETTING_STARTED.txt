@@ -10,7 +10,7 @@ A good starting point would be to replace the example controller with your own (
 
 You can find a controller template in the class/controllers/_template.* file and many wonderful examples in the original project.
 
-If you want to, you can do "./scripts/create_controller controller_name" to automatically create a controller and add it to the dependency list. This will not add the controller to the states.h file or to the state driver, but will help.
+If you want to, you can do "./scripts/create_controller controller_name" to automatically create a controller and add it to the dependency list. This will also add the controller to the states.h, but not to the state driver.
 
 Happy hacking :).
 

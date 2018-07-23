@@ -15,19 +15,20 @@ else
 	sed -i -e "s/template/$name/g" class/controllers/$name.cpp
 	sed -i -e "s/state_max/state_$name, state_max/g" class/controllers/states.h
 
-
 	awk_include_pattern="//new controller includes here.";
-	awk_include_replacement="#include \"../controllers/$name.h\"\n"
-	awk -v ptr="$awk_include_pattern" "\$0 ~ ptr {gsub(ptr, \"$awk_include_replacement\"ptr)}1" class/dfwimpl/state_driver.h > class/dfwimpl/state_driver.tmp.h
+	awk_include_replacement="#include \\\"../controllers/$name.h\\\"\n"
+	awk -v ptr="$awk_include_pattern" "\$0 ~ ptr {gsub(ptr, \"$awk_include_replacement\"ptr)}1" class/dfwimpl/state_driver.h > class/dfwimpl/state_driver.tmp
 
-#	awk_declare_pattern="//controller instances here.";
-#	awk_declare_replacement="ptr_controller\t\t\t\t\tc_$name;"
-#	awk -v ptr="$awk_declare_pattern" "\$0 ~ ptr {gsub(ptr, \"$awk_declare_replacement\"ptr)}1" class/dfwimpl/state_driver.tmp.h > class/dfwimpl/state_driver.h
-#	rm class/dfwimpl/state_driver.tmp.h
+	awk_declare_pattern="//controller instances here.";
+	awk_declare_replacement="ptr_controller\t\t\t\t\tc_$name\n;"
+	awk -v ptr="$awk_declare_pattern" "\$0 ~ ptr {gsub(ptr, \"$awk_declare_replacement\"ptr)}1" class/dfwimpl/state_driver.tmp > class/dfwimpl/state_driver.h
+	rm class/dfwimpl/state_driver.tmp
 
-#	awk_register_pattern="//register controllers here.";
-#	awk_register_replacement="reg(c_$name, t_states::state_$name, new controller_$name(log));\\n\\t"
-#	awk -v ptr="$awk_register_pattern" "\$0 ~ ptr {gsub(ptr, \"$awk_register_replacement\"ptr)}1" class/dfwimpl/state_driver.cpp
+	mv class/dfwimpl/state_driver.cpp class/dfwimpl/state_driver.tmp
+	awk_register_pattern="//register controllers here.";
+	awk_register_replacement="reg(c_$name, t_states::state_$name, new controller_$name(log));\\n\\t"
+	awk -v ptr="$awk_register_pattern" "\$0 ~ ptr {gsub(ptr, \"$awk_register_replacement\"ptr)}1" class/dfwimpl/state_driver.tmp > class/dfwimpl/state_driver.cpp
+	rm class/dfwimpl/state_driver.tmp
 
 	echo "DEP_CONTROLLERS+= $target" >> make/controllers;
 	echo "$recipe_deps" >> make/controllers;

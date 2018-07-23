@@ -18,7 +18,6 @@ mv templates/state_driver.* class/dfwimpl;
 mkdir class/controllers;
 mv templates/states.h class/controllers;
 mv templates/_template.* class/controllers;
-mv templates/example.* class/controllers;
 mkdir data;
 mkdir data/config;
 mv templates/config.dnot data/config;

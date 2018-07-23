@@ -16,7 +16,7 @@ using namespace app;
 extern tools::log LOG;
 
 state_driver::state_driver(dfw::kernel& kernel, app::app_config& c)
-	:state_driver_interface(t_states::state_example),
+	:state_driver_interface(t_states::state_min),
 	config(c), log(kernel.get_log()) {
 
 	log<<"setting state check function..."<<std::endl;
@@ -106,7 +106,6 @@ void state_driver::register_controllers(dfw::kernel& /*kernel*/) {
 		register_controller(_i, *_ptr);
 	};
 
-	reg(c_example, t_states::state_example, new controller_example(log));
 	//register controllers here.
 }
 

@@ -6,11 +6,11 @@ Once the dependencies are ready you will be able to compile and try the project 
 
 If you haven't do so yet, please, build the libdansdl2, dfw, log and tools documentation with doxygen!.
 
-A good starting point would be to replace the example controller with your own (remove it from the class/controllers directory, the class/controllers/states.h file, the make/controllers file and the class/dfwimpl/state_driver.* implementation).
-
 You can find a controller template in the class/controllers/_template.* file and many wonderful examples in the original project.
 
 If you want to, you can do "./scripts/create_controller controller_name" to automatically create a controller and add it to the dependency list. This will also add the controller to the states.h and state driver through the magic of sed and awk :D.
+
+Remember, the project will not run until you add a controller!.
 
 Happy hacking :).
 

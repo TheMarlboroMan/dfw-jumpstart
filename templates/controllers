@@ -3,8 +3,4 @@ DEP_CONTROLLERS=\
 
 #Controller recipes.
 
-DEP_CONTROLLERS+= $(DIR_O)example_c.o
-$(DIR_O)example_c.o :\
-$(DIR_CONTROLLERS)example.h \
-$(DIR_CONTROLLERS)example.cpp
-	$(CC) $(CFLAGS) $(INCLUDES) $(DIR_CONTROLLERS)example.cpp -o $(DIR_O)example_c.o
+

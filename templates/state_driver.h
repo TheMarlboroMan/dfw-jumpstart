@@ -11,7 +11,6 @@
 #include "app_config.h"
 
 //Controllers.
-#include "../controllers/example.h"
 //new controller includes here.
 
 //Specific app_config
@@ -47,7 +46,6 @@ class state_driver:
 	tools::log&					log;
 
 	typedef std::unique_ptr<dfw::controller_interface>	ptr_controller;
-	ptr_controller					c_example;
 	//controller instances here.
 };
 

@@ -13,6 +13,7 @@ else
 	sed -i -e "s/template/$1/g" class/controllers/$1.h
 	sed -i -e "s/TEMPLATE/$uppercasename/g" class/controllers/$1.h
 	sed -i -e "s/template/$1/g" class/controllers/$1.cpp
+	sed -i -e "s/\/*new states go here*\//state_$1, \/*new states go here*\//g" class/controllers/states.h
 #	sed -i -e "s/$ecl/$target $ecl/g" make/controllers
 
 	echo "DEP_CONTROLLERS+= $target" >> make/controllers;

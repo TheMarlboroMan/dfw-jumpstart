@@ -1,4 +1,4 @@
-#include "_template.h"
+#include "template.h"
 
 //local
 #include "../input.h"
@@ -24,5 +24,5 @@ void controller_template::loop(dfw::input& /*input*/, const dfw::loop_iteration_
 
 void controller_template::draw(ldv::screen& screen, int /*fps*/)
 {
-	screen.clear(ldv::rgba8(0, 255, 255, 255));
+	screen.clear(ldv::rgba8(0, 0, 0, 255));
 }

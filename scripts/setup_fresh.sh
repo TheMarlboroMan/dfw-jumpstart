@@ -31,5 +31,5 @@ mv templates/GETTING_STARTED.txt .
 rm -rf templates;
 if [ -d objects ]; then rm -rf objects; fi;
 rm -rf .git;
-rm -rf scripts;
+rm scripts/setup_fresh.sh;
 cat GETTING_STARTED.txt;

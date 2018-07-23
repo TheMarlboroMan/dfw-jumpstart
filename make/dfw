@@ -5,7 +5,6 @@ $(DIR_O)state_driver.o\
 $(DIR_O)app_config.o
 
 $(DIR_O)state_driver.o :\
-$(DIR_O)shared_resources.o \
 $(DEP_CONTROLLERS)\
 $(DIR_DFWIMPL)state_driver.h \
 $(DIR_DFWIMPL)state_driver.cpp

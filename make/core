@@ -13,11 +13,6 @@ include make/app_dependencies
 
 include make/common_dependencies
 
-########################
-#Setup fresh definition...
-
-include make/setup_fresh
-
 ################################################################################
 #Target definitions.
 

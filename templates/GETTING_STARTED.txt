@@ -6,5 +6,7 @@ Once the dependencies are ready you will be able to compile and try the project 
 
 A good starting point would be to replace the example controller with your own (remove it from the class/controllers directory, the class/controllers/states.h file, the make/controllers file and the class/dfwimpl/state_driver.* implementation).
 
+You can find a controller template in the class/controllers/_template.* file and many wonderful examples in the original project.
+
 Happy hacking :).
 

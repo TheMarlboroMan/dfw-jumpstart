@@ -34,6 +34,7 @@ class controller_example:
 	tools::log&					log;
 
 	//properties
+	int						r, g, b;
 };
 
 }

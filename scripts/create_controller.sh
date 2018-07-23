@@ -13,6 +13,8 @@ else
 	sed -i -e "s/TEMPLATE/$uppercasename/g" class/controllers/$1.h
 	sed -i -e "s/template/$1/g" class/controllers/$1.cpp
 	sed -i -e "s/state_max/state_$1, state_max/g" class/controllers/states.h
+	awk '{gsub("//register controllers here.", "reg(c_examples, t_states::state_examples, new controller_examples(log));");}'
+
 
 	echo "DEP_CONTROLLERS+= $target" >> make/controllers;
 	echo "$recipe_deps" >> make/controllers;

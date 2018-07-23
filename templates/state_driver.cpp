@@ -108,7 +108,7 @@ void state_driver::register_controllers(dfw::kernel& /*kernel*/) {
 
 	reg(c_example, t_states::state_example, new controller_example(log));
 	//register controllers here.
-	//new controllers are registered here.
+troll
 }
 
 void state_driver::prepare_state(int /*next*/, int /*current*/) {

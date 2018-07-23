@@ -1,7 +1,5 @@
 generate_base_project:
-	if [ !-d templates ]; then\
-echo "A previous setup was already run!";\n
-else
+	if [ !-d templates ]; then echo "A previous setup was already run!"; else
 rm tiles.sh;\
 rm editor.sh;\
 rm README.md;\

@@ -20,7 +20,7 @@ else
 	awk -v ptr="$awk_include_pattern" "\$0 ~ ptr {gsub(ptr, \"$awk_include_replacement\"ptr)}1" class/dfwimpl/state_driver.h > class/dfwimpl/state_driver.tmp
 
 	awk_declare_pattern="//controller instances here.";
-	awk_declare_replacement="ptr_controller\t\t\t\t\tc_$name\n;"
+	awk_declare_replacement="ptr_controller\t\t\t\t\tc_$name;\n\t"
 	awk -v ptr="$awk_declare_pattern" "\$0 ~ ptr {gsub(ptr, \"$awk_declare_replacement\"ptr)}1" class/dfwimpl/state_driver.tmp > class/dfwimpl/state_driver.h
 	rm class/dfwimpl/state_driver.tmp
 

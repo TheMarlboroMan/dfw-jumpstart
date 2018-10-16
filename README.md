@@ -44,7 +44,26 @@ Now for the ugly part.
 
 ##On coordinate systems.
 
-//TODO.
+Copied and pasted from the "camera.h" header file of libdansdl2:
+
+"A particularly interesting feature is the coordinate system: in "screen", 
+the focus box will be assumed to be a rectangle with its origin in the top-left 
+corner its width extending right and its height extending down (just as the screen
+coordinate system used on the library). In "cartesian", the origin is the 
+bottom-left corner and the "height" parameter "ascends". The choice of coordinate
+system makes the camera act as a mediator between screen and application space.
+Whatever the system chosen, all representations MUST be in "screen" form. 
+The camera will not perform the transformations itself... Even if this 
+transformation could be implemented into the framework, I'd rather not do it
+and keep it simple. All the client code needs to do is invert the y axis 
+when creating a representation for a logic object.".
+
+Which translates to: "code all your logic assuming whatever coordinate system
+you want. When it comes to draw your representations, first set the camera to 
+the space you are using in the login (screen or cartesian). Next create your
+representations in 'screen' space and invert the Y axis if you are using 
+cartesian coordinates".
+
 
 ##A few definitions:
 
@@ -60,13 +79,51 @@ Here are a few things that need to be done in a regular basis.
 
 ###Add new controllers:
 
+You can do the automatic or manual methods...
+
+The automatic method, under Linux: 
+
+- from the root of the project: ./scripts/create_controller.sh controllername.
+
+The manual method:
+
 - Create your files in class/controllers. Use the _template.* files for your convenience.
 - Add the controller to _makefile_app. state_driver should depend on it. This is a good moment to try and see if it compiles.
 - Register the controller in state_driver.*. Perhaps in prepare_state() too.
 - Add the state to states.h, so it can be used from other controllers to request state changes.
 - Test the controller by changing the default state in state_driver's constructor.
 
-It is a bit clunky, but does not take more than 5 minutes.
+It is a bit clunky, but does not take more than 5 minutes...
+
+###Run code once, at application startup.
+
+The one thing that best matches this is to use your main state_driver under the
+class/dfwimpl directory. Modify the constructor and have it call your own hooks.
+
+###Register and draw TTF fonts.
+
+Use the tools::ttf_manager class. You can have a manager for each of your 
+instances or use the same for all of them (for example, making it property of
+the state driver).
+
+The ttf_manager can be constructed with no arguments. Once constructed, use
+
+bool ttf_manager::insert(const std::string& _alias, int _size, const std::string& _path);
+
+to insert fonts, which will return true on success (false if the font was already
+registered!).
+
+When it comes to draw the font you will need both a registered ttf and a 
+drawable object:
+
+//Get the font.
+const auto& font=ttf_manager.get("myfontalias", 14);
+//Create the drawable... More parameters are available!!!!.
+ldv::ttf_representation txt(font, ldv::rgba8(255,255,255,255), "My text"); 
+txt.draw(screen);
+
+Alternatively, you may want to consider the layout classes if you want to skip
+creating instances all the time.
 
 ###Do signal broadcasting between controllers and with the state_driver
 
@@ -216,9 +273,16 @@ The documentation of the class is fairly complete in any case.
 ###Add new inputs:
 
 - Add it to the enum in class/input.h.
-- In case you need a keyboard input, locate the sdl key mapping in SDL_keycode.h (locate SDK_scancode.h first, usually in /usr/include/SDL2).
-- Add this mapping to data/config/config.dnot in the "input" sequence. The first parameter is "type" (0 is keyboard), the second is device number and the third is the code.
-- Map it in kernel_config.cpp's get_input_pairs().
+- In case you need a keyboard input:
+	- Locate the sdl key mapping in SDL_keycode.h (locate SDK_scancode.h first, usually in /usr/include/SDL2).
+	- Or use the showkey -a command (second result).
+	- Remember, this is a scancode, not the ASCII value!.
+- Add this mapping to data/config/config.dnot in the "input" sequence. 
+	- The first parameter is "type" (0 is keyboard).
+	- The second is device number and 
+	- The third is the code.
+
+- Map it in class/dfwimpl/state_driver.cpp's prepare_input().
 - Use it in your code by referencing as indicated in class/input.h: 
 	- if(input.is_input_[down|pressed|up](input_app::your_input_here)) {...}
 

@@ -3,10 +3,10 @@ DIR_APP=./class/app/
 #Full list of classes
 
 DEP_APP=\
-#$(DIR_O)placeholder.o \
 
 #Class recipes
 
+#DEP_APP+=$(DIR_O)placeholder.o 
 #$(DIR_O)placeholder.o :\
 #$(DIR_APP)placeholder.h \
 #$(DIR_APP)placeholder.cpp

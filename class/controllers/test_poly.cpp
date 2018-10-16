@@ -3,6 +3,7 @@
 #include <sstream>
 #include <iomanip>
 
+#include <class/dnot_parser.h>
 #include <templates/compatibility_patches.h>
 
 //local

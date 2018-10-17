@@ -23,7 +23,8 @@ echo "Dir clean";
 DIR_HOME=~/devel/
 DIR_LIBDAN2=$(DIR_HOME)libdansdl2
 DIR_DFW=$(DIR_HOME)dfw/
-DIR_LOG=$(DIR_HOME)log/
+DIR_LOG=$(DIR_HOME)log/src/
+DIR_O_LOG=$(DIR_HOME)log/obj
 DIR_O_DFW=$(DIR_HOME)dfw/objects/
 DIR_TOOLS=$(DIR_HOME)tools/
 DIR_O_TOOLS=$(DIR_HOME)tools/objects/

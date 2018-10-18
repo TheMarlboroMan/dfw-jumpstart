@@ -1,3 +1,5 @@
 objects/*
 logs/*
+*.exe
 *.out
+*.dll

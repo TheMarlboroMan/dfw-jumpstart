@@ -6,6 +6,10 @@
 	- Check camera spatiable objects.
 	- Skip camera test (set in camera...)
 
+#Building on windows.
+
+The zlib1.dll bundled with the mingw development packages at https://www.libsdl.org/projects/SDL_image/ is out of date with regards to libpng. Basically this means that you can build the project, but it will not run. Download a more up to date version, such as the one at https://sourceforge.net/projects/uqm-mods/ and you will be ready to go.	
+	
 #Basic framework.
 
 The idea here is to have a very basic application so things can run with little copy and paste. It will also include a few features I tend to forget about.

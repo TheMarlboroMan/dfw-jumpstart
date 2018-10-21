@@ -1,37 +1,34 @@
-#Definitions.
+#Machine specifics.
+DIR_HOME=~/devel/
+DIR_LIBDAN2=$(DIR_HOME)libdansdl2/
+DIR_DFW=$(DIR_HOME)dfw/
+DIR_LOG=$(DIR_HOME)log/
+DIR_TOOLS=$(DIR_HOME)tools/
+MINGW32_INCLUDE=
+MINGW32_LIB=
+DIR_SDL2=
+DIR_SDL2_LIB=
+DIR_OBJ=objects
+SYSTEM_FLAGS=
 
+#Commands.
+CLEAN=if [ -d $(DIR_OBJ) ]; then rm -rf $(DIR_OBJ); fi;\ if [ -f $(EXECUTABLE) ]; then rm $(EXECUTABLE); fi;\
+CREATE_OBJ_DIR=mkdir -p $(DIR_OBJ);
+
+#Build specifics.
+EXECUTABLE=a.out
+DEBUG=-g
+#OPTIMIZATION=-O3
 WITH_DEBUG_CODE=-DWDEBUG_CODE
 #DISABLE_ASSERT=-DNDEBUG=1
-#OPTIMIZATION=-O3
-DEBUG=-g
 
-#These are either old or plain stupid :P.
-#OTHER_WARNING_FLAGS=-Wno-deprecated -Wfloat-equal
-WARNING_FLAGS=-Wall -Wextra -Wundef -Wcast-align -Wwrite-strings -Wlogical-op -Wmissing-declarations -Wredundant-decls -Wshadow -Woverloaded-virtual -fno-rtti 
-#-Wfatal-errors 
-
-FLAGS_BASE=$(WARNING_FLAGS) $(OTHER_WARNING_FLAGS) $(DISABLE_ASSERT) $(WITH_DEBUG_CODE) -ansi -pedantic -std=c++11
-CFLAGS=-c $(DEBUG) $(OPTIMIZATION) $(FLAGS_BASE)
-CFLAGS_TARGET_FINAL=$(DEBUG) $(OPTIMIZATION) $(FLAGS_BASE)
+#Fixed compiler definitions.
 CC=g++
-EXECUTABLE=a.out
-
-DO_CLEAN=if [ -d objects ]; then rm -rf objects; fi;\
-if [ -f $(EXECUTABLE) ]; then rm $(EXECUTABLE); fi;\
-echo "Dir clean";
-
-DIR_HOME=~/devel/
-DIR_LIBDAN2=$(DIR_HOME)libdansdl2
-DIR_DFW=$(DIR_HOME)dfw/
-DIR_LOG=$(DIR_HOME)log/src/
-DIR_O_LOG=$(DIR_HOME)log/obj
-DIR_O_DFW=$(DIR_HOME)dfw/objects/
-DIR_TOOLS=$(DIR_HOME)tools/
-DIR_O_TOOLS=$(DIR_HOME)tools/objects/
-DO_DIR_OBJECTS=mkdir -p objects;
-
+WARNING_FLAGS=-Wall -Wextra -Wundef -Wcast-align -Wwrite-strings -Wlogical-op -Wmissing-declarations -Wredundant-decls -Wshadow -Woverloaded-virtual -fno-rtti 
+FLAGS_BASE=$(WARNING_FLAGS) $(DISABLE_ASSERT) $(WITH_DEBUG_CODE) -ansi -pedantic -std=c++11
+CFLAGS=-c $(DEBUG) $(OPTIMIZATION) $(FLAGS_BASE) $(SYSTEM_FLAGS)
+CFLAGS_EXECUTABLE=$(DEBUG) $(OPTIMIZATION) $(FLAGS_BASE)
 LINKER=-L $(DIR_LIBDAN2) -lDanSDL2 -L. -lSDL2 -lSDL2_ttf -lSDL2_mixer -lSDL2_image -lGL
-INCLUDES=-I $(DIR_LIBDAN2) -I $(DIR_TOOLS) -I $(DIR_DFW) -I $(DIR_LOG)/src/
-LIBRARIES=
+INCLUDES=-I$(DIR_LIBDAN2) -I$(DIR_TOOLS) -I$(DIR_DFW) -I$(DIR_LOG)
 
 include make/core

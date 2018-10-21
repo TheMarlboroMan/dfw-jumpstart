@@ -2,7 +2,8 @@
 #include <class/kernel.h>
 #include "class/dfwimpl/app_config.h"
 #include "class/dfwimpl/state_driver.h"
-#include <log.h>
+
+#include <src/log.h>
 
 //Global log. Bad practice, but useful.
 tools::log LOG;

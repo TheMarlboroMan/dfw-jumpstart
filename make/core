@@ -1,7 +1,7 @@
 ################################################################################
 #Definitions
 
-DIR_O=./objects/
+DIR_O=./$(DIR_OBJ)/
 
 include make/app
 include make/controllers
@@ -17,11 +17,11 @@ include make/common_dependencies
 #Target definitions.
 
 all: \
-$(DIR_O)\
+create_obj\
 $(EXECUTABLE) \
 
-$(DIR_O):
-	$(DO_DIR_OBJECTS)
+create_obj:
+	$(CREATE_OBJ_DIR)
 
 $(EXECUTABLE): \
 $(DIR_LIBDAN2)/libDanSDL2.a\
@@ -32,7 +32,7 @@ $(DEP_FRAMEWORK) \
 $(DEP_TOOLS) \
 $(DEP_APP_DEPENDENCIES) \
 main.cpp
-	$(CC) $(CFLAGS_TARGET_FINAL) $(INCLUDES) main.cpp \
+	$(CC) $(CFLAGS_EXECUTABLE) $(INCLUDES) main.cpp \
 $(DEP_APP) \
 $(DEP_DFW_IMPLEMENTATION) \
 $(DEP_CONTROLLERS) \
@@ -42,4 +42,4 @@ $(DEP_APP_DEPENDENCIES) \
 -o $(EXECUTABLE) $(LIBRARIES) $(LINKER)
 
 clean:
-	$(DO_CLEAN)	
+	$(CLEAN)	

@@ -1,30 +1,34 @@
-#Definiciones.
-
-#OPTIMIZATION=-O3
-DEBUG=-g
-DRIVE_PATH=C
-MINGW32_INCLUDE=$(DRIVE_PATH):/mingw64/mingw32/include
-MINGW32_LIB=$(DRIVE_PATH):/mingw64/mingw32/lib
-SDL2_LIB=$(DRIVE_PATH):/devel/lib
-DIR_SDL2=$(DRIVE_PATH):/devel/include
-DIR_HOME=$(DRIVE_PATH):/devel/repos/
+#Machine specifics.
+DIR_HOME=c:/devel/repos/
 DIR_LIBDAN2=$(DIR_HOME)libdansdl2/
 DIR_DFW=$(DIR_HOME)dfw/
-DIR_HERRAMIENTAS_PROYECTO=$(DIR_HOME)tools/
-DIR_O_DFW=$(DIR_HOME)dfw/objects/
-DIR_O_TOOLS=$(DIR_HOME)tools/objects/
-DIR_LOG=$(DIR_HOME)log/src/
-DIR_O_LOG=$(DIR_HOME)log/obj/
+DIR_LOG=$(DIR_HOME)log/
+DIR_TOOLS=$(DIR_HOME)tools/
+MINGW32_INCLUDE=$(DIR_HOME)../deps/mingw-w64-8-1/mingw32/include/
+MINGW32_LIB=$(DIR_HOME)../deps/mingw-w64-8-1/mingw32/lib/
+DIR_SDL2=$(DIR_HOME)../deps/sdl2-plus-libs/include/
+DIR_SDL2_LIB=$(DIR_HOME)../deps/sdl2-plus-libs/lib/
+DIR_OBJ=objects
+SYSTEM_FLAGS=-DWINCOMPIL=1
 
+#Commands.
+CLEAN=if exist $(DIR_OBJ) rmdir $(DIR_OBJ) /S /Q; del $(EXECUTABLE);
+CREATE_OBJ_DIR=	if not exist "$(DIR_OBJ)" mkdir $(DIR_OBJ)
 
-CFLAGS= -DWINCOMPIL=1 $(DEBUG) $(OPTIMIZATION) -c -Wno-deprecated -Wall -ansi -pedantic -std=c++11 -fno-rtti -DWDEBUG_CODE=1
-CFLAGS_TARGET_FINAL=-DWINCOMPIL=1 $(DEBUG) $(OPTIMIZATION) -Wno-deprecated -Wall -ansi -pedantic -std=c++11
-CC=g++
+#Build specifics.
 EXECUTABLE=a.exe
-DO_CLEAN=rmdir objects /s /q; del $(EXECUTABLE);
-DO_DIR_OBJECTS=if not exist objects mkdir objects & copy nul objects/dummy > nul
+DEBUG=-g
+#OPTIMIZATION=-O3
+WITH_DEBUG_CODE=-DWDEBUG_CODE
+#DISABLE_ASSERT=-DNDEBUG=1
 
-LINKER=-L$(MINGW32_LIB) -L$(SDL2_LIB) -L$(DIR_LIBDAN2) -lDanSDL2 -lmingw32 -lSDL2main -lSDL2 -lSDL2_mixer -lSDL2_image -lSDL2_ttf -static-libgcc -static-libstdc++ -lopengl32 -Wl,-Bstatic,--whole-archive -lwinpthread -Wl,--no-whole-archive
-INCLUDES=-I$(DIR_SDL2) -I$(DIR_DFW) -I$(DIR_LOG) -I$(DIR_LIBDAN2) -I$(DIR_HERRAMIENTAS_PROYECTO) -I$(MINGW32_INCLUDE) 
+#Fixed compiler definitions.
+CC=g++
+WARNING_FLAGS=-Wno-deprecated -Wall
+FLAGS_BASE=$(WARNING_FLAGS) $(DISABLE_ASSERT) $(WITH_DEBUG_CODE) -ansi -pedantic -std=c++11 -fno-rtti
+CFLAGS=-c $(DEBUG) $(OPTIMIZATION) $(FLAGS_BASE) $(SYSTEM_FLAGS)
+CFLAGS_EXECUTABLE=$(DEBUG) $(OPTIMIZATION) $(FLAGS_BASE)
+LINKER=-L$(MINGW32_LIB) -L$(DIR_SDL2_LIB) -L$(DIR_LIBDAN2) -lDanSDL2 -lmingw32 -lSDL2main -lSDL2 -lSDL2_mixer -lSDL2_image -lSDL2_ttf -static-libgcc -static-libstdc++ -lopengl32 -Wl,-Bstatic,--whole-archive -lwinpthread -Wl,--no-whole-archive
+INCLUDES=-I$(DIR_LIBDAN2) -I$(DIR_TOOLS) -I$(DIR_DFW) -I$(DIR_LOG) -I$(DIR_SDL2) -I$(MINGW32_INCLUDE) 
 
 include make/core

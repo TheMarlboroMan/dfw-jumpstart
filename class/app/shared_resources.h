@@ -10,8 +10,10 @@
 //culminating point of lazyness... But it is also easy and clear, mind you.
 
 //Libdan
-#include <log.h>
 #include <video/resource_manager/resource_manager.h>
+
+//Log
+#include <src/log.h>
 
 //Tools
 #include <class/ttf_manager.h>

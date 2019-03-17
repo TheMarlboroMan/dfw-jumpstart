@@ -16,9 +16,7 @@ include make/common_dependencies
 ################################################################################
 #Target definitions.
 
-all: \
-create_obj\
-$(EXECUTABLE) \
+all: create_obj $(EXECUTABLE)
 
 create_obj:
 	$(CREATE_OBJ_DIR)
@@ -42,4 +40,4 @@ $(DEP_APP_DEPENDENCIES) \
 -o $(EXECUTABLE) $(LIBRARIES) $(LINKER)
 
 clean:
-	$(CLEAN)	
+	$(CLEAN)

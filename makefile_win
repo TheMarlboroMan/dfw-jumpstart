@@ -4,15 +4,17 @@ DIR_LIBDAN2=$(DIR_HOME)libdansdl2/
 DIR_DFW=$(DIR_HOME)dfw/
 DIR_LOG=$(DIR_HOME)log/
 DIR_TOOLS=$(DIR_HOME)tools/
-MINGW32_INCLUDE=$(DIR_HOME)../deps/mingw-w64-8-1/mingw32/include/
-MINGW32_LIB=$(DIR_HOME)../deps/mingw-w64-8-1/mingw32/lib/
+
+MINGW32_INCLUDE=C:\Mingw-w64-builds/include
+MINGW32_LIB=C:\Mingw-w64-builds/lib
+
 DIR_SDL2=$(DIR_HOME)../deps/sdl2-plus-libs/include/
 DIR_SDL2_LIB=$(DIR_HOME)../deps/sdl2-plus-libs/lib/
 DIR_OBJ=objects
 SYSTEM_FLAGS=-DWINCOMPIL=1
 
 #Commands.
-CLEAN=if exist $(DIR_OBJ) rmdir $(DIR_OBJ) /S /Q; del $(EXECUTABLE);
+CLEAN=if exist $(DIR_OBJ) rmdir $(DIR_OBJ) /S /Q; if exist $(EXECUTABLE) del $(EXECUTABLE);
 CREATE_OBJ_DIR=	if not exist "$(DIR_OBJ)" mkdir $(DIR_OBJ)
 
 #Build specifics.
@@ -28,7 +30,9 @@ WARNING_FLAGS=-Wno-deprecated -Wall
 FLAGS_BASE=$(WARNING_FLAGS) $(DISABLE_ASSERT) $(WITH_DEBUG_CODE) -ansi -pedantic -std=c++11 -fno-rtti
 CFLAGS=-c $(DEBUG) $(OPTIMIZATION) $(FLAGS_BASE) $(SYSTEM_FLAGS)
 CFLAGS_EXECUTABLE=$(DEBUG) $(OPTIMIZATION) $(FLAGS_BASE)
-LINKER=-L$(MINGW32_LIB) -L$(DIR_SDL2_LIB) -L$(DIR_LIBDAN2) -lDanSDL2 -lmingw32 -lSDL2main -lSDL2 -lSDL2_mixer -lSDL2_image -lSDL2_ttf -static-libgcc -static-libstdc++ -lopengl32 -Wl,-Bstatic,--whole-archive -lwinpthread -Wl,--no-whole-archive
-INCLUDES=-I$(DIR_LIBDAN2) -I$(DIR_TOOLS) -I$(DIR_DFW) -I$(DIR_LOG) -I$(DIR_SDL2) -I$(MINGW32_INCLUDE) 
+LINKER=-L$(MINGW32_LIB) -L$(DIR_SDL2_LIB) -L$(DIR_LIBDAN2) -lstdc++ -lDanSDL2 -lmingw32 -lSDL2main -lSDL2 -lSDL2_mixer -lopengl32 -lSDL2_ttf -lSDL2_image
+
+#-static-libgcc  -static-libstdc++ -Wl,-Bstatic,--whole-archive -lwinpthread -Wl,--no-whole-archive
+INCLUDES=-I$(DIR_LIBDAN2) -I$(DIR_TOOLS) -I$(DIR_DFW) -I$(DIR_LOG) -I$(DIR_SDL2) -I$(MINGW32_INCLUDE)
 
 include make/core

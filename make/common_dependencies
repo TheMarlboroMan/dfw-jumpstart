@@ -13,12 +13,3 @@ $(DIR_TOOLS)objects/ttf_manager.o \
 $(DIR_TOOLS)objects/chrono.o\
 $(DIR_TOOLS)objects/dnot_config_file.o\
 $(DIR_LOG)objects/log.o\
-
-DEP_FRAMEWORK=\
-$(DIR_DFW)objects/fw_audio.o \
-$(DIR_DFW)objects/fw_input.o \
-$(DIR_DFW)objects/fw_state_controller.o \
-$(DIR_DFW)objects/fw_base_config.o \
-$(DIR_DFW)objects/fw_kernel.o \
-$(DIR_DFW)objects/fw_resource_loader.o \
-$(DIR_DFW)objects/fw_state_driver_interface.o \

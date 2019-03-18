@@ -1,5 +1,5 @@
 #Machine specifics.
-DIR_HOME=~/devel/other/
+DIR_HOME=~/devel/
 DIR_LIBDAN2=$(DIR_HOME)libdansdl2/
 DIR_DFW=$(DIR_HOME)dfw/
 DIR_LOG=$(DIR_HOME)log/
@@ -26,7 +26,7 @@ WARNING_FLAGS=-Wall -Wextra -Wundef -Wcast-align -Wwrite-strings -Wlogical-op -W
 FLAGS_BASE=$(WARNING_FLAGS) $(DISABLE_ASSERT) $(WITH_DEBUG_CODE) -ansi -pedantic -std=c++11
 CFLAGS=-c $(DEBUG) $(OPTIMIZATION) $(FLAGS_BASE) $(SYSTEM_FLAGS)
 CFLAGS_EXECUTABLE=$(DEBUG) $(OPTIMIZATION) $(FLAGS_BASE)
-LINKER=-L $(DIR_LIBDAN2) -lDanSDL2 -L. -lSDL2 -lSDL2_ttf -lSDL2_mixer -lSDL2_image -lGL
+LINKER=-L $(DIR_LIBDAN2) -L $(DIR_DFW) -ldfw -lDanSDL2 -L. -lSDL2 -lSDL2_ttf -lSDL2_mixer -lSDL2_image -lGL
 INCLUDES=-I $(DIR_LIBDAN2) -I $(DIR_TOOLS) -I $(DIR_DFW) -I $(DIR_LOG)
 
 

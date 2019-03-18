@@ -3,4 +3,5 @@ consola-mono	32	data/fonts/ConsolaMono.ttf
 consola-mono	16	data/fonts/ConsolaMono.ttf
 consola-mono	12	data/fonts/ConsolaMono.ttf
 akashi	12	data/fonts/akashi.ttf
+akashi	16	data/fonts/akashi.ttf
 

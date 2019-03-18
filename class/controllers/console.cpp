@@ -23,7 +23,7 @@ controller_console::controller_console(shared_resources& sr)
 void controller_console::loop(dfw::input& input, const dfw::loop_iteration_data& lid)
 {
 	if(input().is_exit_signal())
-	{ 
+	{
 		set_leave(true);
 		return;
 	}
@@ -37,38 +37,38 @@ void controller_console::loop(dfw::input& input, const dfw::loop_iteration_data&
 	time+=lid.delta;
 	if(time > 1.f) time=0.f;
 
-	//Keyboard control... Newline (enter) and backspace are controlled separatedly 
+	//Keyboard control... Newline (enter) and backspace are controlled separatedly
 	//from text and do not trigger text inputs.
 
 	if(input().is_event_text())
 	{
-		if(current_command.size() < 30) 
+		if(current_command.size() < 30)
 		{
 			current_command+=input().get_text_input();
 		}
-		input().clear_text_input(); 
+		input().clear_text_input();
 	}
 	else if(input.is_input_down(input_app::console_newline))
 	{
-		//A history of commands is kept up to 10 lines. 
+		//A history of commands is kept up to 10 lines.
 		history.push_back(current_command);
 		if(history.size() > 10) history.erase(std::begin(history), std::begin(history)+1);
-	
+
 		//This is pretty much stupid... A list of commands and their results.
 		if(current_command=="clear") history.clear();
 		else if(current_command=="help") history.push_back("clear, bgcolor:, fgcolor:, exit");
 		else if(current_command=="exit") set_state(state_test_2d);
-		else if(current_command.substr(0, 8)=="bgcolor:") 
+		else if(current_command.substr(0, 8)=="bgcolor:")
 		{
 			try {do_color_change("bgcolor", bgc_r, bgc_g, bgc_b);}
 			catch(std::exception& e) {history.push_back("Syntax: bgcolor:[r,g,b] "+std::string(e.what()));}
 		}
-		else if(current_command.substr(0, 8)=="fgcolor:") 
+		else if(current_command.substr(0, 8)=="fgcolor:")
 		{
 			try {do_color_change("fgcolor", fgc_r, fgc_g, fgc_b);}
 			catch(std::exception& e) {history.push_back("Syntax: fgcolor:[r,g,b] "+std::string(e.what()));}
 		}
-		else 
+		else
 		{
 			history.push_back("Syntax error: "+current_command+" not recognised. Try help");
 		}
@@ -84,28 +84,39 @@ void controller_console::loop(dfw::input& input, const dfw::loop_iteration_data&
 void controller_console::draw(ldv::screen& screen, int /*fps*/)
 {
 	screen.clear(ldv::rgba8(bgc_r, bgc_g, bgc_b, 0));
-
-	std::string history_text;
-	for(auto& s: history) history_text+=s+"\n";
-	
-
 	auto& font=s_resources.get_ttf_manager().get("consola-mono", 16);
 	auto fgcolor=ldv::rgba8(fgc_r, fgc_g, fgc_b, 255);
+
+/*
+	std::string history_text;
+	for(auto& s: history) history_text+=s+"\n";
 	ldv::ttf_representation txt_history(font, fgcolor, history_text);
 	txt_history.set_alpha(128);
 	txt_history.draw(screen);
+*/
+	std::string print_command{">"+current_command};
+	ldv::ttf_representation txt_command(font, fgcolor, print_command);
 
-	ldv::ttf_representation txt_command(font, fgcolor, ">"+current_command);
+	const auto& location=txt_command.get_location();
+	const auto& clip=txt_command.get_location();
+
 	txt_command.go_to({0, 450});
+
+	std::cout<<print_command<<std::endl
+		<<" loca "<<location.origin.x<<","<<location.origin.y<<" ["<<location.w<<","<<location.h<<"]"<<std::endl
+		<<" clip "<<clip.origin.x<<","<<clip.origin.y<<" ["<<clip.w<<","<<clip.h<<"]"<<std::endl;
+
+
 	txt_command.draw(screen);
-	
+/*
 	if(time < 0.5f)
 	{
 		auto txt_box=txt_command.get_view_position();
-		ldv::rect box_rect={txt_box.origin.x+(int)txt_box.w, txt_box.origin.y+(int)txt_box.h-16, 4, 16}; 
+		ldv::rect box_rect={txt_box.origin.x+(int)txt_box.w, txt_box.origin.y+(int)txt_box.h-16, 4, 16};
 		ldv::box_representation box(ldv::polygon_representation::type::fill, box_rect, fgcolor);
 		box.draw(screen);
 	}
+	*/
 }
 
 void controller_console::awake(dfw::input& input)

@@ -32,7 +32,7 @@ int main(int argc, char ** argv)
 		if(!ldt::sdl_init(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_JOYSTICK)) {
 			throw std::runtime_error("unable to init sdl2");
 		}
-		
+
 		log_app<<"creating kernel..."<<std::endl;
 		dfw::kernel kernel(log_app, carg);
 
@@ -45,7 +45,7 @@ int main(int argc, char ** argv)
 		//Setting the state according to the command line...
 		if(carg.exists("-s") && carg.arg_follows("-s")) {
 			sd.startup_set_state(std::atoi(carg.get_following("-s").c_str()));
-		} 
+		}
 
 		log_app<<"init state driver..."<<std::endl;
 		sd.init(kernel);

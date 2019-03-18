@@ -18,7 +18,7 @@ try
 	time_text(0.f), time_blink(0.f)
 {
 	setup_signal_receiver();
-	layout.map_font("main_text_font", s_resources.get_ttf_manager().get("consola-mono", 16));
+	layout.map_font("main_text_font", s_resources.get_ttf_manager().get("akashi", 12));
 	layout.parse("data/app_data/layouts.dat", "text_bubble_layout");
 }
 catch(std::exception& e)
@@ -30,7 +30,7 @@ catch(std::exception& e)
 void controller_test_2d_text::loop(dfw::input& input, const dfw::loop_iteration_data& lid)
 {
 	if(input().is_exit_signal())
-	{ 
+	{
 		set_leave(true);
 		return;
 	}
@@ -110,7 +110,7 @@ void controller_test_2d_text::draw(ldv::screen& screen, int /*fps*/)
 
 void controller_test_2d_text::request_draw(dfw::controller_view_manager& cvm)
 {
-	cvm.add(state_test_2d); 
+	cvm.add(state_test_2d);
 	cvm.add_ptr(this);
 }
 

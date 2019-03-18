@@ -34,7 +34,7 @@ state_driver::state_driver(dfw::kernel& kernel, app::app_config& c)
 	prepare_input(kernel);
 
 	log<<"preparing resources..."<<std::endl;
-	prepare_resources(kernel);
+	prepare_resources(kernel);	
 
 	log<<"preparing resource injection class..."<<std::endl;
 	s_resources.reset(

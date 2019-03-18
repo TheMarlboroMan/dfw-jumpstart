@@ -14,7 +14,7 @@ DIR_OBJ=objects
 SYSTEM_FLAGS=-DWINCOMPIL=1
 
 #Commands.
-CLEAN=if exist $(DIR_OBJ) rmdir $(DIR_OBJ) /S /Q; if exist $(EXECUTABLE) del $(EXECUTABLE);
+CLEAN=if exist $(DIR_OBJ) rmdir $(DIR_OBJ) /S /Q && if exist $(EXECUTABLE) del $(EXECUTABLE) && echo "CLEAN"
 CREATE_OBJ_DIR=	if not exist "$(DIR_OBJ)" mkdir $(DIR_OBJ)
 
 #Build specifics.

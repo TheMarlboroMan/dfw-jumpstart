@@ -270,13 +270,14 @@ void controller_menu::create_functions()
 			r.set_text_align(al);
 		r.unlock_changes();
 		r.go_to({0, 20+(int)index*20});
+
 	};
 
 	//Draws a menu that is key only... Like the main one.
 	draw_funcs[df_txt_right_single]=[draw_txt, &loc](const std::string& /*k*/, size_t index, const std::vector<ldv::representation*>& v, const std::string& val, bool current)
 	{
 		auto& r=*(static_cast<ldv::ttf_representation*>(v[0]));
-		draw_txt(r, index, val, current, ldv::ttf_representation::text_align::left);
+		draw_txt(r, index, val, current, ldv::ttf_representation::text_align::right);
 		r.align({0,0,700,1}, {alh::inner_right, alv::none, 20,0});
 	};
 

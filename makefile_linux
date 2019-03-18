@@ -1,5 +1,5 @@
 #Machine specifics.
-DIR_HOME=~/devel/
+DIR_HOME=~/devel/other/
 DIR_LIBDAN2=$(DIR_HOME)libdansdl2/
 DIR_DFW=$(DIR_HOME)dfw/
 DIR_LOG=$(DIR_HOME)log/
@@ -8,14 +8,12 @@ MINGW32_INCLUDE=
 MINGW32_LIB=
 DIR_SDL2=
 DIR_SDL2_LIB=
-DIR_OBJ=objects
+DIR_O_TOOLS=$(DIR_HOME)tools/objects/
+DIR_O_DFW=$(DIR_HOME)dfw/objects/
 SYSTEM_FLAGS=
 
-#Commands.
-CLEAN=if [ -d $(DIR_OBJ) ]; then rm -rf $(DIR_OBJ); fi;\ if [ -f $(EXECUTABLE) ]; then rm $(EXECUTABLE); fi;\
-CREATE_OBJ_DIR=mkdir -p $(DIR_OBJ);
-
 #Build specifics.
+DIR_OBJ=objects
 EXECUTABLE=a.out
 DEBUG=-g
 #OPTIMIZATION=-O3
@@ -24,11 +22,19 @@ WITH_DEBUG_CODE=-DWDEBUG_CODE
 
 #Fixed compiler definitions.
 CC=g++
-WARNING_FLAGS=-Wall -Wextra -Wundef -Wcast-align -Wwrite-strings -Wlogical-op -Wmissing-declarations -Wredundant-decls -Wshadow -Woverloaded-virtual -fno-rtti 
+WARNING_FLAGS=-Wall -Wextra -Wundef -Wcast-align -Wwrite-strings -Wlogical-op -Wmissing-declarations -Wredundant-decls -Wshadow -Woverloaded-virtual -fno-rtti
 FLAGS_BASE=$(WARNING_FLAGS) $(DISABLE_ASSERT) $(WITH_DEBUG_CODE) -ansi -pedantic -std=c++11
 CFLAGS=-c $(DEBUG) $(OPTIMIZATION) $(FLAGS_BASE) $(SYSTEM_FLAGS)
 CFLAGS_EXECUTABLE=$(DEBUG) $(OPTIMIZATION) $(FLAGS_BASE)
 LINKER=-L $(DIR_LIBDAN2) -lDanSDL2 -L. -lSDL2 -lSDL2_ttf -lSDL2_mixer -lSDL2_image -lGL
-INCLUDES=-I$(DIR_LIBDAN2) -I$(DIR_TOOLS) -I$(DIR_DFW) -I$(DIR_LOG)
+INCLUDES=-I $(DIR_LIBDAN2) -I $(DIR_TOOLS) -I $(DIR_DFW) -I $(DIR_LOG)
+
+
+#Commands.
+CLEAN=if [ -d $(DIR_OBJ) ]; then rm -rf $(DIR_OBJ); fi;\
+if [ -f $(EXECUTABLE) ]; then rm $(EXECUTABLE); fi;
+
+CREATE_OBJ_DIR=mkdir -p $(DIR_OBJ);
+
 
 include make/core

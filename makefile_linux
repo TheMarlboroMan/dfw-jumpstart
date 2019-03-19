@@ -7,11 +7,11 @@ DIR_SDL2_LIB=
 SYSTEM_FLAGS=
 
 #Dependency specifics
-DIR_LIBDANSDL2=$(DIR_HOME)libdansdl2/
-DIR_LIBDANSDL2_TOOLS=$(DIR_HOME)libdansdl2-tools/
-DIR_DFW=$(DIR_HOME)dfw/
-DIR_LOG=$(DIR_HOME)log/
-DIR_TOOLS=$(DIR_HOME)tools/
+DIR_LIBDANSDL2=$(DIR_HOME)libdansdl2
+DIR_LIBDANSDL2_TOOLS=$(DIR_HOME)libdansdl2-tools
+DIR_DFW=$(DIR_HOME)dfw
+DIR_LOG=$(DIR_HOME)log
+DIR_TOOLS=$(DIR_HOME)tools
 
 #Build specifics.
 DIR_OBJ=objects

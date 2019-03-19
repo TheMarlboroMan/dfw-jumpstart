@@ -26,7 +26,7 @@ WARNING_FLAGS=-Wno-deprecated -Wall
 FLAGS_BASE=$(WARNING_FLAGS) $(DISABLE_ASSERT) $(WITH_DEBUG_CODE) -ansi -pedantic -std=c++11 -fno-rtti
 CFLAGS=-c $(DEBUG) $(OPTIMIZATION) $(FLAGS_BASE) $(SYSTEM_FLAGS)
 CFLAGS_EXECUTABLE=$(DEBUG) $(OPTIMIZATION) $(FLAGS_BASE)
-LINKER=-L$(MINGW32_LIB) -L$(DIR_SDL2_LIB) -L$(DIR_LIBDAN2) -L$(DIR_DFW) -L$(DIR_LOG) -lstdc++ -ldfw -lDanSDL2 -llog -lmingw32 -lSDL2main -lSDL2 -lSDL2_mixer -lopengl32 -lSDL2_ttf -lSDL2_image
+LINKER=-L$(MINGW32_LIB) -L$(DIR_SDL2_LIB) -L$(DIR_LIBDAN2) -L$(DIR_DFW) -L$(DIR_TOOLS) -L$(DIR_LOG) -lstdc++ -ldfw -lDanSDL2 -ltools -llog -lmingw32 -lSDL2main -lSDL2 -lSDL2_mixer -lopengl32 -lSDL2_ttf -lSDL2_image
 #-static-libgcc  -static-libstdc++ -Wl,-Bstatic,--whole-archive -lwinpthread -Wl,--no-whole-archive
 INCLUDES=-I$(DIR_LIBDAN2) -I$(DIR_TOOLS) -I$(DIR_DFW) -I$(DIR_LOG) -I$(DIR_SDL2) -I$(MINGW32_INCLUDE)
 

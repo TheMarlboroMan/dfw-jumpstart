@@ -7,7 +7,8 @@ DIR_SDL2_LIB=
 SYSTEM_FLAGS=
 
 #Dependency specifics
-DIR_LIBDAN2=$(DIR_HOME)libdansdl2/
+DIR_LIBDANSDL2=$(DIR_HOME)libdansdl2/
+DIR_LIBDANSDL2_TOOLS=$(DIR_HOME)libdansdl2-tools/
 DIR_DFW=$(DIR_HOME)dfw/
 DIR_LOG=$(DIR_HOME)log/
 DIR_TOOLS=$(DIR_HOME)tools/
@@ -26,9 +27,8 @@ WARNING_FLAGS=-Wall -Wextra -Wundef -Wcast-align -Wwrite-strings -Wlogical-op -W
 FLAGS_BASE=$(WARNING_FLAGS) $(DISABLE_ASSERT) $(WITH_DEBUG_CODE) -ansi -pedantic -std=c++11
 CFLAGS=-c $(DEBUG) $(OPTIMIZATION) $(FLAGS_BASE) $(SYSTEM_FLAGS)
 CFLAGS_EXECUTABLE=$(DEBUG) $(OPTIMIZATION) $(FLAGS_BASE)
-LINKER=-L $(DIR_LIBDAN2) -L $(DIR_DFW) -L $(DIR_LOG) -L $(DIR_TOOLS) -L. -ldfw -lDanSDL2 -ltools -llog -lSDL2 -lSDL2_ttf -lSDL2_mixer -lSDL2_image -lGL
-INCLUDES=-I $(DIR_LIBDAN2) -I $(DIR_TOOLS) -I $(DIR_DFW) -I $(DIR_LOG)
-
+LINKER=-L $(DIR_LIBDANSDL2) -L $(DIR_LIBDANSDL2_TOOLS) -L $(DIR_DFW) -L $(DIR_LOG) -L $(DIR_TOOLS) -L. -ldfw -lDanSDL2 -ldansdl2-tools -ltools -llog -lSDL2 -lSDL2_ttf -lSDL2_mixer -lSDL2_image -lGL
+INCLUDES=-I $(DIR_LIBDANSDL2) -I $(DIR_TOOLS) -I $(DIR_DFW) -I $(DIR_LOG) -I $(DIR_LIBDANSDL2_TOOLS)
 
 #Commands.
 CLEAN=if [ -d $(DIR_OBJ) ]; then rm -rf $(DIR_OBJ); fi;\

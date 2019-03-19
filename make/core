@@ -16,7 +16,8 @@ create_obj:
 	$(CREATE_OBJ_DIR)
 
 $(EXECUTABLE): \
-$(DIR_LIBDAN2)/libDanSDL2.a\
+$(DIR_LIBDANSDL2)/libDanSDL2.a\
+$(DIR_LIBDANSDL2_TOOLS)/libdansdl2-tools.a\
 $(DIR_DFW)/libdfw.a\
 $(DIR_LOG)/liblog.a\
 $(DEP_APP) \

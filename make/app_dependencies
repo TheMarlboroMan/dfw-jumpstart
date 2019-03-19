@@ -1,7 +1,0 @@
-#Linking dependencies...
-
-DEP_APP_DEPENDENCIES=\
-$(DIR_TOOLS)objects/animation_table.o\
-$(DIR_TOOLS)objects/sprite_table.o\
-$(DIR_TOOLS)objects/localization_base.o\
-$(DIR_TOOLS)objects/view_composer.o\

@@ -7,9 +7,7 @@
 #include <class/dnot_parser.h>
 #include <source/string_utils.h>
 
-#ifdef WDEBUG_CODE
 #include "../input.h"
-#endif
 
 using namespace app;
 
@@ -163,14 +161,19 @@ void state_driver::common_pre_loop_input(dfw::input& input, float /*delta*/) {
 	}
 }
 
-void state_driver::common_loop_input(dfw::input& input, float /*delta*/) {
 #ifdef WDEBUG_CODE
+void state_driver::common_loop_input(dfw::input& input, float /*delta*/) {
 	if(input.is_input_down(input_app::reload_debug_config)) {
 		log<<"reloading debug configuration"<<std::endl;
 		s_resources->reload_debug_config();
 	}
-#endif
 }
+#else
+void state_driver::common_loop_input(dfw::input& /*input*/, float /*delta*/) {
+
+}
+#endif
+
 
 void state_driver::common_pre_loop_step(float /*delta*/) {
 

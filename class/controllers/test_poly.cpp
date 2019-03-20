@@ -118,7 +118,7 @@ void controller_test_poly::draw(ldv::screen& screen, int /*fps*/)
 		break;
 	}
 
-#if WDEBUG_CODE
+#ifdef WDEBUG_CODE
 	editor_draw_line(screen, 
 		editor_pt(debug_collision_line_pt1.x, debug_collision_line_pt1.y), 
 		editor_pt(debug_collision_line_pt2.x, debug_collision_line_pt2.y), 

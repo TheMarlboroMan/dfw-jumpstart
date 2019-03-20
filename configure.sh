@@ -1,5 +1,24 @@
 #!/bin/bash
 
+__retval="";
+
+#params: prompt value_y value_n 
+#return code:0 on y and 1 on no.
+#reference return: uses __retval
+function y_n_choice() {
+
+	local read_value;
+	while true;
+	do
+		echo -n "$1 (y/n): ";
+		read read_value;
+		case $read_value in
+			"y") __retval=$2; return 0; break;;
+			"n") __retval=$3; return 1; break;;
+		esac
+	done;
+}
+
 while true; do
 	echo -n "Home directory (current $(pwd), must have trailing slash): "
 	read home_dir;
@@ -17,45 +36,19 @@ while true; do
 	fi;
 done;
 
-while true; do
-	echo -n "With optimizations (y/n): "
-	read with_optimizations;
-	case $with_optimizations in
-		[y]* ) optimizations="OPTIMIZATION=-O2"; break;;
-		[n]* ) optimizations="#OPTIMIZATION=-O2"; break;;
-	esac
-done;
+y_n_choice "With optimizations" "OPTIMIZATION=-O2" "#OPTIMIZATION=02"
+optimizations=$__retval;
 
-while true; do
-	echo -n "With debug (y/n): "
-	read with_debug;
-	case $with_debug in
-		[y] ) debug="DEBUG=-g"; break;;
-		[n] ) debug="#DEBUG=-g"; break;;
-	esac;
-done;
+y_n_choice "With debug" "DEBUG=-g" "#DEBUG=-g"
+debug=$__retval;
 
-while true; do
-	echo -n "With debug code (y/n): "
-	read with_debug_code;
-	case $with_debug_code in
-		"y") debug_code="WITH_DEBUG_CODE=-DWDEBUG_CODE"; break;;
-		"n") debug_code="#WITH_DEBUG_CODE=-DWDEBUG_CODE"; break;;
-	esac;
-done
+y_n_choice "With debug code" "WITH_DEBUG_CODE=-DWDEBUG_CODE" "#WITH_DEBUG_CODE=-DWDEBUG_CODE"
+debug_code=$__retval;
 
-while true; do
-	echo -n "With assertions (y/n): "
-	read with_assertions;
-	case $with_assertions in
-		"y") disable_assert="#DISABLE_ASSERT=-DNDEBUG=1"; break;;
-		"n") disable_assert="DISABLE_ASSERT=-DNDEBUG=1"; break;;
-	esac;
-done;
-
+y_n_choice "With assertions" "#DISABLE_ASSERT=-DNDEBUG=1" "DISABLE_ASSERT=-DNDEBUG=1";
+disable_assert=$__retval;
 
 makefile_name='makefile';
-
 cp make/linux.template ./$makefile_name;
 
 sed -i -e "s^__TEMPLATE_DIR_HOME__^DIR_HOME=$home_dir^g" ./$makefile_name;
@@ -64,13 +57,9 @@ sed -i -e "s/__TEMPLATE_DEBUG__/$debug/g" ./$makefile_name;
 sed -i -e "s/__TEMPLATE_WITH_DEBUG_CODE__/$debug_code/g" ./$makefile_name;
 sed -i -e "s/__TEMPLATE_DISABLE_ASSERT__/$disable_assert/g" ./$makefile_name;
 
-while true; do
-	echo -n "Begin compilation (y/n)?: "
-	read begin_compilation;
-	case $begin_compilation in
-		[y] ) make clean; make all; break;;
-		[n] ) break;;
-	esac;
-done;
+y_n_choice "Begin compilation" "" ""
+if [ $? -eq 0 ]; then 
+	make clean; make all;
+fi;
 
 echo "Done";

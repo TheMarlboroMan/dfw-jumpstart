@@ -1,0 +1,36 @@
+################################################################################
+# Static option menu strings...
+################################################################################
+
+[[menu-1000]]{{Begin / Restart}}
+[[menu-1001]]{{Continue}}
+[[menu-1002]]{{Controls}}
+[[menu-1003]]{{Options}}
+[[menu-1004]]{{Exit}}
+
+[[menu-1010]]{{Window size}}
+[[menu-1011]]{{original 700x500}}
+[[menu-1012]]{{scaled 1100x750}}
+[[menu-1013]]{{scaled 1400x1000}}
+[[menu-1014]]{{fullscreen}}
+[[menu-1025]]{{VSync}}
+[[menu-1026]]{{enabled}}
+[[menu-1027]]{{disabled}}
+[[menu-1030]]{{Sound volume}}
+[[menu-1040]]{{Music volume}}
+[[menu-1050]]{{Back}}
+
+[[menu-1060]]{{Up}}
+[[menu-1061]]{{Down}}
+[[menu-1062]]{{Left}}
+[[menu-1063]]{{Right}}
+[[menu-1064]]{{Examine}}
+[[menu-1065]]{{Back}}
+[[menu-1066]]{{Enter new input}}
+[[menu-1067]]{{Restore defaults}}
+
+[[menu-1100]]{{Key}}
+[[menu-1101]]{{Joystick}}
+[[menu-1102]]{{Button}}
+[[menu-1103]]{{Mouse}}
+[[menu-1104]]{{None}}

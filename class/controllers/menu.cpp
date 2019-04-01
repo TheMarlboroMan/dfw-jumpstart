@@ -321,6 +321,7 @@ void controller_menu::mount_menus()
 		std::map<std::string, int>	translation_map;
 		tools::mount_from_dnot(tools::dnot_parse_file(file)[key], m, &translation_map);
 		std::vector<tools::options_menu<std::string>::translation_struct > trad;
+		//TODO: This would change too.
 		for(const auto& p: translation_map) trad.push_back({p.first, loc.get(p.second)});
 		m.translate(trad);
 	};
@@ -382,15 +383,19 @@ std::string controller_menu::translate_input(const dfw::input_description& id)
 	switch(id.type)
 	{
 		case dfw::input_description::types::none:
+			//TODO.
 			res=menu_localization.get(1104);
 		break;
 		case dfw::input_description::types::keyboard:
+			//TODO.
 			res=menu_localization.get(1100)+" "+std::string(SDL_GetKeyName(SDL_GetKeyFromScancode((SDL_Scancode)id.code)));
 		break;
 		case dfw::input_description::types::joystick:
+			//TODO. 			//TODO.
 			res=menu_localization.get(1101)+" "+compat::to_string(id.device)+" "+menu_localization.get(1102)+" "+compat::to_string(id.code);
 		break;
 		case dfw::input_description::types::mouse:
+			//TODO.			//TODO.
 			res=menu_localization.get(1103)+" "+menu_localization.get(1102)+" "+compat::to_string(id.code);
 		break;
 	}

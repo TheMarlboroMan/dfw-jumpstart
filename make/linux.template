@@ -28,7 +28,7 @@ WARNING_FLAGS=-Wall -Wextra -Wundef -Wcast-align -Wwrite-strings -Wlogical-op -W
 FLAGS_BASE=$(WARNING_FLAGS) $(DISABLE_ASSERT) $(WITH_DEBUG_CODE) -ansi -pedantic -std=c++11
 CFLAGS=-c $(DEBUG) $(OPTIMIZATION) $(FLAGS_BASE) $(SYSTEM_FLAGS)
 CFLAGS_EXECUTABLE=$(DEBUG) $(OPTIMIZATION) $(FLAGS_BASE)
-LINKER=-L $(DIR_LIBDANSDL2) -L $(DIR_LIBDANSDL2_TOOLS) -L $(DIR_DFW) -L $(DIR_LOG) -L $(DIR_TOOLS) -L. -llog -lDanSDL2 -ldansdl2-tools -ltools -ldfw -lSDL2 -lSDL2_ttf -lSDL2_mixer -lSDL2_image -lGL
+LINKER=-L $(DIR_LIBDANSDL2) -L $(DIR_LIBDANSDL2_TOOLS) -L $(DIR_DFW) -L $(DIR_LOG) -L $(DIR_TOOLS) -llog -ltools -ldfw -lDanSDL2 -ldansdl2-tools -lSDL2 -lSDL2_ttf -lSDL2_mixer -lSDL2_image -lGL
 INCLUDES=-I $(DIR_LIBDANSDL2) -I $(DIR_TOOLS) -I $(DIR_DFW) -I $(DIR_LOG) -I $(DIR_LIBDANSDL2_TOOLS)
 
 #Commands.

@@ -18,7 +18,7 @@ controller_menu::controller_menu(shared_resources& s, dfw::signal_dispatcher& sd
 	main_menu_rep(main_menu),
 	options_menu_rep(options_menu),
 	controls_menu_rep(controls_menu),
-	menu_localization("data/app_data/localization", "es", {"texts.dat"}),
+	menu_localization("data/app_data/localization", "en", {"texts.dat"}),
 	key_held_time{0.f},
 	flicker{false, false, 1.f}
 {

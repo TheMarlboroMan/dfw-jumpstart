@@ -16,7 +16,6 @@ $(DIR_O)object_decoration_factory.o\
 $(DIR_O)object_logic_factory.o\
 $(DIR_O)object_audio_player.o\
 $(DIR_O)room_action_factory.o\
-$(DIR_O)localization.o\
 $(DIR_O)audio_dispatcher.o\
 $(DIR_O)audio_tools.o 
 

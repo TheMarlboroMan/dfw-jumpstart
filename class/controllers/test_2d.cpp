@@ -20,7 +20,7 @@ try
 	game_camera{{0,0,700,500},{0,0}}, //This means that the camera always gets a 700x500 box, even with a larger window.
 	m_fader(sr.get_audio()(), sr.get_audio_resource_manager()),
 	game_audio_dispatcher(sr.get_audio(), sr.get_audio_resource_manager(), game_camera.get_focus_box(), game_player.get_poly().get_centroid()),
-	game_localization("data/app_data/localization", "en", {"descriptions"}) {
+	game_localization("data/app_data/localization", "en", {"descriptions.dat"}) {
 
 	setup_signal_receiver();
 	game_camera.set_center_margin({300, 200, 100, 100});

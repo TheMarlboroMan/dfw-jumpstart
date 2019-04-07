@@ -11,6 +11,9 @@
 //framework
 #include <class/controller_interface.h>
 
+//Tools
+#include <class/i8n.h>
+
 //local
 #include "states.h"
 #include "signals.h"
@@ -20,7 +23,6 @@
 #include "../app/shared_resources.h"
 #include "../app/draw_struct.h"
 #include "../app/player.h"
-#include "../app/localization.h"
 #include "../app/audio_dispatcher.h"
 #include "../app/audio_tools.h"
 
@@ -65,7 +67,7 @@ class controller_test_2d:
 	audio_dispatcher				game_audio_dispatcher;
 	draw_struct					game_draw_struct;
 	player						game_player;
-	localization					game_localization;
+	tools::i8n					game_localization;
 	std::set<int>					unique_actions;
 };
 

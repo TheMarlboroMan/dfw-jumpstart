@@ -18,7 +18,7 @@ controller_menu::controller_menu(shared_resources& s, dfw::signal_dispatcher& sd
 	main_menu_rep(main_menu),
 	options_menu_rep(options_menu),
 	controls_menu_rep(controls_menu),
-	menu_localization(0, {"data/app_data/localization/texts"}),
+	menu_localization("data/app_data/localization", "es", {"texts.dat"}),
 	key_held_time{0.f},
 	flicker{false, false, 1.f}
 {
@@ -205,7 +205,7 @@ void controller_menu::learn_control(dfw::input& input)
 	input().set_event_processing_function(f);
 
 	//Show a "learning" message...
-	controls_menu.set_string(controls_menu_rep.get_current_key(), menu_localization.get(1066));
+	controls_menu.set_string(controls_menu_rep.get_current_key(), menu_localization.get("menu-1066"));
 	controls_menu_rep.refresh();
 }
 
@@ -244,10 +244,6 @@ void controller_menu::update_options_value(const std::string& key)
 void controller_menu::create_functions()
 {
 	const auto& ttfm=s_resources.get_ttf_manager();
-	const auto& rpul=pulse; //The alpha of the font pulsates...
-	const auto& loc=menu_localization;
-	using alh=ldv::representation_alignment::h;
-	using alv=ldv::representation_alignment::v;
 
 	//functions to register representations...
 
@@ -273,8 +269,11 @@ void controller_menu::create_functions()
 
 	};
 
+	using alh=ldv::representation_alignment::h;
+	using alv=ldv::representation_alignment::v;
+
 	//Draws a menu that is key only... Like the main one.
-	draw_funcs[df_txt_right_single]=[draw_txt, &loc](const std::string& /*k*/, size_t index, const std::vector<ldv::representation*>& v, const std::string& val, bool current)
+	draw_funcs[df_txt_right_single]=[draw_txt](const std::string& /*k*/, size_t index, const std::vector<ldv::representation*>& v, const std::string& val, bool current)
 	{
 		auto& r=*(static_cast<ldv::ttf_representation*>(v[0]));
 		draw_txt(r, index, val, current, ldv::ttf_representation::text_align::right);
@@ -301,7 +300,7 @@ void controller_menu::create_functions()
 	draw_funcs[df_empty]=[](const std::string& , size_t, const std::vector<ldv::representation*>&, const std::string&, bool) {};
 
 	//functions to step.
-
+	const auto& rpul=pulse; //The alpha of the font pulsates...
 	step_funcs[sf_pulse]=[&rpul](const std::string& /*k*/, size_t /*index*/, float /*delta*/, const std::vector<ldv::representation*>& v, const std::string& /*val*/, bool current)
 	{
 		if(!v.size()) return; //Again, some options may not have a value.
@@ -318,10 +317,9 @@ void controller_menu::mount_menus()
 
 	auto mount_menu=[&loc](tools::options_menu<std::string>& m, const std::string& file, const std::string& key)
 	{
-		std::map<std::string, int>	translation_map;
+		std::map<std::string, std::string>	translation_map;
 		tools::mount_from_dnot(tools::dnot_parse_file(file)[key], m, &translation_map);
 		std::vector<tools::options_menu<std::string>::translation_struct > trad;
-		//TODO: This would change too.
 		for(const auto& p: translation_map) trad.push_back({p.first, loc.get(p.second)});
 		m.translate(trad);
 	};
@@ -380,23 +378,18 @@ std::string controller_menu::translate_input(const dfw::input_description& id)
 {
 	std::string res;
 
-	switch(id.type)
-	{
+	switch(id.type) {
 		case dfw::input_description::types::none:
-			//TODO.
-			res=menu_localization.get(1104);
+			res=menu_localization.get("menu-1104");
 		break;
 		case dfw::input_description::types::keyboard:
-			//TODO.
-			res=menu_localization.get(1100)+" "+std::string(SDL_GetKeyName(SDL_GetKeyFromScancode((SDL_Scancode)id.code)));
+			res=menu_localization.get("menu-1100")+" "+std::string(SDL_GetKeyName(SDL_GetKeyFromScancode((SDL_Scancode)id.code)));
 		break;
 		case dfw::input_description::types::joystick:
-			//TODO. 			//TODO.
-			res=menu_localization.get(1101)+" "+compat::to_string(id.device)+" "+menu_localization.get(1102)+" "+compat::to_string(id.code);
+			res=menu_localization.get("menu-1101")+" "+compat::to_string(id.device)+" "+menu_localization.get("menu-1102")+" "+compat::to_string(id.code);
 		break;
 		case dfw::input_description::types::mouse:
-			//TODO.			//TODO.
-			res=menu_localization.get(1103)+" "+menu_localization.get(1102)+" "+compat::to_string(id.code);
+			res=menu_localization.get("menu-1103")+" "+menu_localization.get("menu-1102")+" "+compat::to_string(id.code);
 		break;
 	}
 

@@ -126,11 +126,6 @@ $(DIR_APP)audio_tools.h \
 $(DIR_APP)audio_tools.cpp
 	$(CC) $(CFLAGS) $(INCLUDES) $(DIR_APP)audio_tools.cpp -o $(DIR_O)audio_tools.o
 
-$(DIR_O)localization.o :\
-$(DIR_APP)localization.h \
-$(DIR_APP)localization.cpp
-	$(CC) $(CFLAGS) $(INCLUDES) $(DIR_APP)localization.cpp -o $(DIR_O)localization.o
-
 #Interfaces
 
 $(DIR_O)spatiable.o :\

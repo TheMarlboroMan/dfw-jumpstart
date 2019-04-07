@@ -20,7 +20,7 @@ try
 	game_camera{{0,0,700,500},{0,0}}, //This means that the camera always gets a 700x500 box, even with a larger window.
 	m_fader(sr.get_audio()(), sr.get_audio_resource_manager()),
 	game_audio_dispatcher(sr.get_audio(), sr.get_audio_resource_manager(), game_camera.get_focus_box(), game_player.get_poly().get_centroid()),
-	game_localization(0, {"data/app_data/localization/descriptions"}) {
+	game_localization("data/app_data/localization", "en", {"descriptions"}) {
 
 	setup_signal_receiver();
 	game_camera.set_center_margin({300, 200, 100, 100});
@@ -278,7 +278,7 @@ void controller_test_2d::do_room_change(const room_action_exit& a) {
 }
 
 void controller_test_2d::do_text_display(const room_action_text& a) {
-	broadcaster.send_signal(signal_text_display{game_localization.get(a.text_id)});
+	broadcaster.send_signal(signal_text_display{game_localization.get("desc-"+compat::to_string(a.text_id))});
 	set_state(state_test_2d_text);
 }
 

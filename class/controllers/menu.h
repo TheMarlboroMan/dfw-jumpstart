@@ -11,6 +11,7 @@
 #include <templates/options_menu.h>
 #include <class/view_composer.h>
 #include <class/number_generator.h>
+#include <class/i8n.h>
 
 //framework
 #include <class/controller_interface.h>
@@ -19,7 +20,6 @@
 //local
 #include "states.h"
 #include "../app/shared_resources.h"
-#include "../app/localization.h"
 #include "../app/menu_representation.h"
 #include "../dfwimpl/app_config.h"
 
@@ -99,7 +99,7 @@ class controller_menu:
 
 	menu_representation<std::string> *		current_menu_ptr=nullptr;
 	tools::view_composer				layout;
-	localization					menu_localization;
+	tools::i8n					menu_localization;
 	std::vector<bar_struct>				menu_decorations; //These are the background moving bars...
 	float						key_held_time;
 	bool						started=false;	//Just controls if "continue" can be selected.

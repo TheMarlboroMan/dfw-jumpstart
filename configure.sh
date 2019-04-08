@@ -20,20 +20,25 @@ function y_n_choice() {
 }
 
 while true; do
-	echo -n "Home directory (current $(pwd), must have trailing slash): "
-	read home_dir;
+        echo -n "Home directory (current $(pwd), must have trailing slash, empty for previous directory): "
+        read home_dir;
 
-	last_char="${home_dir: -1}";
+        if [ "" == "$home_dir" ]; then
+                home_dir=`pwd`"/../"
+                break;
+        else
+                last_char="${home_dir: -1}";
 
-	if [ "$last_char" != "/" ]; then
-		echo "ERROR: Home directory must end with a slash"
-	else 		
-		if [ -d "$home_dir" ]; then
-			break;
-		else 
-			echo "ERROR: Directory $home_dir does not exist"
-		fi;
-	fi;
+                if [ "$last_char" != "/" ]; then
+                        echo "ERROR: Home directory must end with a slash"
+                else            
+                        if [ -d "$home_dir" ]; then
+                                break;
+                        else 
+                                echo "ERROR: Directory $home_dir does not exist"
+                        fi;
+                fi;
+        fi;
 done;
 
 y_n_choice "With optimizations" "OPTIMIZATION=-O2" "#OPTIMIZATION=02"
@@ -41,6 +46,9 @@ optimizations=$__retval;
 
 y_n_choice "With debug" "DEBUG=-g" "#DEBUG=-g"
 debug=$__retval;
+
+y_n_choice "With C++14" "CPPREV=-std=c++14" "CPPREV=-std=c++11"
+cpprev=$__retval
 
 y_n_choice "With debug code" "WITH_DEBUG_CODE=-DWDEBUG_CODE" "#WITH_DEBUG_CODE=-DWDEBUG_CODE"
 debug_code=$__retval;
@@ -56,6 +64,7 @@ sed -i -e "s/__TEMPLATE_OPTIMIZATION__/$optimizations/g" ./$makefile_name;
 sed -i -e "s/__TEMPLATE_DEBUG__/$debug/g" ./$makefile_name;
 sed -i -e "s/__TEMPLATE_WITH_DEBUG_CODE__/$debug_code/g" ./$makefile_name;
 sed -i -e "s/__TEMPLATE_DISABLE_ASSERT__/$disable_assert/g" ./$makefile_name;
+sed -i -e "s/__TEMPLATE_CPPREV__/$cpprev/g" ./$makefile_name;
 
 y_n_choice "Begin compilation" "" ""
 if [ $? -eq 0 ]; then 

@@ -25,7 +25,7 @@ __TEMPLATE_DISABLE_ASSERT__
 #Fixed compiler definitions.
 CC=g++
 WARNING_FLAGS=-Wall -Wextra -Wundef -Wcast-align -Wwrite-strings -Wlogical-op -Wmissing-declarations -Wredundant-decls -Wshadow -Woverloaded-virtual -fno-rtti
-FLAGS_BASE=$(WARNING_FLAGS) $(DISABLE_ASSERT) $(WITH_DEBUG_CODE) -ansi -pedantic -std=c++11
+FLAGS_BASE=$(WARNING_FLAGS) $(DISABLE_ASSERT) $(WITH_DEBUG_CODE) -ansi -pedantic -std=c++14
 CFLAGS=-c $(DEBUG) $(OPTIMIZATION) $(FLAGS_BASE) $(SYSTEM_FLAGS)
 CFLAGS_EXECUTABLE=$(DEBUG) $(OPTIMIZATION) $(FLAGS_BASE)
 LINKER=-L $(DIR_LIBDANSDL2) -L $(DIR_LIBDANSDL2_TOOLS) -L $(DIR_DFW) -L $(DIR_LOG) -L $(DIR_TOOLS) -llog -ltools -ldfw -lDanSDL2 -ldansdl2-tools -lSDL2 -lSDL2_ttf -lSDL2_mixer -lSDL2_image -lGL

@@ -30,7 +30,7 @@ void spatiable::center_on(app::tpoly p)
 
 app::tbox app_interfaces::coarse_bounding_box(const app::tpoly& p)
 {
-	auto &vt=p.get_vertexes();
+	auto &vt=p.get_vertices();
 
 	app::tpos 	minx=vt[0].x, 	maxx=minx,
 			miny=vt[0].y,	maxy=miny;

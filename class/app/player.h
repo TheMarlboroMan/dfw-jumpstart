@@ -44,8 +44,8 @@ class player:
 	//////////////////////////
 	//Drawable implementation
 
-	virtual tpos			get_ordering_x() const {return polygon.get_vertexes()[0].x;}
-	virtual tpos			get_ordering_y() const {return polygon.get_vertexes()[2].y;}
+	virtual tpos			get_ordering_x() const {return polygon.get_vertices()[0].x;}
+	virtual tpos			get_ordering_y() const {return polygon.get_vertices()[2].y;}
 	virtual bool			is_in_camera(const ldv::rect&) const;
 	virtual void			draw(ldv::screen&, const ldv::camera&, app::draw_struct&, const app::shared_resources&) const;
 

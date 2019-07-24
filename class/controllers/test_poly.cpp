@@ -279,39 +279,39 @@ void controller_test_poly::player_step(float delta)
 
 		for(const auto& o :obstacles)
 		{
-			if(ldt::SAT_collision_check(player.poly, o.poly))
-			{
+			auto sat_res=ldt::SAT_collision_check_mtv(player.poly, o.poly);
+
+			if(sat_res.collision) {
+
 				--player.health;
 				//TODO: Add animation effect to the bar: it expands and loses its alpha.
 				//TODO: Some effect or explosion would be nice to end the game, instead of a flicker.
 				//TODO: Do a explosion and pan back to the origin.
-				if(!player.health) 
-				{
+				if(!player.health) {
 					//TODO: Change state.
 					soft_reset();
 				}
 
 
-				auto d=ldt::SAT_collision_check_edge(player.poly, o.poly);
+				auto d=ldt::get_SAT_edge(sat_res, o.poly);
 
 				//Undo movement...
 				player.poly.move({-p.x, -p.y});
 
 				//Adjust new velocity... If the normal is on the own polygon, it will clearly push towards the other...
-				auto vector_normal=d.edge_in_poly_a ? 
-					d.edge.direction.right_normal() :
-					d.edge.direction.left_normal();
 
+				auto vector_normal=d.vector;
 				vector_normal.normalize();
+
 				auto new_vector=player.velocity + (vector_normal * player.velocity.magnitude() * 2.);
 				player.velocity=new_vector / 3.;
 				player.thrust/=3.;
 
 #ifdef WDEBUG_CODE
 				//Draw the edge and normal.
-				debug_collision_line_pt1=d.edge.v1;
-				debug_collision_line_pt2=d.edge.v2;
-				debug_collision_normal_pt1=ldt::segment_middle_point(d.edge);
+				debug_collision_line_pt1=d.point;
+				debug_collision_line_pt2=d.end();
+				debug_collision_normal_pt1=ldt::segment_middle_point(d);
 				debug_collision_normal_pt2=debug_collision_normal_pt1+ldt::point_2d<double>(vector_normal.x*10., vector_normal.y*10.);
 #endif
 				break;
@@ -345,7 +345,6 @@ void controller_test_poly::load()
 			ldv::rgb_color color{t["color"].get_vector()[0], t["color"].get_vector()[1], t["color"].get_vector()[2]};
 			ldt::polygon_2d<double> poly;
 			for(const auto& v: t["poly"].get_vector()) poly.add_vertex({v[0],v[1]});
-			poly.close();
 			poly.set_rotation_center(poly.get_centroid());
 			obstacles.push_back({poly, color});
 		}
@@ -354,7 +353,6 @@ void controller_test_poly::load()
 		{
 			ldt::polygon_2d<double> poly;
 			for(const auto& v: t["poly"].get_vector()) poly.add_vertex({v[0],v[1]});
-			poly.close();
 			poly.set_rotation_center(poly.get_centroid());
 			waypoints.push_back({poly, t["index"]});
 		}
@@ -371,7 +369,7 @@ void controller_test_poly::load()
 void controller_test_poly::draw_polygon(ldv::screen& screen, const ldt::polygon_2d<double>& p, ldv::rgb_color color, int alpha)
 {
 	std::vector<ldv::point> points;
-	for(const auto& pt : p.get_vertexes()) points.push_back({(int)pt.x, (int)-pt.y});
+	for(const auto& pt : p.get_vertices()) points.push_back({(int)pt.x, (int)-pt.y});
 	ldv::polygon_representation poly{ldv::polygon_representation::type::fill, points, color};
 	poly.set_blend(ldv::representation::blends::alpha);
 	poly.set_alpha(alpha);
@@ -487,7 +485,7 @@ void controller_test_poly::editor_save()
 
 	auto fill_vertexes=[](ldt::polygon_2d<double> poly, tools::dnot_token& tok)
 	{
-		for(const auto& p: poly.get_vertexes())
+		for(const auto& p: poly.get_vertices())
 			tok.get_vector().push_back(dnot_token(dnot_token::t_vector({dnot_token(p.x), dnot_token(p.y)})));
 	};
 
@@ -538,7 +536,7 @@ void controller_test_poly::editor_draw(ldv::screen& screen)
 				ldv::rgba8(0, 0, 0, 255), compat::to_string(w.index)};
 
 		//Center the text on the polygon...
-		auto vt=w.poly.get_vertexes();
+		auto vt=w.poly.get_vertices();
 		int minx=vt[0].x, maxx=minx, miny=vt[0].y, maxy=miny;
 		auto f=[](int v, int& min, int& max) {if(v < min) min=v; else if(v > max) max=v;};
 		for(const auto& p : vt) {f(p.x, minx, maxx); f(p.y, miny, maxy);}

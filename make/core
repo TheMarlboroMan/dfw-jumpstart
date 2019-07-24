@@ -12,6 +12,10 @@ include make/dfw
 
 all: create_obj $(EXECUTABLE)
 
+ifndef VERBOSE
+.SILENT:
+endif
+
 create_obj:
 	$(CREATE_OBJ_DIR)
 

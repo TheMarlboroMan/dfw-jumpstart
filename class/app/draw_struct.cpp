@@ -107,7 +107,7 @@ ldv::rect draw_struct::location_projection(const ldv::rect& r, const ldv::rect& 
 }
 
 ldv::rect draw_struct::drawable_box_from_box_polygon(const ldt::polygon_2d<tpos>& poly) const {
-	const auto& vt=poly.get_vertexes();
+	const auto& vt=poly.get_vertices();
 
 	return ldv::rect(
 		vt[0].x,

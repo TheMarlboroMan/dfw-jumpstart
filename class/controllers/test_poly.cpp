@@ -299,10 +299,12 @@ void controller_test_poly::player_step(float delta)
 
 				//Formula for reflection goes like:
 				// R =v - 2 * (v dot N) * v, where N is normalized.
+//TODO: This should go into its own utility class in the library.
 				auto new_vector=player.velocity - (2. * vector_normal * ldt::dot_product(vector_normal, player.velocity));
 				player.velocity=new_vector;
 				player.thrust/=3.;
 
+//TODO: All this crap should also go into the utility library.
 #ifdef WDEBUG_CODE
 				//Draw the edge and normal.
 				debug_collision_line_pt1=d.point;

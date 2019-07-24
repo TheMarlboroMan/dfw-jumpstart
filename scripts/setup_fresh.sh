@@ -7,7 +7,6 @@ rm -rf class;
 rm -rf data;
 rm -rf class/dfwimpl;
 rm make/app;
-rm make/app_dependencies;
 rm make/controllers;
 mkdir logs;
 mkdir class;

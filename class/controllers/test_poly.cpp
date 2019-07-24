@@ -45,16 +45,14 @@ controller_test_poly::controller_test_poly(shared_resources& sr, dfw::signal_dis
 
 void controller_test_poly::loop(dfw::input& input, const dfw::loop_iteration_data& lid)
 {
-	if(input().is_exit_signal() || input.is_input_down(input_app::escape))
-	{
+	if(input().is_exit_signal() || input.is_input_down(input_app::escape)) {
 		//TODO: Nope, back to the previous state.
 		set_leave(true);
 		return;
 	}
 
-#ifdef WDEBUG_CODE
-	if(editor_active) 
-	{
+#ifdef WDEBUG_CODE 
+	if(editor_active) {
 		editor_loop(input);
 		return;
 	}
@@ -93,8 +91,8 @@ void controller_test_poly::draw(ldv::screen& screen, int /*fps*/)
 	screen.clear(ldv::rgba8(0, 0, 0, 255));
 
 #ifdef WDEBUG_CODE
-	if(editor_active) 
-	{
+	if(editor_active) {
+
 		editor_draw(screen);
 		return;
 	}
@@ -103,8 +101,8 @@ void controller_test_poly::draw(ldv::screen& screen, int /*fps*/)
 	//Draw world... always drawn...
 	for(const auto& o : obstacles) draw_polygon(screen, o.poly, o.color, 255); 
 
-	switch(state)
-	{
+	switch(state) {
+
 		//TODO: Read above: maybe use different objects for different states. Add intro state.
 		case tstates::intro:
 			//TODO. draw logo and hit any key
@@ -253,8 +251,8 @@ void controller_test_poly::player_step(float delta)
 //	if(player.velocity.magnitude() > max_magnitude) player.velocity*=max_magnitude / player.velocity.magnitude();
 
 	//Collision detection and response...
-	if(player.velocity.x || player.velocity.y)
-	{
+	if(player.velocity.x || player.velocity.y) {
+
 		ldt::point_2d<double> p(player.velocity.x * delta, player.velocity.y * delta);
 		player.poly.move(p);
 
@@ -277,34 +275,32 @@ void controller_test_poly::player_step(float delta)
 		if(it!=std::end(waypoints) && ldt::SAT_collision_check(player.poly, it->poly)) do_waypoint();
 
 
-		for(const auto& o :obstacles)
-		{
+		for(const auto& o :obstacles) {
+
 			auto sat_res=ldt::SAT_collision_check_mtv(player.poly, o.poly);
 
 			if(sat_res.collision) {
 
-				--player.health;
-				//TODO: Add animation effect to the bar: it expands and loses its alpha.
-				//TODO: Some effect or explosion would be nice to end the game, instead of a flicker.
-				//TODO: Do a explosion and pan back to the origin.
-				if(!player.health) {
-					//TODO: Change state.
+/*
+				if(! (--player.health)) {
 					soft_reset();
 				}
-
-
-				auto d=ldt::get_SAT_edge(sat_res, o.poly);
+*/
 
 				//Undo movement...
 				player.poly.move({-p.x, -p.y});
 
-				//Adjust new velocity... If the normal is on the own polygon, it will clearly push towards the other...
+				auto d=ldt::get_SAT_edge(sat_res, o.poly);
+				auto vector_normal=d.vector.left_normal().normalize();
 
-				auto vector_normal=d.vector;
-				vector_normal.normalize();
+//auto &log=s_resources.get_log();
+//log<<"edge "<<d.point.x<<","<<d.point.y<<" to "<<d.end().x<<","<<d.end().y<<std::endl;
+//log<<"left normal: "<<vector_normal.x<<","<<vector_normal.y<<std::endl;
 
-				auto new_vector=player.velocity + (vector_normal * player.velocity.magnitude() * 2.);
-				player.velocity=new_vector / 3.;
+				//Formula for reflection goes like:
+				// R =v - 2 * (v dot N) * v, where N is normalized.
+				auto new_vector=player.velocity - (2. * vector_normal * ldt::dot_product(vector_normal, player.velocity));
+				player.velocity=new_vector;
 				player.thrust/=3.;
 
 #ifdef WDEBUG_CODE
@@ -313,6 +309,13 @@ void controller_test_poly::player_step(float delta)
 				debug_collision_line_pt2=d.end();
 				debug_collision_normal_pt1=ldt::segment_middle_point(d);
 				debug_collision_normal_pt2=debug_collision_normal_pt1+ldt::point_2d<double>(vector_normal.x*10., vector_normal.y*10.);
+/*
+log<<"normal is ["
+	<<debug_collision_normal_pt1.x<<","<<debug_collision_normal_pt1.y
+	<<"] to ["
+	<<debug_collision_normal_pt2.x<<","<<debug_collision_normal_pt2.y
+	<<"]"<<std::endl;
+*/
 #endif
 				break;
 			}
@@ -320,11 +323,11 @@ void controller_test_poly::player_step(float delta)
 	}
 }
 
-void controller_test_poly::do_waypoint()
-{
+void controller_test_poly::do_waypoint() {
+
 	++waypoint_val.current;
-	if(waypoint_val.current > waypoint_val.total) 
-	{
+	if(waypoint_val.current > waypoint_val.total) {
+
 		waypoint_val.current=1;
 		if(!best_time || timer < best_time) best_time=timer;
 		timer.reset();
@@ -340,21 +343,36 @@ void controller_test_poly::load()
 		obstacles.clear();
 		waypoints.clear();
 
-		for(const auto& t : root["data"]["obstacles"].get_vector())
-		{
-			ldv::rgb_color color{t["color"].get_vector()[0], t["color"].get_vector()[1], t["color"].get_vector()[2]};
+		int index=0;
+
+		for(const auto& t : root["data"]["obstacles"].get_vector()) {
+
 			ldt::polygon_2d<double> poly;
 			for(const auto& v: t["poly"].get_vector()) poly.add_vertex({v[0],v[1]});
+			if(!poly.is_clockwise() || poly.is_concave()) {
+				throw std::runtime_error("counter-clockwise or concave poly found at index ["+std::to_string(index)+"]");
+			}
+
 			poly.set_rotation_center(poly.get_centroid());
+			ldv::rgb_color color{t["color"].get_vector()[0], t["color"].get_vector()[1], t["color"].get_vector()[2]};
+
 			obstacles.push_back({poly, color});
+			++index;
 		}
 
-		for(const auto& t : root["data"]["waypoints"].get_vector())
-		{
+		index=0;
+		for(const auto& t : root["data"]["waypoints"].get_vector()) {
+
 			ldt::polygon_2d<double> poly;
 			for(const auto& v: t["poly"].get_vector()) poly.add_vertex({v[0],v[1]});
+
+			if(!poly.is_clockwise() || poly.is_concave()) {
+				throw std::runtime_error("counter-clockwise or concave waypoint found at index ["+std::to_string(index)+"]");
+			}
+
 			poly.set_rotation_center(poly.get_centroid());
 			waypoints.push_back({poly, t["index"]});
+			++index;
 		}
 
 		waypoint_val.total=waypoints.size();
@@ -414,28 +432,24 @@ void controller_test_poly::editor_loop(dfw::input& input)
 	if(input().is_mouse_button_down(SDL_BUTTON_LEFT))
 	{
 		auto pos=editor_cursor_position();
-		if(editor_current_poly.size() > 2 && pos==editor_current_poly[0])
-		{
+		if(editor_current_poly.size() > 2 && pos==editor_current_poly[0]) {
 			editor_close_poly();
 		}
-		else
-		{
+		else {
 			editor_current_poly.push_back(pos);
 		}
 	}
 	else if(input().is_mouse_button_down(SDL_BUTTON_RIGHT))
 	{
-		if(editor_current_poly.size())
-		{
+		if(editor_current_poly.size()) {
 			editor_current_poly.clear();
 		}
-		else
-		{
+		else {
+
 			auto p=editor_cursor_position(false);
 			ldt::point_2d<double> point{(double)p.x, (double)p.y};
 
-			switch(editor_mode)
-			{
+			switch(editor_mode) {
 				case editor_modes::obstacles: editor_delete_item(obstacles, point); break;
 				case editor_modes::waypoints: editor_delete_item(waypoints, point); break;
 			}

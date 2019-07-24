@@ -55,7 +55,7 @@ class state_driver:
 
 	//references
 	app::app_config&				config;
-	tools::log&					log;
+	tools::log&					log; //Kernel's log.
 
 	app_receiver					receiver;
 

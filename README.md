@@ -8,7 +8,9 @@
 
 #Building on windows.
 
-The zlib1.dll bundled with the mingw development packages at https://www.libsdl.org/projects/SDL_image/ is out of date with regards to libpng. Basically this means that you can build the project, but it will not run. Download a more up to date version, such as the one at https://sourceforge.net/projects/uqm-mods/ and you will be ready to go.	
+The zlib1.dll bundled with the mingw development packages at https://www.libsdl.org/projects/SDL_image/ is out of date with regards to libpng. Basically this means that you can build the project, but it will not run. Download a more up to date version, such as the one at https://sourceforge.net/projects/uqm-mods/ and you will be ready to go.
+
+Alternatively, skip the mingw and go with mingw64-win (or something of the like).
 	
 #Basic framework.
 

@@ -103,7 +103,7 @@ void controller_console::draw(ldv::screen& screen, int /*fps*/)
 	{
 		auto txt_box=txt_command.get_text_position();
 		ldv::rect box_rect={txt_box.origin.x+(int)txt_box.w, txt_box.origin.y+(int)txt_box.h-16, 4, 16};
-		ldv::box_representation box(ldv::polygon_representation::type::fill, box_rect, fgcolor);
+		ldv::box_representation box(box_rect, fgcolor);
 		box.draw(screen);
 	}
 }

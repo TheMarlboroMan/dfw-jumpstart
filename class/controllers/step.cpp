@@ -62,7 +62,7 @@ void controller_step::draw(ldv::screen& screen, int fps)
 {
 	screen.clear(ldv::rgba8(0, 0, 0, 255));
 
-	ldv::box_representation square{ldv::polygon_representation::type::fill, {0,0,data.grit,data.grit}, ldv::rgba8(0, 0, 0, 128)};
+	ldv::box_representation square{{0,0,(unsigned)data.grit,(unsigned)data.grit}, ldv::rgba8(0, 0, 0, 128)};
 	square.set_blend(ldv::representation::blends::alpha);
 
 	//Stuff that slows down.

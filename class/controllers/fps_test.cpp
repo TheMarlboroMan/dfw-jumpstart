@@ -66,7 +66,7 @@ void controller_fps_test::draw(ldv::screen& screen, int fps)
 		for(const auto& v : poly.get_vertices())
 			pts.push_back({(int)v.x, -(int)v.y+400});
 
-		ldv::polygon_representation rep(ldv::polygon_representation::type::fill, pts, color);
+		ldv::polygon_representation rep(pts, color);
 		rep.draw(screen);
 	};
 

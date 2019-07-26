@@ -25,7 +25,7 @@ controller_test_poly::controller_test_poly(shared_resources& sr, dfw::signal_dis
 	camera_val{1., 1.}
 #ifdef WDEBUG_CODE
 	,editor_mode(editor_modes::obstacles),
-	editor_vertex_rep{ldv::polygon_representation::type::fill, {0,0,10,10}, ldv::rgb8(0,0,128)},
+	editor_vertex_rep{{0,0,10,10}, ldv::rgb8(0,0,128)},
 	editor_line_rep({0,0}, {0,0}, ldv::rgb8(0,0,64))
 #endif
 {
@@ -146,7 +146,7 @@ void controller_test_poly::draw_hud(ldv::screen& screen)
 
 	//Draw health.
 	//TODO: I'd rather have small objects I can animate.
-	ldv::polygon_representation poly_health{ldv::polygon_representation::type::fill, { {0,0}, {40, 0}, {40,10}, {0,10} }, ldv::rgba8(255, 0, 0, 128)};
+	ldv::polygon_representation poly_health{{ {0,0}, {40, 0}, {40,10}, {0,10} }, ldv::rgba8(255, 0, 0, 128)};
 	poly_health.set_blend(ldv::representation::blends::alpha);
 	for(int i=0; i<player.health; ++i)
 	{
@@ -390,7 +390,7 @@ void controller_test_poly::draw_polygon(ldv::screen& screen, const ldt::polygon_
 {
 	std::vector<ldv::point> points;
 	for(const auto& pt : p.get_vertices()) points.push_back({(int)pt.x, (int)-pt.y});
-	ldv::polygon_representation poly{ldv::polygon_representation::type::fill, points, color};
+	ldv::polygon_representation poly{points, color};
 	poly.set_blend(ldv::representation::blends::alpha);
 	poly.set_alpha(alpha);
 	poly.draw(screen, camera);
@@ -572,7 +572,7 @@ void controller_test_poly::editor_draw(ldv::screen& screen)
 	{
 		case editor_modes::obstacles:
 		{
-			ldv::box_representation color_box{ldv::polygon_representation::type::fill, {20,20,20,20}, editor_colors[editor_color_index]};
+			ldv::box_representation color_box{{20,20,20,20}, editor_colors[editor_color_index]};
 			color_box.draw(screen);
 		}
 		break;

@@ -7,8 +7,8 @@
 //Global log. Bad practice, but useful.
 tools::log LOG;
 
-int main(int argc, char ** argv)
-{
+int main(int argc, char ** argv) {
+
 	using namespace app;
 
 	//Init global log.
@@ -64,5 +64,6 @@ int main(int argc, char ** argv)
 	log_app<<"stopping sdl2..."<<std::endl;
 	ldt::sdl_shutdown();
 	ldt::log_lsdl::end();
+	
 	return 0;
 }

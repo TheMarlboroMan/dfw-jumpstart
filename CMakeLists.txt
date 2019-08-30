@@ -11,7 +11,7 @@ add_compile_options(-std=c++11)
 
 #TODO: Add the rest of flags...
 
-#TODO: This should be given in the command line
+#TODO: The ../ should be given in the command line
 include_directories(../libdansdl2/)
 include_directories(../libdansdl2-tools/)
 include_directories(../log/)
@@ -20,11 +20,10 @@ include_directories(../tools/)
 
 add_subdirectory("${PROJECT_SOURCE_DIR}/class")
 
-#TODO: Find package???
-
-#libraries...
+#libraries... added manually. Sorry, that's life.
 add_library(log STATIC IMPORTED)
 set_target_properties(log PROPERTIES IMPORTED_LOCATION ${PROJECT_SOURCE_DIR}/../log/build/liblog.a)
+
 
 add_library(tools STATIC IMPORTED)
 set_target_properties(tools PROPERTIES IMPORTED_LOCATION ${PROJECT_SOURCE_DIR}/../tools/build/libtools.a)
@@ -38,17 +37,7 @@ set_target_properties(dansdl2-tools PROPERTIES IMPORTED_LOCATION ${PROJECT_SOURC
 add_library(dfw STATIC IMPORTED)
 set_target_properties(dfw PROPERTIES IMPORTED_LOCATION ${PROJECT_SOURCE_DIR}/../dfw/build/libdfw.a)
 
-
-#target_link_libraries(dansdl2 SDL2)
-#target_link_libraries(dansdl2 SDL2_ttf)
-#target_link_libraries(dansdl2 SDL2_image)
-#target_link_libraries(dansdl2 SDL2_mixer)
-#target_link_libraries(dansdl2 SDL2_image)
-
-#target_link_libraries(dfw log)
-#target_link_libraries(dfw tools)
-#target_link_libraries(dfw dansdl2)
-#target_link_libraries(dfw dansdl2-tools)
-
 add_executable(dfw-jumpstart main.cpp ${SOURCE})
+
+
 target_link_libraries(dfw-jumpstart dfw log tools dansdl2 dansdl2-tools SDL2 SDL2_ttf SDL2_mixer SDL2_image GL)

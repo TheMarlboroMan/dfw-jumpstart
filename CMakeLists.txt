@@ -38,7 +38,7 @@ set_target_properties(dansdl2-tools PROPERTIES IMPORTED_LOCATION ${PROJECT_SOURC
 add_library(dfw STATIC IMPORTED)
 set_target_properties(dfw PROPERTIES IMPORTED_LOCATION ${PROJECT_SOURCE_DIR}/../dfw/build/libdfw.a)
 
-#target_link_libraries(dansdl2 log)
+
 #target_link_libraries(dansdl2 SDL2)
 #target_link_libraries(dansdl2 SDL2_ttf)
 #target_link_libraries(dansdl2 SDL2_image)
@@ -51,4 +51,4 @@ set_target_properties(dfw PROPERTIES IMPORTED_LOCATION ${PROJECT_SOURCE_DIR}/../
 #target_link_libraries(dfw dansdl2-tools)
 
 add_executable(dfw-jumpstart main.cpp ${SOURCE})
-target_link_libraries(dfw-jumpstart log tools dansdl2 dansdl2-tools dfw SDL2 SDL2_ttf SDL2_mixer SDL2_image GL)
+target_link_libraries(dfw-jumpstart dfw log tools dansdl2 dansdl2-tools SDL2 SDL2_ttf SDL2_mixer SDL2_image GL)

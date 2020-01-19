@@ -1,50 +1,44 @@
 #include "fps_test.h"
 
-//std
-#include <cassert>
+//local
+#include "../input.h"
 
 //tools
 #include <templates/compatibility_patches.h>
 
-//local
-#include "../input.h"
+//std
+#include <cassert>
 
 using namespace app;
 
 controller_fps_test::controller_fps_test(shared_resources& sr)
 	:s_resources(sr), frames(0), frames_accum(0), frames_measured(0),
-	seconds(0)
-{
+	seconds(0) {
 
 }
 
-void controller_fps_test::loop(dfw::input& input, const dfw::loop_iteration_data& /*lid*/)
-{
-	if(input().is_exit_signal() || input.is_input_down(input_app::escape))
-	{
+void controller_fps_test::loop(dfw::input& input, const dfw::loop_iteration_data& /*lid*/) {
+	if(input().is_exit_signal() || input.is_input_down(input_app::escape)) {
 		set_leave(true);
 		return;
 	}
 	
 }
 
-void controller_fps_test::draw(ldv::screen& screen, int fps)
-{
+void controller_fps_test::draw(ldv::screen& screen, int fps) {
 	int csec=s_resources.get_controller_chrono().get_seconds(),
 		cmsec=s_resources.get_controller_chrono().get_milliseconds();
 
 	++frames;
 
-	if(seconds!=csec)
-	{
+	if(seconds!=csec) {
 		screen.clear(ldv::rgba8(0, 255, 255, 255));
 		seconds=csec;
 		frames_measured=frames;
 		frames_accum+=frames;
 		frames=0;
 	}
-	else
-	{
+	else {
 		screen.clear(ldv::rgba8(0, 0, 0, 0));
 	}
 
@@ -60,8 +54,7 @@ void controller_fps_test::draw(ldv::screen& screen, int fps)
 	fps_text.go_to({0,0});
 	fps_text.draw(screen);
 
-	auto draw_polygon=[&screen](const ldt::polygon_2d<double>& poly, ldv::rgb_color color)
-	{
+	auto draw_polygon=[&screen](const ldt::polygon_2d<double>& poly, ldv::rgb_color color) {
 		std::vector<ldv::point> pts;
 		for(const auto& v : poly.get_vertices())
 			pts.push_back({(int)v.x, -(int)v.y+400});
@@ -104,17 +97,14 @@ void controller_fps_test::draw(ldv::screen& screen, int fps)
 	txt.draw(screen);
 }
 
-void controller_fps_test::awake(dfw::input& /*input*/)
-{
+void controller_fps_test::awake(dfw::input& /*input*/) {
 
 }
 
-void controller_fps_test::slumber(dfw::input& /*input*/)
-{
+void controller_fps_test::slumber(dfw::input& /*input*/) {
 
 }
 
-bool controller_fps_test::can_leave_state() const
-{
+bool controller_fps_test::can_leave_state() const {
 	return true;
 }

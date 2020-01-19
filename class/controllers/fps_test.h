@@ -1,8 +1,8 @@
-#ifndef CONTROLLER_FPS_TEST_H
-#define CONTROLLER_FPS_TEST_H
+#pragma once
 
-//std
-#include <cmath>
+//local
+#include "states.h"
+#include "../app/shared_resources.h"
 
 //libdansdl2
 #include <def_video.h>
@@ -10,16 +10,14 @@
 //framework
 #include <class/controller_interface.h>
 
-//local
-#include "states.h"
-#include "../app/shared_resources.h"
+//std
+#include <cmath>
 
 namespace app
 {
 
 class controller_fps_test:
-	public dfw::controller_interface
-{
+	public dfw::controller_interface {
 	public:
 
 						controller_fps_test(shared_resources&);
@@ -42,5 +40,3 @@ class controller_fps_test:
 };
 
 }
-
-#endif

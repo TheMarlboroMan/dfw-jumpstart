@@ -1,40 +1,37 @@
 #include "state_driver.h"
+#include "../input.h"
 
+//tools
+#include <tools/dnot_parser.h>
+#include <tools/string_utils.h>
+#include <lm/sentry.h>
 //std
 #include <algorithm>
 
-//tools
-#include <class/dnot_parser.h>
-#include <source/string_utils.h>
-
-#include "../input.h"
-
 using namespace app;
-
-extern tools::log LOG;
 
 state_driver::state_driver(dfw::kernel& kernel, app::app_config& c)
 	:state_driver_interface(t_states::state_menu),
 	config(c), log(kernel.get_log()), receiver(get_signal_dispatcher()) {
 
-	log<<"setting state check function..."<<std::endl;
+	lm::log(log, lm::lvl::info)<<"setting state check function..."<<std::endl;
 	states.set_function([](int v){
 		return v > state_min && v < state_max;
 	});
 
-	log<<"init state driver building: preparing video..."<<std::endl;
+	lm::log(log, lm::lvl::info)<<"init state driver building: preparing video..."<<std::endl;
 	prepare_video(kernel);
 
-	log<<"preparing audio..."<<std::endl;
+	lm::log(log, lm::lvl::info)<<"preparing audio..."<<std::endl;
 	prepare_audio(kernel);
 
-	log<<"preparing input..."<<std::endl;
+	lm::log(log, lm::lvl::info)<<"preparing input..."<<std::endl;
 	prepare_input(kernel);
 
-	log<<"preparing resources..."<<std::endl;
+	lm::log(log, lm::lvl::info)<<"preparing resources..."<<std::endl;
 	prepare_resources(kernel);
 
-	log<<"preparing resource injection class..."<<std::endl;
+	lm::log(log, lm::lvl::info)<<"preparing resource injection class..."<<std::endl;
 	s_resources.reset(
 		new shared_resources(
 			kernel.get_audio(),
@@ -45,17 +42,17 @@ state_driver::state_driver(dfw::kernel& kernel, app::app_config& c)
 			kernel.get_arg_manager()
 			));
 
-	log<<"registering signal receiver..."<<std::endl;
+	lm::log(log, lm::lvl::info)<<"registering signal receiver..."<<std::endl;
 	setup_signal_receiver(kernel);
 
-	log<<"registering controllers..."<<std::endl;
+	lm::log(log, lm::lvl::info)<<"registering controllers..."<<std::endl;
 	register_controllers(kernel);
 
-	log<<"virtualizing input..."<<std::endl;
+	lm::log(log, lm::lvl::info)<<"virtualizing input..."<<std::endl;
 	virtualize_input(kernel.get_input());
 //	kernel.set_delta_step(0.01f);
 
-	log<<"state driver fully constructed"<<std::endl;
+	lm::log(log, lm::lvl::info)<<"state driver fully constructed"<<std::endl;
 }
 
 void state_driver::prepare_video(dfw::kernel& kernel) {
@@ -156,7 +153,7 @@ void state_driver::prepare_state(int next, int current) {
 void state_driver::common_pre_loop_input(dfw::input& input, float /*delta*/) {
 
 	if(input().is_event_joystick_connected()) {
-		log<<"New joystick detected..."<<std::endl;
+		lm::log(log, lm::lvl::info)<<"New joystick detected..."<<std::endl;
 		virtualize_input(input);
 	}
 }
@@ -164,7 +161,7 @@ void state_driver::common_pre_loop_input(dfw::input& input, float /*delta*/) {
 #ifdef WDEBUG_CODE
 void state_driver::common_loop_input(dfw::input& input, float /*delta*/) {
 	if(input.is_input_down(input_app::reload_debug_config)) {
-		log<<"reloading debug configuration"<<std::endl;
+		lm::log(log, lm::lvl::info)<<"reloading debug configuration"<<std::endl;
 		s_resources->reload_debug_config();
 	}
 }
@@ -184,12 +181,12 @@ void state_driver::common_loop_step(float /*delta*/) {
 }
 
 void state_driver::virtualize_input(dfw::input& input) {
-	log<<"trying to virtualize "<<input().get_joysticks_size()<<" controllers..."<<std::endl;
+	lm::log(log, lm::lvl::info)<<"trying to virtualize "<<input().get_joysticks_size()<<" controllers..."<<std::endl;
 
 	for(size_t i=0; i < input().get_joysticks_size(); ++i) {
 		input().virtualize_joystick_hats(i);
 		input().virtualize_joystick_axis(i, 15000);
-		log<<"Joystick virtualized "<<i<<std::endl;
+		lm::log(log, lml::lvl::info)<<"Joystick virtualized "<<i<<std::endl;
 	}
 }
 

@@ -1,15 +1,13 @@
 #include "menu.h"
 
-//std
-#include <cassert>
-
-//tools
-#include <templates/compatibility_patches.h>
-
 //local
 #include "signals.h"
 #include "../input.h"
 #include "../app/audio_defs.h"
+//tools
+#include <templates/compatibility_patches.h>
+//std
+#include <cassert>
 
 using namespace app;
 
@@ -20,8 +18,7 @@ controller_menu::controller_menu(shared_resources& s, dfw::signal_dispatcher& sd
 	controls_menu_rep(controls_menu),
 	menu_localization("data/app_data/localization", "en", {"texts.dat"}),
 	key_held_time{0.f},
-	flicker{false, false, 1.f}
-{
+	flicker{false, false, 1.f} {
 
 
 	create_functions();
@@ -30,16 +27,13 @@ controller_menu::controller_menu(shared_resources& s, dfw::signal_dispatcher& sd
 	choose_current_menu(main_menu_rep);
 }
 
-void controller_menu::loop(dfw::input& input, const dfw::loop_iteration_data& lid)
-{
-	if(input().is_exit_signal())
-	{
+void controller_menu::loop(dfw::input& input, const dfw::loop_iteration_data& lid) {
+	if(input().is_exit_signal()) {
 		set_leave(true);
 		return;
 	}
 
-	if(input().is_event_input_with_pressed())
-	{
+	if(input().is_event_input_with_pressed()) {
 		if(current_menu_ptr==&main_menu_rep) 		do_main_menu_input(input);
 		else if(current_menu_ptr==&options_menu_rep) 	do_options_menu_input(input, lid.delta);
 		else if(current_menu_ptr==&controls_menu_rep) 	do_controls_menu_input(input);
@@ -47,11 +41,12 @@ void controller_menu::loop(dfw::input& input, const dfw::loop_iteration_data& li
 
 	//There are a few steps...
 	current_menu_ptr->step(lid.delta);
-	for(auto& b : menu_decorations) b.step(lid.delta);
+	for(auto& b : menu_decorations) {
+		b.step(lid.delta);
+	}
 	pulse.step(lid.delta);
 	flicker.step(lid.delta);
-	if(flicker.changed)
-	{
+	if(flicker.changed) {
 		tools::int_generator g(0, 300);
 		auto &r=*(layout.get_by_id("code_text"));
 		r.set_visible(flicker.visible);
@@ -60,8 +55,7 @@ void controller_menu::loop(dfw::input& input, const dfw::loop_iteration_data& li
 	}
 }
 
-void controller_menu::draw(ldv::screen& screen, int fps)
-{
+void controller_menu::draw(ldv::screen& screen, int fps) {
 	layout.draw(screen);
 	ldv::ttf_representation txtfps{s_resources.get_ttf_manager().get("consola-mono", 16), ldv::rgba8(255, 255, 255, 255), compat::to_string(fps), 1.};
 	txtfps.draw(screen);
@@ -70,8 +64,7 @@ void controller_menu::draw(ldv::screen& screen, int fps)
 //Logic for the main menu.
 //An interesting thing here is to duplicate the checks, because inputs can
 //be redefined: we check for the app input but also for the fixed scancode.
-void controller_menu::do_main_menu_input(dfw::input& input)
-{
+void controller_menu::do_main_menu_input(dfw::input& input) {
  	if(input.is_input_down(input_app::escape))						set_leave(true);
 	else if(input.is_input_down(input_app::up) || input().is_key_down(SDL_SCANCODE_UP)) 	main_menu_rep.previous();
 	else if(input.is_input_down(input_app::down) || input().is_key_down(SDL_SCANCODE_DOWN)) main_menu_rep.next();

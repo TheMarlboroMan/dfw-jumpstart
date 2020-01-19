@@ -1,11 +1,4 @@
-#ifndef APP_STATE_DRIVER_H
-#define APP_STATE_DRIVER_H
-
-//std
-#include <memory>
-
-//Framework
-#include <class/state_driver_interface.h>
+#pragma once
 
 //local.
 #include "app_config.h"
@@ -23,6 +16,13 @@
 
 //Specific app_config
 #include "../app/shared_resources.h"
+
+//Framework
+#include <class/state_driver_interface.h>
+
+//std
+#include <memory>
+
 
 namespace app
 {
@@ -55,7 +55,7 @@ class state_driver:
 
 	//references
 	app::app_config&				config;
-	tools::log&					log; //Kernel's log.
+	lm::logger&					log; //Kernel's log.
 
 	app_receiver					receiver;
 
@@ -70,4 +70,3 @@ class state_driver:
 };
 
 }
-#endif

@@ -1,18 +1,4 @@
-#ifndef CONTROLLER_CONSOLE_H
-#define CONTROLLER_CONSOLE_H
-
-//std
-#include <cmath>
-#include <string>
-
-//libdansdl2
-#include <def_video.h>
-
-//framework
-#include <class/controller_interface.h>
-
-//tools
-#include <class/ttf_manager.h>
+#pragma once
 
 //local
 #include "states.h"
@@ -20,12 +6,24 @@
 //app
 #include "../app/shared_resources.h"
 
+//tools
+#include <class/ttf_manager.h>
+
+//framework
+#include <class/controller_interface.h>
+
+//libdansdl2
+#include <def_video.h>
+
+//std
+#include <cmath>
+#include <string>
+
 namespace app
 {
 
 class controller_console:
-	public dfw::controller_interface
-{
+	public dfw::controller_interface {
 	public:
 
 						controller_console(shared_resources&);
@@ -50,5 +48,3 @@ class controller_console:
 };
 
 }
-
-#endif

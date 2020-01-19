@@ -1,13 +1,11 @@
-#ifndef APP_CONFIGURATION_H
-#define APP_CONFIGURATION_H
+#pragma once
+
+//framework
+#include <dfw/base_config.h>
+#include <dfw/input.h>
 
 //std
 #include <iostream>
-
-//framework
-#include <class/base_config.h>
-#include <class/input.h>
-
 
 namespace app
 {
@@ -49,4 +47,3 @@ dfw::input_description::types	input_description_type_from_int(int);
 int				input_description_int_from_type(dfw::input_description::types);
 
 }
-#endif

@@ -1,6 +1,4 @@
-#ifndef STRUCT_INPUT_FRAMEWORK_H
-#define STRUCT_INPUT_FRAMEWORK_H
-
+#pragma once
 //This still strikes me as odd. The kernel implementation shares it with the app...
 
 namespace app
@@ -25,5 +23,3 @@ reload_debug_config
 };
 
 }
-
-#endif

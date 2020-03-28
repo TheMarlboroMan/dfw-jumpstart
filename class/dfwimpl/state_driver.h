@@ -18,11 +18,10 @@
 #include "../app/shared_resources.h"
 
 //Framework
-#include <class/state_driver_interface.h>
+#include <dfw/state_driver_interface.h>
 
 //std
 #include <memory>
-
 
 namespace app
 {

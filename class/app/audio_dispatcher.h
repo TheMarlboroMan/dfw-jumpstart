@@ -1,15 +1,18 @@
-#ifndef AUDIO_DISPATCHER_H
-#define AUDIO_DISPATCHER_H
-
-//libdan2
-#include <audio/audio_channel/audio_channel.h>
-#include <video/rect/rect.h>
-
-//dfw
-#include <class/audio.h>
+#pragma once
 
 //local
 #include "aurable.h"
+
+//dfw
+#include <dfw/audio.h>
+
+
+//libdan2
+#include <lda/audio_channel.h>
+#include <lda/sound.h>
+#include <lda/resource_manager.h>
+#include <ldv/rect.h>
+#include <ldt/point_2d.h>
 
 namespace app
 {
@@ -41,4 +44,3 @@ struct audio_dispatcher:
 };
 
 }
-#endif

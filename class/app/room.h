@@ -1,13 +1,4 @@
-#ifndef ROOM_H
-#define ROOM_H
-
-//Std
-#include <vector>
-#include <string>
-
-//Tools
-#include <class/dnot_token.h>
-#include <templates/matrix_2d.h>
+#pragma once
 
 //App
 #include "tile_decoration.h"
@@ -17,6 +8,16 @@
 #include "object_trigger.h"
 #include "room_action.h"
 #include "object_audio_player.h"
+
+//Tools
+#include <tools/dnot_token.h>
+#include <tools/matrix_2d.h>
+
+
+//Std
+#include <vector>
+#include <string>
+
 
 namespace app
 {
@@ -90,4 +91,3 @@ class room
 
 }
 
-#endif

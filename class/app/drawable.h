@@ -1,10 +1,10 @@
-#ifndef DRAWABLE_H
-#define DRAWABLE_H
+#pragma once
 
 #include "draw_struct.h"
 #include "shared_resources.h"
 #include "app_defs.h"
-#include <video/rect/rect.h>
+
+#include <ldv/rect.h>
 
 namespace app_interfaces
 {
@@ -27,5 +27,3 @@ class drawable
 bool drawable_order(const drawable* a, const drawable* b);
 
 }
-
-#endif

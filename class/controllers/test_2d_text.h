@@ -1,23 +1,21 @@
-#ifndef CONTROLLER_TEST_2D_TEXT_H
-#define CONTROLLER_TEST_2D_TEXT_H
-
-//std
-#include <cmath>
-
-//libdansdl2
-#include <def_video.h>
-
-//tools
-#include <class/view_composer.h>
-
-//framework
-#include <class/controller_interface.h>
+#pragma once
 
 //local
 #include "states.h"
 #include "signals.h"
 #include "../app/shared_resources.h"
 
+//tools
+#include <ldtools/view_composer.h>
+
+//framework
+#include <dfw/controller_interface.h>
+
+//libdansdl2
+
+
+//std
+#include <cmath>
 
 namespace app
 {
@@ -46,7 +44,7 @@ class controller_test_2d_text:
 	shared_resources&				s_resources;
 
 	//properties.
-	tools::view_composer				layout;
+	ldtools::view_composer				layout;
 	app_receiver					receiver;
 	enum class tstates{dictate, wait} 		state;
 	std::vector<std::string>			text_buffer;
@@ -56,5 +54,3 @@ class controller_test_2d_text:
 };
 
 }
-
-#endif

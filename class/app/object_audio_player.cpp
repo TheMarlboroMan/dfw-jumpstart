@@ -1,8 +1,8 @@
 #include "object_audio_player.h"
 
 //tools
-#include <class/number_generator.h>
-#include <templates/ranged_value.h>
+#include <tools/number_generator.h>
+#include <tools/ranged_value.h>
 
 using namespace app;
 

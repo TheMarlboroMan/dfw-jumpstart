@@ -1,8 +1,7 @@
-#ifndef OBJECT_DECORATION_FACTORY_H
-#define OBJECT_DECORATION_FACTORY_H
+#pragma once
 
 //Tools.
-#include <class/dnot_parser.h>
+#include <tools/dnot_parser.h>
 
 //Local
 #include "object_decoration.h"
@@ -22,5 +21,3 @@ class object_decoration_factory
 
 };
 }
-
-#endif

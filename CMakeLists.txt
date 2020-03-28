@@ -12,11 +12,11 @@ add_compile_options(-std=c++11)
 #TODO: Add the rest of flags...
 
 #TODO: The ../ should be given in the command line
-include_directories(../libdansdl2/)
-include_directories(../libdansdl2-tools/)
-include_directories(../log/)
-include_directories(../dfw/)
-include_directories(../tools/)
+include_directories(../libdansdl2/include)
+include_directories(../libdansdl2-tools/include)
+include_directories(../log/include)
+include_directories(../dfw/include)
+include_directories(../tools/include)
 
 add_subdirectory("${PROJECT_SOURCE_DIR}/class")
 

@@ -1,5 +1,5 @@
 #include "draw_struct.h"
-#include <templates/compatibility_patches.h>
+
 
 using namespace app;
 

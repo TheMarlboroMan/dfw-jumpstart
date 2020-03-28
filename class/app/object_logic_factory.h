@@ -1,16 +1,16 @@
-#ifndef OBJECT_LOGIC_FACTORY_H
-#define OBJECT_LOGIC_FACTORY_H
-
-//std
-#include <vector>
-
-//tools
-#include <class/dnot_parser.h>
+#pragma once
 
 //local
 #include "object_trigger.h"
 #include "room_entrance.h"
 #include "object_audio_player.h"
+
+//tools
+#include <tools/dnot_parser.h>
+
+
+//std
+#include <vector>
 
 namespace app
 {
@@ -34,5 +34,3 @@ class object_logic_factory
 
 
 }
-
-#endif

@@ -1,12 +1,11 @@
-#ifndef AURABLE_H
-#define AURABLE_H
-
-//libdansd2l
-#include <audio/audio_channel/audio_channel.h>
-#include <video/rect/rect.h>
+#pragma once
 
 //local
 #include "app_defs.h"
+
+//libdansd2l
+#include <lda/audio_channel.h>
+#include <ldv/rect.h>
 
 namespace app_interfaces
 {
@@ -39,4 +38,3 @@ class aurable
 
 } //End namespace...
 
-#endif

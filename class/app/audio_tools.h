@@ -1,19 +1,18 @@
-#ifndef AUDIO_TOOLS_H
-#define AUDIO_TOOLS_H
-
-//libdan2
-#include <audio/audio_controller/audio_controller.h>
-#include <audio/resource_manager/resource_manager.h>
-#include <audio/audio_callback_interface/audio_callback_interface.h>
-#include <audio/sound/sound.h>
-
-//tools
-#include <templates/ranged_value.h>
-#include <templates/linear_timed_function.h>
+#pragma once
 
 //local
 #include "spatiable.h"
 #include "app_defs.h"
+
+//tools
+#include <tools/ranged_value.h>
+#include <tools/linear_timed_function.h>
+
+//libdan2
+#include <lda/audio_controller.h>
+#include <lda/resource_manager.h>
+#include <lda/audio_callback_interface.h>
+#include <lda/sound.h>
 
 namespace app
 {
@@ -63,4 +62,3 @@ class music_fader
 };
 
 }
-#endif

@@ -1,6 +1,6 @@
 #include "object_decoration_factory.h"
 
-#include <templates/compatibility_patches.h>
+#include <ldt/polygon_2d.h>
 
 using namespace app;
 
@@ -17,7 +17,7 @@ object_decoration object_decoration_factory::make_object(const tools::dnot_token
 		//This is in "t" {p:{}, t:5, x:517, y:352}
 
 		//This is in "info" {w:27, h:17, frame_index: 1},
-		const auto& info=data["type_"+compat::to_string(t["t"].get_int())];
+		const auto& info=data["type_"+std::to_string(t["t"].get_int())];
 
 		tpos 	x=t["x"].get_int(), 
 			y=t["y"].get_int(), 

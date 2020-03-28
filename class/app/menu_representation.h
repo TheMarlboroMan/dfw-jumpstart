@@ -1,16 +1,15 @@
-#ifndef MENU_REPRESENTATION_H
-#define MENU_REPRESENTATION_H
+#pragma once
+
+//tools
+#include <tools/options_menu.h>
+
+//libdan2
+#include <ldv/group_representation.h>
 
 //std
 #include <vector>
 #include <map>
 #include <functional>
-
-//libdan2
-#include <video/representation/representation.h>
-
-//tools
-#include <templates/options_menu.h>
 
 namespace app
 {
@@ -263,5 +262,3 @@ class menu_representation
 };
 
 }
-
-#endif

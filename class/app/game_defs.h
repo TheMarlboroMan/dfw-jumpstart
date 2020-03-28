@@ -1,9 +1,8 @@
-#ifndef GAME_DEFS_H
-#define GAME_DEFS_H
+#pragma once
 
 #include "app_defs.h"
 
-#include <tools/vector_2d/vector_2d.h>
+#include <ldt/vector_2d.h>
 
 namespace app
 {
@@ -81,5 +80,3 @@ struct bearing
 };
 
 }
-
-#endif

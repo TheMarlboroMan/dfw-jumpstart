@@ -1,14 +1,11 @@
-#ifndef OBJECT_DECORATION_H
-#define OBJECT_DECORATION_H
-
-//Tools
-#include <class/sprite_table.h>
+#pragma once
 
 //Local
 #include "spatiable.h"
 #include "drawable.h"
 
-
+//Tools
+#include <ldtools/sprite_table.h>
 
 namespace app
 {
@@ -39,5 +36,3 @@ class object_decoration:
 
 };
 }
-
-#endif

@@ -1,7 +1,12 @@
-#ifndef DRAW_STRUCT_H
-#define DRAW_STRUCT_H
+#pragma once
 
-#include <def_video.h>
+#include <ldv/bitmap_representation.h>
+#include <ldv/group_representation.h>
+#include <ldv/point_representation.h>
+#include <ldv/box_representation.h>
+#include <ldv/line_representation.h>
+#include <ldv/polygon_representation.h>
+#include <ldv/representation.h>
 
 #include "app_defs.h"
 #include "spatiable.h"
@@ -113,4 +118,3 @@ struct draw_struct
 
 }
 
-#endif

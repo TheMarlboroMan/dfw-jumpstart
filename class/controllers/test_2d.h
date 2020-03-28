@@ -1,18 +1,4 @@
-#ifndef CONTROLLER_TEST_2D_H
-#define CONTROLLER_TEST_2D_H
-
-//std
-#include <cmath>
-#include <set>
-
-//libdansdl2
-#include <def_video.h>
-
-//framework
-#include <class/controller_interface.h>
-
-//Tools
-#include <class/i8n.h>
+#pragma once
 
 //local
 #include "states.h"
@@ -25,6 +11,19 @@
 #include "../app/player.h"
 #include "../app/audio_dispatcher.h"
 #include "../app/audio_tools.h"
+
+//Tools
+#include <tools/i8n.h>
+
+//libdansdl2
+
+//framework
+#include <dfw/controller_interface.h>
+
+//std
+#include <cmath>
+#include <set>
+
 
 namespace app
 {
@@ -72,4 +71,3 @@ class controller_test_2d:
 };
 
 }
-#endif

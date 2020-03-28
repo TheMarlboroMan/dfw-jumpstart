@@ -1,11 +1,11 @@
-#ifndef MOTION_H
-#define MOTION_H
+#pragma once
 
 //This would usually be an "interface" but let's try some composition instead.
 
-#include <tools/vector_2d/vector_2d.h>
-
 #include "app_defs.h"
+
+#include <ldt/vector_2d.h>
+
 
 namespace app
 {
@@ -47,5 +47,3 @@ class motion {
 };
 
 }
-
-#endif

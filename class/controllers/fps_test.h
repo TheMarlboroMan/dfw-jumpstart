@@ -5,10 +5,9 @@
 #include "../app/shared_resources.h"
 
 //libdansdl2
-#include <def_video.h>
 
 //framework
-#include <class/controller_interface.h>
+#include <dfw/controller_interface.h>
 
 //std
 #include <cmath>

@@ -1,8 +1,4 @@
-#ifndef PLAYER_H
-#define PLAYER_H
-
-//Dlib
-#include <tools/vector_2d/vector_2d.h>
+#pragma once
 
 //Local
 #include "motion.h"
@@ -11,6 +7,9 @@
 #include "game_defs.h"
 #include "game_input.h"
 #include "aurable.h"
+
+//Dlib
+#include <ldt/vector_2d.h>
 
 namespace app
 {
@@ -72,5 +71,3 @@ class player:
 };
 
 }
-
-#endif

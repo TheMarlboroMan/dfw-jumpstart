@@ -1,7 +1,7 @@
 #include "player.h"
 
 //tools
-#include <class/number_generator.h>
+#include <tools/number_generator.h>
 
 //local
 #include "display_defs.h"

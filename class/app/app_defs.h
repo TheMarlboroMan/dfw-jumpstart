@@ -1,13 +1,12 @@
-#ifndef APP_DEFS_H
-#define APP_DEFS_H
-
-//libdan2
-
-#include <tools/box/box.h>
-#include <tools/polygon_2d/polygon_2d.h>
+#pragma once
 
 //tools
-#include <templates/vector_2d_screen.h>
+#include <ldt/vector_2d.h>
+
+//libdan2
+#include <ldt/box.h>
+#include <ldt/polygon_2d.h>
+
 
 //Basic application typedefs... 
 
@@ -21,7 +20,7 @@ typedef double					tpos;
 typedef unsigned int				tdim ;
 
 //Represents the type of movement vector.
-typedef tools::vector_2d_screen<tpos> 		tvector;
+typedef ldt::vector_2d<tpos> 		tvector;
 
 //Types for spatiable data...
 typedef ldt::box<tpos, tdim>			tbox;
@@ -29,4 +28,3 @@ typedef ldt::polygon_2d<tpos>	 		tpoly;
 typedef ldt::point_2d<tpos> 			tpoint;
 
 }
-#endif

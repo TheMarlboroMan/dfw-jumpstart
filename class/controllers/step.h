@@ -1,19 +1,19 @@
-#ifndef CONTROLLER_STEP_H
-#define CONTROLLER_STEP_H
-
-//std
-#include <cmath>
-
-//libdansdl2
-#include <def_video.h>
-
-//framework
-#include <class/controller_interface.h>
-#include <class/chrono.h>
+#pragma once
 
 //local
 #include "states.h"
 #include "../app/shared_resources.h"
+
+//Tools
+#include <tools/chrono.h>
+
+//framework
+#include <dfw/controller_interface.h>
+
+//libdansdl2
+
+//std
+#include <cmath>
 
 namespace app
 {
@@ -45,5 +45,3 @@ class controller_step:
 };
 
 }
-
-#endif

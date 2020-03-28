@@ -1,27 +1,29 @@
-#ifndef CONTROLLER_MENU_H
-#define CONTROLLER_MENU_H
-
-//std
-#include <cmath>
-
-//libdansdl2
-#include <def_video.h>
-
-//tools
-#include <templates/options_menu.h>
-#include <class/view_composer.h>
-#include <class/number_generator.h>
-#include <class/i8n.h>
-
-//framework
-#include <class/controller_interface.h>
-#include <class/signal_broadcasting.h>
+#pragma once
 
 //local
 #include "states.h"
 #include "../app/shared_resources.h"
 #include "../app/menu_representation.h"
 #include "../dfwimpl/app_config.h"
+
+//framework
+#include <dfw/controller_interface.h>
+#include <dfw/signal_broadcasting.h>
+
+//tools
+#include <tools/options_menu.h>
+#include <tools/number_generator.h>
+#include <tools/i8n.h>
+
+//libdansdl2
+#include <ldv/resource_manager.h>
+
+//ldtools
+#include <ldtools/view_composer.h>
+
+
+//std
+#include <cmath>
 
 namespace app
 {
@@ -98,7 +100,7 @@ class controller_menu:
 							controls_menu_rep;
 
 	menu_representation<std::string> *		current_menu_ptr=nullptr;
-	tools::view_composer				layout;
+	ldtools::view_composer				layout;
 	tools::i8n					menu_localization;
 	std::vector<bar_struct>				menu_decorations; //These are the background moving bars...
 	float						key_held_time;
@@ -137,4 +139,3 @@ class controller_menu:
 
 }
 
-#endif

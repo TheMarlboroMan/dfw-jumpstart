@@ -1,5 +1,4 @@
-#ifndef OBJECT_AUDIO_PLAYER_H
-#define OBJECT_AUDIO_PLAYER_H
+#pragma once
 
 //local
 #include "aurable.h"
@@ -67,5 +66,3 @@ class object_audio_player:
 };
 
 }
-
-#endif

@@ -3,9 +3,6 @@
 //std
 #include <stdexcept>
 
-//tools
-#include <templates/compatibility_patches.h>
-
 using namespace app;
 
 object_logic_factory::object_logic_factory(
@@ -76,6 +73,6 @@ void object_logic_factory::make_object(const tools::dnot_token& tok)
 	}
 	catch(std::exception& e)
 	{
-		throw std::runtime_error(std::string("Unable to build object of type ")+compat::to_string(tok["t"].get_int())+std::string(":")+e.what());
+		throw std::runtime_error(std::string("Unable to build object of type ")+std::to_string(tok["t"].get_int())+std::string(":")+e.what());
 	}
 }

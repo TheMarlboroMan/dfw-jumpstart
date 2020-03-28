@@ -7,13 +7,12 @@
 #include "../app/shared_resources.h"
 
 //tools
-#include <class/ttf_manager.h>
+#include <ldtools/ttf_manager.h>
 
 //framework
-#include <class/controller_interface.h>
+#include <dfw/controller_interface.h>
 
 //libdansdl2
-#include <def_video.h>
 
 //std
 #include <cmath>

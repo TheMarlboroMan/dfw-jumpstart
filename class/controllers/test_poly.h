@@ -1,23 +1,20 @@
-#ifndef CONTROLLER_TEST_POLY_H
-#define CONTROLLER_TEST_POLY_H
-
-//std
-#include <cmath>
-
-//libdansdl2
-#include <def_video.h>
-
-//tools
-#include <templates/ranged_value.h>
-
-//framework
-#include <class/controller_interface.h>
+#pragma once
 
 //local
 #include "states.h"
 #include "signals.h"
-
 #include "../app/shared_resources.h"
+
+//tools
+#include <tools/ranged_value.h>
+
+//framework
+#include <dfw/controller_interface.h>
+
+//libdansdl2
+
+//std
+#include <cmath>
 
 namespace app
 {
@@ -190,4 +187,3 @@ class controller_test_poly:
 
 }
 
-#endif

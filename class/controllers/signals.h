@@ -1,7 +1,6 @@
-#ifndef APP_SIGNALS
-#define APP_SIGNALS
+#pragma once
 
-#include <class/signal_broadcasting.h>
+#include <dfw/signal_broadcasting.h>
 
 namespace app
 {
@@ -90,5 +89,3 @@ struct signal_reset_state:public dfw::broadcast_signal
 };
 
 }
-
-#endif

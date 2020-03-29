@@ -24,7 +24,6 @@
 #include <cmath>
 #include <set>
 
-
 namespace app
 {
 

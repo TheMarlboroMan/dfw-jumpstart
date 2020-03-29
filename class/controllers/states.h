@@ -1,5 +1,4 @@
-#ifndef ESTADOS_CONTROLADORES_H
-#define ESTADOS_CONTROLADORES_H
+#pragma once
 
 //TODO: Never liked the way these are stupid integers...
 enum t_states {state_min=0,
@@ -12,4 +11,3 @@ state_fps_test,
 state_step,
 state_max};
 
-#endif

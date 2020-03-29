@@ -2,6 +2,8 @@
 
 #include <dfw/signal_broadcasting.h>
 
+#include <functional>
+
 namespace app
 {
 

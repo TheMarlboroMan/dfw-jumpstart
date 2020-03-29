@@ -4,8 +4,9 @@
 #include "signals.h"
 #include "../input.h"
 #include "../app/audio_defs.h"
-//tools
-#include <templates/compatibility_patches.h>
+
+#include <ldv/ttf_representation.h>
+
 //std
 #include <cassert>
 
@@ -57,7 +58,7 @@ void controller_menu::loop(dfw::input& input, const dfw::loop_iteration_data& li
 
 void controller_menu::draw(ldv::screen& screen, int fps) {
 	layout.draw(screen);
-	ldv::ttf_representation txtfps{s_resources.get_ttf_manager().get("consola-mono", 16), ldv::rgba8(255, 255, 255, 255), compat::to_string(fps), 1.};
+	ldv::ttf_representation txtfps{s_resources.get_ttf_manager().get("consola-mono", 16), ldv::rgba8(255, 255, 255, 255), std::to_string(fps), 1.};
 	txtfps.draw(screen);
 }
 
@@ -340,8 +341,8 @@ void controller_menu::mount_menus()
 
 	std::string window_size=config.bool_from_path("config:video:fullscreen")
 		? "fullscreen"
-		: compat::to_string(config.int_from_path("config:video:window_w_px"))
-				+"x"+compat::to_string(config.int_from_path("config:video:window_h_px"));
+		: std::to_string(config.int_from_path("config:video:window_w_px"))
+				+"x"+std::to_string(config.int_from_path("config:video:window_h_px"));
 
 	options_menu.set_by_value_templated("10_VIDEO_SIZE", window_size);
 	options_menu.set_by_value_templated("25_VIDEO_VSYNC", config.get_screen_vsync());

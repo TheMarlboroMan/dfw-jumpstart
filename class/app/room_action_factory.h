@@ -1,5 +1,4 @@
-#ifndef ROOM_ACTION_FACTORY_H
-#define ROOM_ACTION_FACTORY_H
+#pragma once
 
 //std
 #include <vector>
@@ -7,7 +6,7 @@
 #include <string>
 
 //tools
-#include <class/dnot_parser.h>
+#include <tools/dnot_parser.h>
 
 //local
 #include "room_action.h"
@@ -28,4 +27,3 @@ class room_action_factory
 
 } //end namespace
 
-#endif

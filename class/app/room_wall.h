@@ -1,5 +1,4 @@
-#ifndef ROOM_WALL_H
-#define ROOM_WALL_H
+#pragma once
 
 #include "spatiable.h"
 
@@ -36,5 +35,3 @@ class room_wall:
 room_wall::twall room_wall_int_to_type(int);
 
 }
-
-#endif

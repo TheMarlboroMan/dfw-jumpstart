@@ -1,16 +1,18 @@
 #include "test_2d.h"
 
-//std
-#include <cassert>
-
-//tools
-#include <templates/compatibility_patches.h>
-#include <templates/ranged_value.h>
-
 //local
 #include "../input.h"
 #include "../app/game_input.h"
 #include "../app/audio_defs.h"
+
+#include <lm/sentry.h>
+
+//tools
+#include <tools/ranged_value.h>
+
+//std
+#include <cassert>
+
 
 using namespace app;
 
@@ -32,7 +34,7 @@ try
 	do_room_change("map01.dat", 0);
 }
 catch(std::exception& e) {
-	sr.get_log()<<"Unable to create main controller: "<<e.what()<<std::endl;
+	lm::log(s_resources.get_log(), lm::lvl::error)<<"Unable to create main controller: "<<e.what()<<std::endl;
 	//This would still propagate: initialization lists and exceptions work like that.
 }
 
@@ -179,7 +181,7 @@ void controller_test_2d::draw(ldv::screen& screen, int fps)
 	//Draw fps.
 	ldv::ttf_representation fps_text{
 		s_resources.get_ttf_manager().get("consola-mono", 12), 
-		ldv::rgba8(0, 0, 255, 255), compat::to_string(fps)};
+		ldv::rgba8(0, 0, 255, 255), std::to_string(fps)};
 	fps_text.go_to({500,0});
 	fps_text.draw(screen);
 
@@ -208,7 +210,7 @@ void controller_test_2d::draw(ldv::screen& screen, int fps)
 	if(s_resources.get_debug_config().bool_from_path("debug:video:draw_fps")) {
 		ldv::ttf_representation fps_text{
 			s_resources.get_ttf_manager().get("consola-mono", 12), 
-			ldv::rgba8(0, 0, 255, 255), s_resources.get_audio()().debug_state()+" "+compat::to_string(fps)};
+			ldv::rgba8(0, 0, 255, 255), s_resources.get_audio()().debug_state()+" "+std::to_string(fps)};
 		fps_text.go_to({200,0});
 		fps_text.draw(screen);
 	}	
@@ -278,7 +280,7 @@ void controller_test_2d::do_room_change(const room_action_exit& a) {
 }
 
 void controller_test_2d::do_text_display(const room_action_text& a) {
-	broadcaster.send_signal(signal_text_display{game_localization.get("desc-"+compat::to_string(a.text_id))});
+	broadcaster.send_signal(signal_text_display{game_localization.get("desc-"+std::to_string(a.text_id))});
 	set_state(state_test_2d_text);
 }
 
@@ -298,14 +300,15 @@ void controller_test_2d::do_trigger(const object_trigger& trig) {
  
 	const room_action * act=game_room.get_action(trig.get_action_id());
 	if(!act) {
-		s_resources.get_log()<<"unavailable action "<<trig.get_action_id()<<std::endl;
+	
+		lm::log(s_resources.get_log(), lm::lvl::warning)<<"unavailable action "<<trig.get_action_id()<<std::endl;
 		return;
 	}
 	
 	//If it is repeatable we may skip the action.
 	if(!act->repeat) {
 		if(unique_actions.count(act->action_id)) return;
-		s_resources.get_log()<<"Adding unique trigger "<<act->action_id<<std::endl;
+		lm::log(s_resources.get_log(), lm::lvl::info)<<"Adding unique trigger "<<act->action_id<<std::endl;
 		unique_actions.insert(act->action_id);
 	}
 

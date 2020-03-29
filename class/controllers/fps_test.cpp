@@ -3,8 +3,10 @@
 //local
 #include "../input.h"
 
-//tools
-#include <templates/compatibility_patches.h>
+//ld
+#include <ldv/ttf_representation.h>
+#include <ldv/polygon_representation.h>
+#include <ldt/sat_2d.h>
 
 //std
 #include <cassert>
@@ -42,10 +44,10 @@ void controller_fps_test::draw(ldv::screen& screen, int fps) {
 		screen.clear(ldv::rgba8(0, 0, 0, 0));
 	}
 
-	std::string fdata="sec: "+compat::to_string(csec)+
-	" msec: "+compat::to_string(cmsec)+
-	" frames:"+compat::to_string(frames_accum)+
-	" fps"+compat::to_string(fps)+"/"+compat::to_string(frames_measured);
+	std::string fdata="sec: "+std::to_string(csec)+
+	" msec: "+std::to_string(cmsec)+
+	" frames:"+std::to_string(frames_accum)+
+	" fps"+std::to_string(fps)+"/"+std::to_string(frames_measured);
 
 	//Draw fps.
 	ldv::ttf_representation fps_text{
@@ -92,7 +94,7 @@ void controller_fps_test::draw(ldv::screen& screen, int fps) {
 
 	ldv::ttf_representation txt{
 		s_resources.get_ttf_manager().get("consola-mono", 32), 
-		ldv::rgba8(255, 255, 255, 255), "mtv:"+compat::to_string(sat_response.mtv.x)+","+compat::to_string(sat_response.mtv.y)};
+		ldv::rgba8(255, 255, 255, 255), "mtv:"+std::to_string(sat_response.mtv.x)+","+std::to_string(sat_response.mtv.y)};
 	txt.go_to({0, 50});
 	txt.draw(screen);
 }

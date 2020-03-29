@@ -12,6 +12,14 @@
 #include <dfw/controller_interface.h>
 
 //libdansdl2
+#include <ldt/polygon_2d.h>
+#include <ldt/vector_2d.h>
+#include <ldt/point_2d.h>
+
+#include <ldv/screen.h>
+#include <ldv/raster_representation.h>
+#include <ldv/color.h>
+
 
 //std
 #include <cmath>

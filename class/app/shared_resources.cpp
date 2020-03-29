@@ -1,15 +1,18 @@
 #include "shared_resources.h"
 
+//lm
+#include <lm/sentry.h>
+
 //tools
-#include <source/string_utils.h>
-#include <class/text_reader.h> //Explode lines from file.
+#include <tools/string_utils.h>
+#include <tools/text_reader.h> //Explode lines from file.
 
 using namespace app;
 
 shared_resources::shared_resources(dfw::audio& au, 
 	lda::resource_manager& am, 
 	ldv::resource_manager& rm, 
-	tools::log& l, 
+	lm::logger& l, 
 	tools::chrono& cc, 
 	tools::arg_manager& argm
 )
@@ -23,9 +26,9 @@ shared_resources::shared_resources(dfw::audio& au,
 	register_animations();
 }
 
-void shared_resources::register_fonts()
-{	
-	log<<"registering fonts..."<<std::endl;
+void shared_resources::register_fonts() {
+
+	lm::log(log, lm::lvl::info)<<"registering fonts..."<<std::endl;
 
 	using namespace tools;
 
@@ -46,34 +49,30 @@ void shared_resources::register_fonts()
 
 void shared_resources::register_tilesets()
 {
-	log<<"registering tilesets..."<<std::endl;
+	lm::log(log, lm::lvl::info)<<"registering tilesets..."<<std::endl;
 
-	try
-	{
+	try {
 		tilesheets.push_back({"data/app_data/scifitiles-sheet-alt.dat"});
 		tilesheets.push_back({"data/app_data/shadows-sheet.dat"});
 		tilesheets.push_back({"data/app_data/character-sheet.dat"});
 		tilesheets.push_back({"data/app_data/decoration-sheet.dat"});
 	}
-	catch(std::exception& e)
-	{
-		log<<"unable to load all tilesets:"<<e.what()<<std::endl;
+	catch(std::exception& e) {
+		lm::log(log, lm::lvl::info)<<"unable to load all tilesets:"<<e.what()<<std::endl;
 		throw e;
 	}
 }
 
 void shared_resources::register_animations()
 {
-	log<<"registering animations..."<<std::endl;
+	lm::log(log, lm::lvl::info)<<"registering animations..."<<std::endl;
 
-	try
-	{
+	try {
 		//This 2 is "character-sheet", hopefully :).
 		animations.push_back({tilesheets[2], "data/app_data/character-animations.dat"});
 	}
-	catch(std::exception& e)
-	{
-		log<<"unable to load all animations: "<<e.what()<<std::endl;
+	catch(std::exception& e) {
+		lm::log(log, lm::lvl::info)<<"unable to load all animations: "<<e.what()<<std::endl;
 		throw e;
 	}
 }

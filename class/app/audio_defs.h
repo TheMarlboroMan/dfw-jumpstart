@@ -1,5 +1,4 @@
-#ifndef AUDIO_DEFS_H
-#define AUDIO_DEFS_H
+#pragma once
 
 namespace app
 {
@@ -18,5 +17,3 @@ struct sound_defs
 };
 
 }
-
-#endif

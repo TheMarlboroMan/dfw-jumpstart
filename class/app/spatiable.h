@@ -1,6 +1,6 @@
-#ifndef SPATIABLE_H
-#define SPATIABLE_H
+#pragma once
 
+//TODO: yeah, sure...
 #include <libDan2.h>
 #include "app_defs.h"
 
@@ -36,4 +36,3 @@ app::tbox		coarse_bounding_box(const app::tpoly&);
 
 }
 
-#endif

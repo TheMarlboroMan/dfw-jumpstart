@@ -1,5 +1,4 @@
-#ifndef ROOM_OBJECT_BOX_H
-#define ROOM_OBJECT_BOX_H
+#pragma once
 
 //local
 #include "spatiable.h"
@@ -39,4 +38,3 @@ class room_object_box:
 };
 }
 
-#endif

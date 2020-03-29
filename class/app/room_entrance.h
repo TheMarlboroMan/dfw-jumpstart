@@ -1,12 +1,11 @@
-#ifndef ROOM_ENTRANCE_H
-#define ROOM_ENTRANCE_H
-
-//Std
-#include <string>
+#pragma once 
 
 //local
 #include "game_defs.h"
 #include "room_object_box.h"
+
+//Std
+#include <string>
 
 namespace app
 {
@@ -33,5 +32,3 @@ class room_entrance:
 };
 
 }
-
-#endif

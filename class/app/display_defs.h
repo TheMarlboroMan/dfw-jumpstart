@@ -1,5 +1,4 @@
-#ifndef DISPLAY_DEFS_H
-#define DISPLAY_DEFS_H
+#pragma once
 
 namespace app
 {
@@ -43,5 +42,3 @@ struct player_animation_defs
 };
 
 }
-
-#endif

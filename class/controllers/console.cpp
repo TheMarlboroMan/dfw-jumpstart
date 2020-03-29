@@ -7,6 +7,10 @@
 #include <tools/compatibility_patches.h>
 #include <tools/dnot_parser.h>
 
+//ld
+#include <ldv/ttf_representation.h>
+#include <ldv/box_representation.h>
+
 //std
 #include <cassert>
 

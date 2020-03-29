@@ -1,13 +1,15 @@
 #include "test_2d_text.h"
 
+//local
+#include "../input.h"
+
+#include <lm/sentry.h>
+
+#include <ldv/ttf_representation.h>
+
 //std
 #include <cassert>
 
-//tools
-#include <templates/compatibility_patches.h>
-
-//local
-#include "../input.h"
 
 using namespace app;
 
@@ -23,7 +25,8 @@ try
 }
 catch(std::exception& e)
 {
-	sr.get_log()<<"Unable to create 2d text controller: "<<e.what()<<std::endl;
+	
+	lm::log(sr.get_log(), lm::lvl::error)<<"Unable to create 2d text controller: "<<e.what()<<std::endl;
 	//This would still propagate: initialization lists and exceptions work like that.
 }
 

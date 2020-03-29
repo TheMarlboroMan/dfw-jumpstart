@@ -1,13 +1,18 @@
 #include "test_poly.h"
 
+//local
+#include "../input.h"
+
+#include <tools/dnot_parser.h>
+
+#include <ldt/sat_2d.h>
+#include <ldv/polygon_representation.h>
+#include <ldv/ttf_representation.h>
+
+
 #include <sstream>
 #include <iomanip>
 
-#include <class/dnot_parser.h>
-#include <templates/compatibility_patches.h>
-
-//local
-#include "../input.h"
 
 using namespace app;
 
@@ -549,7 +554,7 @@ void controller_test_poly::editor_draw(ldv::screen& screen)
 		draw_polygon(screen, w.poly, ldv::rgb8(255, 200, 0), 128);
 		ldv::ttf_representation wi{
 				s_resources.get_ttf_manager().get("consola-mono", 32), 
-				ldv::rgba8(0, 0, 0, 255), compat::to_string(w.index)};
+				ldv::rgba8(0, 0, 0, 255), std::to_string(w.index)};
 
 		//Center the text on the polygon...
 		auto vt=w.poly.get_vertices();
@@ -580,7 +585,7 @@ void controller_test_poly::editor_draw(ldv::screen& screen)
 		{
 			ldv::ttf_representation txt_way{
 				s_resources.get_ttf_manager().get("consola-mono", 16), 
-				ldv::rgba8(0, 255, 255, 255), "index:"+compat::to_string(editor_waypoint_index)};
+				ldv::rgba8(0, 255, 255, 255), "index:"+std::to_string(editor_waypoint_index)};
 			txt_way.go_to({0,50});
 			txt_way.draw(screen);
 		}
@@ -590,9 +595,9 @@ void controller_test_poly::editor_draw(ldv::screen& screen)
 	//HUD data.
 	auto pos=editor_cursor_position();
 	std::string cdata=
-		"cam: "+compat::to_string(camera.get_x())+","+compat::to_string(camera.get_y())
-		+" coords: "+compat::to_string(pos.x)+","+compat::to_string(pos.y)
-		+" zoom:"+compat::to_string(camera.get_zoom());
+		"cam: "+std::to_string(camera.get_x())+","+std::to_string(camera.get_y())
+		+" coords: "+std::to_string(pos.x)+","+std::to_string(pos.y)
+		+" zoom:"+std::to_string(camera.get_zoom());
 
 	ldv::ttf_representation fps_text{
 		s_resources.get_ttf_manager().get("consola-mono", 16), 

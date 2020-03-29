@@ -1,5 +1,4 @@
-#ifndef GAME_INPUT_H
-#define GAME_INPUT_H
+#pragma once
 
 namespace app
 {
@@ -14,5 +13,3 @@ struct game_input
 };
 
 }
-
-#endif

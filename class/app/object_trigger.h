@@ -1,11 +1,10 @@
-#ifndef OBJECT_TRIGGER_H
-#define OBJECT_TRIGGER_H
-
-//std
-#include <string>
+#pragma once
 
 //local
 #include "room_object_box.h"
+
+//std
+#include <string>
 
 namespace app
 {
@@ -40,4 +39,3 @@ class object_trigger:
 
 }
 
-#endif

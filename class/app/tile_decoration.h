@@ -1,5 +1,4 @@
-#ifndef TILE_DECORATION_H
-#define TILE_DECORATION_H
+#pragma once
 
 #include "drawable.h"
 
@@ -42,5 +41,3 @@ class tile_decoration:
 };
 
 }
-
-#endif

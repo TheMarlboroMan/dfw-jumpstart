@@ -1,5 +1,4 @@
-#ifndef ROOM_ACTION_H
-#define ROOM_ACTION_H
+#pragma once
 
 #include <string>
 #include <stdexcept>
@@ -86,4 +85,3 @@ struct room_action_arcade:
 
 } //End namespace.
 
-#endif

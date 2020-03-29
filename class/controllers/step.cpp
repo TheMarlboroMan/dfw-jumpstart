@@ -1,10 +1,12 @@
 #include "step.h"
 
-//tools
-#include <templates/compatibility_patches.h>
-
 //local
 #include "../input.h"
+
+//ld
+#include <ldv/box_representation.h>
+#include <ldv/ttf_representation.h>
+#include <ldv/line_representation.h>
 
 using namespace app;
 
@@ -87,7 +89,7 @@ void controller_step::draw(ldv::screen& screen, int fps)
 	goal.draw(screen);
 
 	//Data.
-	std::string fdata="grit:"+compat::to_string(data.grit)+" fps:"+compat::to_string(fps)+" elapsed:"+compat::to_string(data.elapsed)+" measured:"+compat::to_string(data.chrono.get_milliseconds())+" steps:"+compat::to_string(data.steps);
+	std::string fdata="grit:"+std::to_string(data.grit)+" fps:"+std::to_string(fps)+" elapsed:"+std::to_string(data.elapsed)+" measured:"+std::to_string(data.chrono.get_milliseconds())+" steps:"+std::to_string(data.steps);
 	ldv::ttf_representation fps_text{
 		s_resources.get_ttf_manager().get("consola-mono", 16), 
 		ldv::rgba8(0, 0, 0, 255), fdata};

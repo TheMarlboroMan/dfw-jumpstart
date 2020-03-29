@@ -21,9 +21,8 @@ include_directories(../tools/include)
 add_subdirectory("${PROJECT_SOURCE_DIR}/class")
 
 #libraries... added manually. Sorry, that's life.
-add_library(log STATIC IMPORTED)
-set_target_properties(log PROPERTIES IMPORTED_LOCATION ${PROJECT_SOURCE_DIR}/../log/build/liblog.a)
-
+add_library(lm STATIC IMPORTED)
+set_target_properties(lm PROPERTIES IMPORTED_LOCATION ${PROJECT_SOURCE_DIR}/../log/build/liblm.a)
 
 add_library(tools STATIC IMPORTED)
 set_target_properties(tools PROPERTIES IMPORTED_LOCATION ${PROJECT_SOURCE_DIR}/../tools/build/libtools.a)
@@ -31,8 +30,8 @@ set_target_properties(tools PROPERTIES IMPORTED_LOCATION ${PROJECT_SOURCE_DIR}/.
 add_library(dansdl2 STATIC IMPORTED)
 set_target_properties(dansdl2 PROPERTIES IMPORTED_LOCATION ${PROJECT_SOURCE_DIR}/../libdansdl2/build/libdansdl2.a)
 
-add_library(dansdl2-tools STATIC IMPORTED)
-set_target_properties(dansdl2-tools PROPERTIES IMPORTED_LOCATION ${PROJECT_SOURCE_DIR}/../libdansdl2-tools/build/libdansdl2-tools.a)
+add_library(ldtools STATIC IMPORTED)
+set_target_properties(ldtools PROPERTIES IMPORTED_LOCATION ${PROJECT_SOURCE_DIR}/../libdansdl2-tools/build/libldtools.a)
 
 add_library(dfw STATIC IMPORTED)
 set_target_properties(dfw PROPERTIES IMPORTED_LOCATION ${PROJECT_SOURCE_DIR}/../dfw/build/libdfw.a)
@@ -40,4 +39,4 @@ set_target_properties(dfw PROPERTIES IMPORTED_LOCATION ${PROJECT_SOURCE_DIR}/../
 add_executable(dfw-jumpstart main.cpp ${SOURCE})
 
 
-target_link_libraries(dfw-jumpstart dfw log tools dansdl2 dansdl2-tools SDL2 SDL2_ttf SDL2_mixer SDL2_image GL)
+target_link_libraries(dfw-jumpstart dfw tools dansdl2 ldtools lm SDL2 SDL2_ttf SDL2_mixer SDL2_image GL)

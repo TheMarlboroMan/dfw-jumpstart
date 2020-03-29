@@ -186,7 +186,7 @@ void state_driver::virtualize_input(dfw::input& input) {
 	for(size_t i=0; i < input().get_joysticks_size(); ++i) {
 		input().virtualize_joystick_hats(i);
 		input().virtualize_joystick_axis(i, 15000);
-		lm::log(log, lml::lvl::info)<<"Joystick virtualized "<<i<<std::endl;
+		lm::log(log, lm::lvl::info)<<"Joystick virtualized "<<i<<std::endl;
 	}
 }
 

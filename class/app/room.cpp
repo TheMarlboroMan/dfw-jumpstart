@@ -1,17 +1,17 @@
 #include "room.h"
 
-//Std
-#include <algorithm>
-
-//Tools
-#include <class/dnot_parser.h>
-#include <templates/compatibility_patches.h>
-
 //Local
 #include "display_defs.h"
 #include "object_decoration_factory.h"
 #include "object_logic_factory.h"
 #include "room_action_factory.h"
+
+//Tools
+#include <tools/dnot_parser.h>
+
+//Std
+#include <algorithm>
+
 
 using namespace app;
 
@@ -155,7 +155,7 @@ const room_entrance& room::get_entrance_by_id(int id) const
 
 	if(res==std::end(entrances))
 	{
-		throw std::runtime_error("Unable to find terminus id "+compat::to_string(id));
+		throw std::runtime_error("Unable to find terminus id "+std::to_string(id));
 	}
 
 	return *res;

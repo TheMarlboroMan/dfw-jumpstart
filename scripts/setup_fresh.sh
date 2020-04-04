@@ -11,6 +11,12 @@ fi
 
 cd ..
 
+#remove build, if need be...
+if [ -d build ]
+then 
+	rm -rf build
+fi
+
 #remove shell scripts, main and readme file
 rm tiles.sh editor.sh README.md main.cpp
 
@@ -24,14 +30,13 @@ mkdir -p logs class/dfwimpl class/controllers data/config
 tar -xzf scripts/templates.tar.gz
 
 #Remove git and scripts
-#rm -rf .git;
-#rm scripts/setup_fresh.sh;
-#rm scripts/templates.tar.gz
+rm -rf .git;
+rm scripts/setup_fresh.sh;
+rm scripts/templates.tar.gz
 
-#Rename project
+#Rename project, create the build directory
 sed -i s/dfw-jumpstart/new-project/g CMakeLists.txt
-
-#TODO: We should have a CmakeLists template for the new controllers...
+mkdir build
 
 #give a little help, which was on the tar file.
 #cat GETTING_STARTED.txt;

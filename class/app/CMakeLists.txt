@@ -1,40 +1,22 @@
 set(SOURCE
 	${SOURCE}
 	${CMAKE_CURRENT_SOURCE_DIR}/audio_dispatcher.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/audio_dispatcher.h
 	${CMAKE_CURRENT_SOURCE_DIR}/audio_tools.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/audio_tools.h
 	${CMAKE_CURRENT_SOURCE_DIR}/draw_struct.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/draw_struct.h
 	${CMAKE_CURRENT_SOURCE_DIR}/drawable.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/drawable.h
 	${CMAKE_CURRENT_SOURCE_DIR}/motion.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/motion.h
 	${CMAKE_CURRENT_SOURCE_DIR}/object_audio_player.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/object_audio_player.h
 	${CMAKE_CURRENT_SOURCE_DIR}/object_decoration_factory.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/object_decoration_factory.h
 	${CMAKE_CURRENT_SOURCE_DIR}/object_decoration.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/object_decoration.h
 	${CMAKE_CURRENT_SOURCE_DIR}/object_logic_factory.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/object_logic_factory.h
 	${CMAKE_CURRENT_SOURCE_DIR}/object_trigger.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/object_trigger.h
 	${CMAKE_CURRENT_SOURCE_DIR}/player.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/player.h
 	${CMAKE_CURRENT_SOURCE_DIR}/room_action_factory.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/room_action_factory.h
 	${CMAKE_CURRENT_SOURCE_DIR}/room_entrance.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/room_entrance.h
 	${CMAKE_CURRENT_SOURCE_DIR}/room_wall.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/room_wall.h
 	${CMAKE_CURRENT_SOURCE_DIR}/room.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/room.h
 	${CMAKE_CURRENT_SOURCE_DIR}/shared_resources.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/shared_resources.h
 	${CMAKE_CURRENT_SOURCE_DIR}/spatiable.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/spatiable.h
 	${CMAKE_CURRENT_SOURCE_DIR}/tile_decoration.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/tile_decoration.h
 	PARENT_SCOPE
 )

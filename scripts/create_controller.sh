@@ -30,6 +30,7 @@ else
 	awk -v ptr="$awk_register_pattern" "\$0 ~ ptr {gsub(ptr, \"$awk_register_replacement\"ptr)}1" class/dfwimpl/state_driver.tmp > class/dfwimpl/state_driver.cpp
 	rm class/dfwimpl/state_driver.tmp
 
+	#TODO This is nonsense, actually, we need to do the cmake dance.
 	echo "DEP_CONTROLLERS+= $target" >> make/controllers;
 	echo "$recipe_deps" >> make/controllers;
 	echo "$recipe" >> make/controllers;

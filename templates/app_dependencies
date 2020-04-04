@@ -1,3 +1,0 @@
-DEP_APP_DEPENDENCIES=\
-#$(DIR_O_TOOLS)localization_base.o\
-#$(DIR_O_TOOLS)view_composer.o\

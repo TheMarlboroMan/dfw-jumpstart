@@ -29,7 +29,7 @@ tar -xzf scripts/templates.tar.gz
 #rm scripts/templates.tar.gz
 
 #Rename project
-sed -I /r/dfw-jumpstart/new-project/g/ CMakeLists.txt
+sed -I r/dfw-jumpstart/new-project/g CMakeLists.txt
 
 #TODO: We should have a CmakeLists template for the new controllers...
 

@@ -1,4 +1,5 @@
 #!/bin/bash
+set -x
 
 current_dir=`pwd | awk -F '/' '{print $NF}'`
 
@@ -20,12 +21,12 @@ rm -rf integration logs class data main.cpp
 mkdir -p logs class/dfwimpl class/controllers data/config
 
 #move the blank templates
-tar -xzf templates/templates.tar.gz
-rm -rf templates
+tar -xzf scripts/templates.tar.gz
 
 #Remove git and scripts
 #rm -rf .git;
 #rm scripts/setup_fresh.sh;
+#rm scripts/templates.tar.gz
 
 #give a little help, which was on the tar file.
 cat GETTING_STARTED.txt;

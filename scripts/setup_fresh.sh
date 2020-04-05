@@ -34,7 +34,7 @@ then
 fi
 
 #remove the project specifics...
-rm -rf integration logs class data main.cpp tiles.sh editor.sh README.md CMakeLists.txt .git
+rm -rf integration logs class data main.cpp tiles.sh editor.sh README.md CMakeLists.txt .git resources
 
 #refresh the directories...
 mkdir -p class/dfwimpl class/controllers
@@ -56,10 +56,10 @@ then
 fi
 
 #cleanup
+cd ..
 rm scripts/setup_fresh.sh;
 rm scripts/templates.tar.gz
 
 #give a little help, which was on the tar file.
-cd ..
 cat GETTING_STARTED.txt;
 exit 0

@@ -89,7 +89,10 @@ You can do the automatic or manual methods...
 
 The automatic method, under Linux: 
 
-- from the root of the project: ./scripts/create_controller.sh controllername.
+- from the root of the project:
+
+	- cd scripts
+	- ./create_controller.sh controllername.
 
 The manual method:
 
@@ -260,7 +263,7 @@ virtual void			request_draw(dfw::controller_view_manager& cvm)
 
 And that's all. Controllers will be drawn in the declared order (in the example,
 first the one with the index 1 and then "this"). No logic of the controllers will be
-executed at all.
+executed at all, so the view will be frozen.
 
 An example can be seen in the test_2d_text controller which requests text_2d to 
 be drawn and then overlays new elements.

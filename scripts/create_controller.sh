@@ -1,39 +1,55 @@
-if [ "$1" == "" ]; then
-	echo "Use ./scripts/create_controller.sh controller_name";
-else
-	uppercasename=${1^^}
-	name=$1
-	ecl="#ENDCONTROLLERLIST";
-	target="\$(DIR_O)${name}_c.o"
-	recipe_deps="$target:\$(DIR_CONTROLLERS)$name.h \$(DIR_CONTROLLERS)$name.cpp";
-	recipe="	\$(CC) \$(CFLAGS) \$(INCLUDES) \$(DIR_CONTROLLERS)$name.cpp -o $target"
+#!/bin/bash
 
-	cp class/controllers/_template.h class/controllers/$name.h
-	cp class/controllers/_template.cpp class/controllers/$name.cpp
-	sed -i -e "s/template/$name/g" class/controllers/$name.h
-	sed -i -e "s/TEMPLATE/$uppercasename/g" class/controllers/$name.h
-	sed -i -e "s/template/$name/g" class/controllers/$name.cpp
-	sed -i -e "s/state_max/state_$name, state_max/g" class/controllers/states.h
+current_dir=`pwd | awk -F '/' '{print $NF}'`
+if [ "scripts" != "$current_dir" ]
+then
+	echo "this script must be called from within the scripts directory"
+	exit 1
+fi
 
-	awk_include_pattern="//new controller includes here.";
-	awk_include_replacement="#include \\\"../controllers/$name.h\\\"\n"
-	awk -v ptr="$awk_include_pattern" "\$0 ~ ptr {gsub(ptr, \"$awk_include_replacement\"ptr)}1" class/dfwimpl/state_driver.h > class/dfwimpl/state_driver.tmp
+if [ "$1" == "" ]; 
+then
+	echo "Use ./create_controller.sh controller_name";
+	exit 1
+fi
 
-	awk_declare_pattern="//controller instances here.";
-	awk_declare_replacement="ptr_controller\t\t\t\t\tc_$name;\n\t"
-	awk -v ptr="$awk_declare_pattern" "\$0 ~ ptr {gsub(ptr, \"$awk_declare_replacement\"ptr)}1" class/dfwimpl/state_driver.tmp > class/dfwimpl/state_driver.h
-	rm class/dfwimpl/state_driver.tmp
+cd ..
 
-	mv class/dfwimpl/state_driver.cpp class/dfwimpl/state_driver.tmp
-	awk_register_pattern="//register controllers here.";
-	awk_register_replacement="reg(c_$name, t_states::state_$name, new controller_$name(log));\\n\\t"
-	awk -v ptr="$awk_register_pattern" "\$0 ~ ptr {gsub(ptr, \"$awk_register_replacement\"ptr)}1" class/dfwimpl/state_driver.tmp > class/dfwimpl/state_driver.cpp
-	rm class/dfwimpl/state_driver.tmp
+name=$1
 
-	#TODO This is nonsense, actually, we need to do the cmake dance.
-	echo "DEP_CONTROLLERS+= $target" >> make/controllers;
-	echo "$recipe_deps" >> make/controllers;
-	echo "$recipe" >> make/controllers;
-	echo "Done";
-fi;
+#Check if the controller already exists.
+if [ -f class/controllers/$name.h ] || [ -f class/controllers/$name.cpp ]
+then
+	echo "Controller files with that name already exist. Aborting";
+	exit 1
+fi 
 
+#Copy files and replace their contents
+cp class/controllers/_template.h class/controllers/$name.h
+cp class/controllers/_template.cpp class/controllers/$name.cpp
+sed -i "s/template/$name/g" class/controllers/$name.h
+sed -i "s/template/$name/g" class/controllers/$name.cpp
+
+#Add to controller to the state list
+sed -i "/new states go above here/i state_$name," class/controllers/states.h
+
+#Add the include and instance to the header file
+sed -i "/new controller includes here/i #include \"../controllers/$name.h\"" class/dfwimpl/state_driver.h
+sed -i "/controller instances here/i \\\tptr_controller\t\t\t\t\tc_$name;" class/dfwimpl/state_driver.h
+
+#Instance the controller in the implementation file
+sed -i "/register controllers here/i \\\treg(c_$name, t_states::state_$name, new controller_$name(log));" class/dfwimpl/state_driver.cpp
+
+#Add the file to the cmake recipes...
+sed -i "/_CONTROLLER_.cpp/i \\\t\$\{CMAKE_CURRENT_SOURCE_DIR\}/$name.cpp" class/controllers/CMakeLists.txt
+
+#Finally, if that was the first controller, just set it up...
+grep -q 'state_driver_interface(app::t_states::state_min)' class/dfwimpl/state_driver.cpp
+if [ 0 -eq $? ]
+then
+	sed -i "s/state_driver_interface(app::t_states::state_min)/state_driver_interface(app::t_states::state_$name)/g" class/dfwimpl/state_driver.cpp
+	echo "$name was setup as the starting controller"
+fi
+
+echo "Done"
+exit 0

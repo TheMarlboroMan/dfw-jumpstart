@@ -32,6 +32,9 @@ set_target_properties(dansdl2 PROPERTIES IMPORTED_LOCATION /usr/local/lib/libdan
 set_target_properties(ldtools PROPERTIES IMPORTED_LOCATION /usr/local/lib/libldtools.a)
 set_target_properties(dfw PROPERTIES IMPORTED_LOCATION /usr/local/lib/libdfw.a)
 
+#Configure the executable, we want it into the "build directory" and we want all resources copied
+#to the build directory.
 add_executable(dfw-jumpstart main.cpp ${SOURCE})
-
+set_target_properties(dfw-jumpstart PROPERTIES RUNTIME_OUTPUT_DIRECTORY build)
+add_custom_command(TARGET dfw-jumpstart POST_BUILD COMMAND cp -r ../resources/* ./build)
 target_link_libraries(dfw-jumpstart dfw tools dansdl2 ldtools lm SDL2 SDL2_ttf SDL2_mixer SDL2_image GL)

@@ -64,17 +64,25 @@ transformation could be implemented into the framework, I'd rather not do it
 and keep it simple. All the client code needs to do is invert the y axis 
 when creating a representation for a logic object.".
 
-Which translates to: "code all your logic assuming whatever coordinate system
-you want. When it comes to draw your representations, first set the camera to 
-the space you are using in the login (screen or cartesian). Next create your
-representations in 'screen' space and invert the Y axis if you are using 
-cartesian coordinates".
+Which translates to:
 
+1 - Code all your logic assuming whatever coordinate system you want. The 
+	geometry classes in libdansdl2 assume a cartesian space, but you may be
+	used to the trope of 0.0 being the top-left.
+2 - When it comes to draw your representations, first set the camera to 
+	the space you are using in the state. If you assume 0.0 is the top of the
+	screen and 0.0 is above 0.10, use "screen". Else use "cartesian".
+3 - Create your representations in 'screen' space, always. This might be 
+	confusing if you are using the "cartesian" system: the trick is to invert
+	than Y axis. Seriously, just go to "test_poly.cpp" and look at the 
+	draw_polygon method. It takes in a ldt::polygon_2d in cartesian space and
+	turns it into a ldv::polygon_representation by copying all its points and
+	inverting the y axis.
 
 ##A few definitions:
 
 - Controller:
-	TODO.
+	TODOz
 - State driver:
 	TODO
 - Signal broadcasting.

@@ -34,10 +34,10 @@ then
 fi
 
 #remove the project specifics...
-rm -rf integration logs class data main.cpp tiles.sh editor.sh README.md CMakeLists.txt .git resources
+rm -rf integration logs include lib data main.cpp tiles.sh editor.sh README.md CMakeLists.txt .git resources
 
 #refresh the directories...
-mkdir -p class/dfwimpl class/controllers
+mkdir -p lib/dfwimpl lib/controller include/dfwimpl include/controller
 
 #decompress the blank templates...
 tar -xzf scripts/templates.tar.gz

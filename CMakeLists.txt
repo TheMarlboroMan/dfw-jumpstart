@@ -16,7 +16,7 @@ add_compile_options(-std=c++11)
 #include_directories(../dfw/include)
 #include_directories(../tools/include)
 
-add_subdirectory("${PROJECT_SOURCE_DIR}/class")
+add_subdirectory("${PROJECT_SOURCE_DIR}/lib")
 
 #libraries... added manually. Sorry, that's life.
 add_library(lm STATIC IMPORTED)

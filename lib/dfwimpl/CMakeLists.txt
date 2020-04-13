@@ -1,0 +1,6 @@
+set(SOURCE
+	${SOURCE}
+	${CMAKE_CURRENT_SOURCE_DIR}/config.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/state_driver.cpp
+	PARENT_SCOPE
+)

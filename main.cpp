@@ -1,5 +1,5 @@
-#include "class/dfwimpl/app_config.h"
-#include "class/dfwimpl/state_driver.h"
+#include "include/dfwimpl/config.h"
+#include "include/dfwimpl/state_driver.h"
 
 #include <lm/file_logger.h>
 #include <lm/sentry.h>
@@ -35,10 +35,10 @@ int main(int argc, char ** argv) {
 		dfw::kernel kernel(log_app, carg);
 
 		lm::log(log_app, lm::lvl::info)<<"init app config..."<<std::endl;
-		app_config config;
+		dfwimpl::config config;
 
 		lm::log(log_app, lm::lvl::info)<<"create state driver..."<<std::endl;
-		state_driver sd(kernel, config);
+		dfwimpl::state_driver sd(kernel, config);
 
 		//Setting the state according to the command line...
 		if(carg.exists("-s") && carg.arg_follows("-s")) {

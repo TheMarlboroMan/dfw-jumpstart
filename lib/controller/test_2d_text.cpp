@@ -7,6 +7,9 @@
 
 #include <ldv/ttf_representation.h>
 
+#include <tools/json.h>
+#include <tools/file_utils.h>
+
 //std
 #include <cassert>
 
@@ -21,11 +24,16 @@ try
 {
 	setup_signal_receiver();
 	layout.map_font("main_text_font", s_resources.get_ttf_manager().get("consola-mono", 16));
-	layout.parse("data/app_data/layouts.dat", "text_bubble_layout");
+
+	auto document=tools::parse_json_string(
+		tools::dump_file("data/app_data/layouts.json")
+	);
+
+	layout.parse(document["text_bubble_layout"]);
 }
 catch(std::exception& e)
 {
-	
+
 	lm::log(sr.get_log(), lm::lvl::error)<<"Unable to create 2d text controller: "<<e.what()<<std::endl;
 	//This would still propagate: initialization lists and exceptions work like that.
 }
@@ -33,7 +41,7 @@ catch(std::exception& e)
 void test_2d_text::loop(dfw::input& input, const dfw::loop_iteration_data& lid)
 {
 	if(input().is_exit_signal())
-	{ 
+	{
 		set_leave(true);
 		return;
 	}
@@ -113,7 +121,7 @@ void test_2d_text::draw(ldv::screen& screen, int /*fps*/)
 
 void test_2d_text::request_draw(dfw::controller_view_manager& cvm)
 {
-	cvm.add(state_test_2d); 
+	cvm.add(state_test_2d);
 	cvm.add_ptr(this);
 }
 

@@ -3,12 +3,14 @@
 //local
 #include "../../include/input/input.h"
 
-#include <tools/dnot_parser.h>
-
 #include <ldt/sat_2d.h>
 #include <ldv/polygon_representation.h>
 #include <ldv/ttf_representation.h>
 
+#include <tools/json.h>
+#include <tools/file_utils.h>
+
+#include <rapidjson/document.h>
 
 #include <sstream>
 #include <iomanip>
@@ -56,7 +58,7 @@ void test_poly::loop(dfw::input& input, const dfw::loop_iteration_data& lid)
 		return;
 	}
 
-#ifdef WDEBUG_CODE 
+#ifdef WDEBUG_CODE
 	if(editor_active) {
 		editor_loop(input);
 		return;
@@ -77,7 +79,7 @@ void test_poly::loop(dfw::input& input, const dfw::loop_iteration_data& lid)
 			if(input.is_input_pressed(input::down))	player_accelerate(lid.delta, -1);
 			else if(input.is_input_pressed(input::up)) 	player_accelerate(lid.delta, 1);
 			else						player_idle(lid.delta);
-		
+
 			if(input.is_input_pressed(input::left))	player_turn(lid.delta, 1);
 			else if(input.is_input_pressed(input::right)) player_turn(lid.delta, -1);
 
@@ -104,7 +106,7 @@ void test_poly::draw(ldv::screen& screen, int /*fps*/)
 #endif
 
 	//Draw world... always drawn...
-	for(const auto& o : obstacles) draw_polygon(screen, o.poly, o.color, 255); 
+	for(const auto& o : obstacles) draw_polygon(screen, o.poly, o.color, 255);
 
 	switch(state) {
 
@@ -112,24 +114,24 @@ void test_poly::draw(ldv::screen& screen, int /*fps*/)
 		case tstates::intro:
 			//TODO. draw logo and hit any key
 		break;
-		case tstates::play: 
+		case tstates::play:
 			draw_polygon(screen, player.poly, player_color, 255);
 			draw_hud(screen);
 		break;
-		case tstates::game_over: 
+		case tstates::game_over:
 			//TODO. draw particles and hit any key
 		break;
 	}
 
 #ifdef WDEBUG_CODE
-	editor_draw_line(screen, 
-		editor_pt(debug_collision_line_pt1.x, debug_collision_line_pt1.y), 
-		editor_pt(debug_collision_line_pt2.x, debug_collision_line_pt2.y), 
+	editor_draw_line(screen,
+		editor_pt(debug_collision_line_pt1.x, debug_collision_line_pt1.y),
+		editor_pt(debug_collision_line_pt2.x, debug_collision_line_pt2.y),
 		ldv::rgb8(255,0,0));
 
-	editor_draw_line(screen, 
-		editor_pt(debug_collision_normal_pt1.x, debug_collision_normal_pt1.y), 
-		editor_pt(debug_collision_normal_pt2.x, debug_collision_normal_pt2.y), 
+	editor_draw_line(screen,
+		editor_pt(debug_collision_normal_pt1.x, debug_collision_normal_pt1.y),
+		editor_pt(debug_collision_normal_pt2.x, debug_collision_normal_pt2.y),
 		ldv::rgb8(255,0,0));
 #endif
 }
@@ -144,7 +146,7 @@ void test_poly::draw_hud(ldv::screen& screen)
 		return ss.str();
 	};
 	ldv::ttf_representation txt_timer{
-		s_resources.get_ttf_manager().get("consola-mono", 16), 
+		s_resources.get_ttf_manager().get("consola-mono", 16),
 		ldv::rgba8(255, 255, 255, 255), "time: "+timer_str(timer)+"\nbest: "+timer_str(best_time)};
 	txt_timer.align(screen.get_rect(), {ldv::representation_alignment::h::inner_right, ldv::representation_alignment::v::inner_top, 50, 10});
 	txt_timer.draw(screen);
@@ -157,14 +159,14 @@ void test_poly::draw_hud(ldv::screen& screen)
 	{
 		poly_health.align(screen.get_rect(), {ldv::representation_alignment::h::inner_right, ldv::representation_alignment::v::inner_top, 0, 10+(14*i)});
 		poly_health.draw(screen);
-	}	
+	}
 }
 
 void test_poly::do_camera(float delta)
 {
 	typedef ldt::point_2d<double>	pnt;
 	auto solve_for_x=[](pnt p1, pnt p2, double x)
-	{	
+	{
 		//This, of course, fails for straight or vertical lines.
 		double m=(p2.y-p1.y) / (p2.x-p1.x); 	//m=(y2-y1) / (x2-x1)
 		double b=p1.y-(m*p1.x); 		//y=mx+b, thus b=y-mx
@@ -189,7 +191,7 @@ void test_poly::soft_reset()
 	player={
 		{{ {-16.,-16.},{-16.,16.},{0.,64.},{16.,16.},{16.,-16.} } },
 		{0.,0.}, {0.,0.},
-		90., 
+		90.,
 		max_health
 	};
 	//Reset camera.
@@ -244,7 +246,7 @@ void test_poly::player_step(float delta)
 	if(!player.thrust.magnitude())
 	{
 		if(player.velocity.magnitude() < player_full_stop_threshold) player.velocity={0., 0.};
-//		else 
+//		else
 //		{
 			//TODO: This is problematic: we keep it, reverse becomes forward once key is lifted. We remove it, forget about steering!!!
 			//player.velocity=ldt::vector_from_angle(player.bearing)*player.velocity.magnitude();
@@ -346,39 +348,46 @@ void test_poly::load()
 {
 	try
 	{
-		auto root=tools::dnot_parse("data/app_data/arcade_data.dnot");
+		auto root=tools::parse_json_string(tools::dump_file("data/app_data/arcade_data.json"));
 		obstacles.clear();
 		waypoints.clear();
 
 		int index=0;
 
-		for(const auto& t : root["data"]["obstacles"].get_vector()) {
+		for(const auto& t : root["data"]["obstacles"].GetArray()) {
 
 			ldt::polygon_2d<double> poly;
-			for(const auto& v: t["poly"].get_vector()) poly.add_vertex({v[0],v[1]});
+			for(const auto& v: t["poly"].GetArray()) {
+				poly.add_vertex({v[0].GetDouble(),v[1].GetDouble()});
+			}
 			if(!poly.is_clockwise() || poly.is_concave()) {
 				throw std::runtime_error("counter-clockwise or concave poly found at index ["+std::to_string(index)+"]");
 			}
 
 			poly.set_rotation_center(poly.get_centroid());
-			ldv::rgb_color color{t["color"].get_vector()[0], t["color"].get_vector()[1], t["color"].get_vector()[2]};
+
+			const auto& color_array=t["color"].GetArray();
+
+			ldv::rgb_color color{color_array[0].GetFloat(), color_array[1].GetFloat(), color_array[2].GetFloat()};
 
 			obstacles.push_back({poly, color});
 			++index;
 		}
 
 		index=0;
-		for(const auto& t : root["data"]["waypoints"].get_vector()) {
+		for(const auto& t : root["data"]["waypoints"].GetArray()) {
 
 			ldt::polygon_2d<double> poly;
-			for(const auto& v: t["poly"].get_vector()) poly.add_vertex({v[0],v[1]});
+			for(const auto& v: t["poly"].GetArray()) {
+				poly.add_vertex({v[0].GetDouble(),v[1].GetDouble()});
+			}
 
 			if(!poly.is_clockwise() || poly.is_concave()) {
 				throw std::runtime_error("counter-clockwise or concave waypoint found at index ["+std::to_string(index)+"]");
 			}
 
 			poly.set_rotation_center(poly.get_centroid());
-			waypoints.push_back({poly, t["index"]});
+			waypoints.push_back({poly, t["index"].GetInt()});
 			++index;
 		}
 
@@ -467,7 +476,7 @@ void test_poly::editor_loop(dfw::input& input)
 	{
 		if(input.is_input_down(input_app::left) && camera.get_zoom() > 0.2) 	camera.set_zoom(camera.get_zoom()-0.1);
 		else if(input.is_input_down(input_app::right)) 				camera.set_zoom(camera.get_zoom()+0.1);
-		
+
 		switch(editor_mode)
 		{
 			case editor_modes::obstacles:
@@ -499,47 +508,76 @@ void test_poly::editor_save()
 	using namespace tools;
 
 	//Building the first level map
-	dnot_token::t_map mroot;
+	rapidjson::Value mroot;
+	mroot.SetObject();
 
 	//Building the second level maps.
-	dnot_token::t_map second_level;
+	rapidjson::Value second_level;
+	second_level.SetObject();
 
-	auto fill_vertexes=[](ldt::polygon_2d<double> poly, tools::dnot_token& tok)
-	{
-		for(const auto& p: poly.get_vertices())
-			tok.get_vector().push_back(dnot_token(dnot_token::t_vector({dnot_token(p.x), dnot_token(p.y)})));
+	auto fill_vertexes=[](ldt::polygon_2d<double> poly, rapidjson::Value& tok) {
+		for(const auto& p: poly.get_vertices()) {
+
+			rapidjson::Value arr;
+			arr.SetArray();
+			arr.PushBack(p.x);
+			arr.PushBack(p.y);
+
+			tok.GetArray().PushBack(arr);
+		}
 	};
 
-	second_level["obstacles"]=dnot_token(dnot_token::t_vector());
+	second_level["obstacles"]=rapidJson::Value;
+	second_level["obstacles"].SetArray();
 	for(const auto& o : obstacles)
 	{
-		dnot_token::t_map data;
-		data["color"]=dnot_token(dnot_token::t_vector{dnot_token(o.color.r), dnot_token(o.color.g), dnot_token(o.color.b)});
-		data["poly"]=dnot_token(dnot_token::t_vector());
+		rapidJson::Value data;
+		data.SetObject();
+
+		data["color"]=rapidJson::Value;
+		data["color"].SetArray();
+		data["color"].PushBack(.color.r);
+		data["color"].PushBack(.color.g);
+		data["color"].PushBack(.color.b);
+
+		data["poly"]=rapidJson::Value;
+		data["poly"].SetArray();
+
 		fill_vertexes(o.poly, data["poly"]);
-		second_level["obstacles"].get_vector().push_back(dnot_token{data});
+		second_level["obstacles"].GetArray().PushBack(dnot_token{data});
 	}
 
-	second_level["waypoints"]=dnot_token(dnot_token::t_vector());
-	for(const auto& w : waypoints)
-	{
-		dnot_token::t_map data;
-		data["index"]=dnot_token(w.index);
-		data["poly"]=dnot_token(dnot_token::t_vector());
+	second_level["waypoints"]=Rapidjson::Value;
+	second_level["waypoints"].SetArray();
+	for(const auto& w : waypoints) {
+
+		rapidJson::Value data;
+		data.SetObject();
+
+		data["index"]=w.index;
+		data["poly"]=rapidJson::Value;
+		data["poly"].SetArray();
+
 		fill_vertexes(w.poly, data["poly"]);
-		second_level["waypoints"].get_vector().push_back(dnot_token{data});
+		second_level["waypoints"].GetArray().PushBack(data);
 	}
 
 	//Adding it all up.
-	mroot["data"]=dnot_token(second_level);
+	mroot["data"]=second_level
+
+
+/*
+	rapidJson::Value root;
 	dnot_token root;
 	root.set(mroot);
 
+	TODO: Still need the printer for this.
+
 	//Save to disk.
-	std::ofstream file("data/app_data/arcade_data.dnot");
+	std::ofstream file("data/app_data/arcade_data.json");
 	file<<root.serialize();
 	file.close();
-	
+*/
 	std::cout<<"saved"<<std::endl;
 }
 
@@ -549,11 +587,11 @@ void test_poly::editor_draw(ldv::screen& screen)
 
 	//Draw obstacles and waypoints...
 	for(const auto& o : obstacles) draw_polygon(screen, o.poly, o.color, 255);
-	for(const auto& w : waypoints) 
+	for(const auto& w : waypoints)
 	{
 		draw_polygon(screen, w.poly, ldv::rgb8(255, 200, 0), 128);
 		ldv::ttf_representation wi{
-				s_resources.get_ttf_manager().get("consola-mono", 32), 
+				s_resources.get_ttf_manager().get("consola-mono", 32),
 				ldv::rgba8(0, 0, 0, 255), std::to_string(w.index)};
 
 		//Center the text on the polygon...
@@ -569,7 +607,7 @@ void test_poly::editor_draw(ldv::screen& screen)
 	draw_polygon(screen, player.poly, player_color, 255);
 
 	//Draw current mouse position and polygon in progress...
-	editor_draw_vertex(screen, editor_cursor_position(), ldv::rgb8(0,0,128)); 
+	editor_draw_vertex(screen, editor_cursor_position(), ldv::rgb8(0,0,128));
 	editor_draw_current_poly(screen);
 
 	//Other information...
@@ -584,7 +622,7 @@ void test_poly::editor_draw(ldv::screen& screen)
 		case editor_modes::waypoints:
 		{
 			ldv::ttf_representation txt_way{
-				s_resources.get_ttf_manager().get("consola-mono", 16), 
+				s_resources.get_ttf_manager().get("consola-mono", 16),
 				ldv::rgba8(0, 255, 255, 255), "index:"+std::to_string(editor_waypoint_index)};
 			txt_way.go_to({0,50});
 			txt_way.draw(screen);
@@ -600,7 +638,7 @@ void test_poly::editor_draw(ldv::screen& screen)
 		+" zoom:"+std::to_string(camera.get_zoom());
 
 	ldv::ttf_representation fps_text{
-		s_resources.get_ttf_manager().get("consola-mono", 16), 
+		s_resources.get_ttf_manager().get("consola-mono", 16),
 		ldv::rgba8(0, 255, 255, 255), cdata};
 	fps_text.go_to({0,0});
 	fps_text.draw(screen);
@@ -635,7 +673,7 @@ void test_poly::editor_draw_current_poly(ldv::screen& screen)
 	if(editor_current_poly.size() >= 1)
 	{
 		for(size_t i=1; i<editor_current_poly.size(); ++i)
-			editor_draw_line(screen, editor_current_poly[i-1], editor_current_poly[i], color); 
+			editor_draw_line(screen, editor_current_poly[i-1], editor_current_poly[i], color);
 		editor_draw_line(screen, editor_current_poly.back(), editor_cursor_position(), color);
 	}
 }
@@ -653,12 +691,12 @@ void test_poly::editor_close_poly()
 	{
 		return ldt::point_2d<double>{(double)p.x, (double)p.y};
 	};
-	
+
 	std::vector<ldt::point_2d<double>> vt;
 	for(const auto& p : editor_current_poly) vt.push_back(pt(p));
 
 	auto poly=ldt::polygon_2d<double>{vt, {pt(editor_current_poly[0])}};
-	if(poly.is_clockwise() && !poly.is_concave()) 
+	if(poly.is_clockwise() && !poly.is_concave())
 	{
 		switch(editor_mode)
 		{
@@ -676,7 +714,7 @@ void test_poly::editor_close_poly()
 
 test_poly::editor_pt test_poly::editor_cursor_position(bool snap)
 {
-	//Mouse snap vertex in world position... Because of the camera's 
+	//Mouse snap vertex in world position... Because of the camera's
 	//cartesian system, 0.0 is in the bottom left when the camera points at 0.0.
 
 	const auto fb=camera.get_focus_box();

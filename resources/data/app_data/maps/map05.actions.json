@@ -1,0 +1,4 @@
+[
+	{"id": 1, "type": 1, "room":"map02.json", "terminus_id":4, "repeat": true},
+	{"id": 2, "type": 1, "room":"map02.json", "terminus_id":5, "repeat": true}
+]

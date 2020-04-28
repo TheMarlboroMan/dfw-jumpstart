@@ -1,0 +1,86 @@
+{
+	"main":{
+		"properties":{
+			"wrap":false
+		},
+		"entries":[
+			{"key":"10_START", "type":"void"},
+			{"key":"20_CONTINUE", "type":"void"},
+			{"key":"30_CONTROLS", "type":"void"},
+			{"key":"40_OPTIONS", "type":"void"},
+			{"key":"50_EXIT", "type":"void"}
+		]
+	},
+
+	"options":{
+		"properties":{
+			"wrap":false
+		},
+		"entries":[
+			{
+				"key":"10_VIDEO_SIZE",
+				"type":"choice",
+				"properties": {
+					"value_type":"string",
+					"wrap":true,
+					"values": [
+						{"value": "700x500"},
+						{"value": "1100x750"},
+						{"value": "1400x1000"},
+						{"value": "fullscreen"}
+					]
+				}
+			},
+			{
+				"key":"25_VIDEO_VSYNC",
+				"type":"choice",
+				"properties": {
+					"value_type":"bool",
+					"wrap":true,
+					"values":[
+						{"value":true},
+						{"value":false}
+					]
+				}
+			},
+			{
+				"key":"30_SOUND_VOLUME",
+				"type":"int",
+				"properties": {
+					"value_type":"bool",
+					"wrap":false,
+					"min":0,
+					"max":127
+				}
+			},
+			{
+				"key":"40_MUSIC_VOLUME",
+				"type":"int",
+				"properties": {
+					"value_type":"bool",
+					"wrap":false,
+					"min":0,
+					"max":127
+				}
+			},
+			{
+				"key":"50_BACK",
+				"type":"void"
+			}
+		]
+	},
+	"controls":{
+		"properties":{
+			"wrap":true
+		},
+		"entries":[
+			{"key":"10_UP", "type":"string"},
+			{"key":"20_DOWN", "type":"string"},
+			{"key":"30_LEFT", "type":"string"},
+			{"key":"40_RIGHT", "type":"string"},
+			{"key":"50_ACTIVATE", "type":"string"},
+			{"key":"55_RESTORE", "type":"void"},
+			{"key":"60_BACK", "type":"void"}
+		]
+	}
+}

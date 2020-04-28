@@ -6,8 +6,11 @@
 #include "../../include/app/object_logic_factory.h"
 #include "../../include/app/room_action_factory.h"
 
-//Tools
-#include <tools/dnot_parser.h>
+#include <tools/json.h>
+#include <tools/file_utils.h>
+
+//External
+#include <rapidjson/document.h>
 
 //Std
 #include <algorithm>
@@ -16,7 +19,7 @@
 using namespace app;
 
 room::room()
-	:music_data{0,0,0,0}, 
+	:music_data{0,0,0,0},
 	trigger_memory(nullptr),
 	walls{1,1}
 {
@@ -28,14 +31,14 @@ room_drawable_collection room::get_drawables() const
 	room_drawable_collection res;
 
 	//The order of insertion goes "floor" then "shadows".
-	for(const auto& ft: floor_tiles) 
+	for(const auto& ft: floor_tiles)
 		res.background.push_back(&ft);
 
-	for(const auto& st: shadow_tiles) 
+	for(const auto& st: shadow_tiles)
 		res.background.push_back(&st);
 
 	//Next game objects...
-	for(const auto& dc: decorations) 
+	for(const auto& dc: decorations)
 		res.main.push_back(&dc);
 
 	return res;
@@ -52,74 +55,99 @@ void room::load(const std::string& fn)
 		clear();
 
 		std::string filename="data/app_data/maps/"+fn;
-		auto root=tools::dnot_parse_file(filename);
+		auto root=tools::parse_json_string(
+			tools::dump_file(
+				filename
+			)
+		);
 
 		//First, layers...
-		const auto& layers=root["data"]["layers"].get_vector();
+		const auto& layers=root["data"]["layers"].GetArray();
 
 		//Lambda to push decoration tiles...
-		auto push_tile=[](const tools::dnot_token& i, std::vector<tile_decoration>& tiles, int tset_id, int res_id, int alpha)
+		auto push_tile=[](const rapidjson::Value& i, std::vector<tile_decoration>& tiles, int tset_id, int res_id, int alpha)
 		{
-			int x=i["x"], y=i["y"], id=i["t"];
+			int x=i["x"].GetInt(), y=i["y"].GetInt(), id=i["t"].GetInt();
 			tiles.push_back(
 				tile_decoration(x, y, id, tset_id, res_id, alpha));
 		};
 
 		//First item is the logic layer.
-		if(layers.size() >= 1)
-		{
+		if(layers.Size() >= 1) {
 			walls.clear();
-			walls.resize(layers[0]["info"]["w"].get_int(), layers[0]["info"]["h"].get_int());
+			walls.resize(
+				layers[0]["info"]["w"].GetInt(),
+				layers[0]["info"]["h"].GetInt()
+			);
 
-			for(auto& i : layers[0]["data"].get_vector())
-				walls.insert(i["x"].get_int(), i["y"].get_int(), room_wall(i["x"].get_int(), i["y"].get_int(), i["t"].get_int()));
+			for(auto& i : layers[0]["data"].GetArray()) {
+				walls.insert(
+					i["x"].GetInt(),
+					i["y"].GetInt(),
+					room_wall(i["x"].GetInt(), i["y"].GetInt(), i["t"].GetInt())
+				);
+			}
 		}
 
 		//Second item is the background.
-		if(layers.size() >= 2)
-			for(auto& i : layers[1]["data"].get_vector())
+		if(layers.Size() >= 2) {
+			for(auto& i : layers[1]["data"].GetArray()) {
 				push_tile(i, floor_tiles, tileset_defs::background, texture_defs::bg_tiles, bgtiles_alpha);
+			}
+		}
 
 		//Third item is the shadow layer.
-		if(layers.size() >= 3)
-			for(auto& i : layers[2]["data"].get_vector())
+		if(layers.Size() >= 3) {
+			for(auto& i : layers[2]["data"].GetArray()) {
 				push_tile(i, shadow_tiles, tileset_defs::shadows, texture_defs::shadow_tiles, shadowtiles_alpha);
+			}
+		}
 
 		//Next, object layers...
-		const auto& logic=root["data"]["logic"].get_vector();
+		const auto& logic=root["data"]["logic"].GetArray();
 
 		//First layer is a lot of logic objects...
-		if(logic.size() >= 1)
-		{
+		if(logic.Size() >= 1) {
 			object_logic_factory fac(entrances, triggers, audio_players);
-			for(const auto& i: logic[0]["data"].get_vector())
+			for(const auto& i: logic[0]["data"].GetArray())
 				fac.make_object(i);
 		}
 
 		//Second layer is a lot of decorations...
-		if(logic.size() >= 2)
-		{
+		if(logic.Size() >= 2) {
 			object_decoration_factory fac;
-			for(const auto& i: logic[1]["data"].get_vector())
+			for(const auto& i: logic[1]["data"].GetArray())
 				decorations.push_back(fac.make_object(i));
 		}
 
 		//There are no more layers. so now, meta.
-		auto& meta=root["data"]["meta"].get_map();
+		const auto& meta=root["data"]["meta"].GetObject();
 
-		if(meta.count("actions"))
-		{
+		if(meta.HasMember("actions")) {
+
 			room_action_factory fac(actions);
-			auto root_act=tools::dnot_parse_file("data/app_data/maps/"+meta["actions"].get_string());
-			for(const auto& n : root_act["actions"].get_vector())
+
+			std::string root_act_filename="data/app_data/maps/"+std::string{meta["actions"].GetString()};
+			auto root_act=tools::parse_json_string(
+				tools::dump_file(
+					root_act_filename
+				)
+			);
+
+			for(const auto& n : root_act["actions"].GetArray()) {
 				fac.make_action(n);
+			}
 		}
 
-		if(meta.count("music_id") && meta.count("music_fade_in") && meta.count("music_fade_out"), meta.count("music_volume"))
-		{
-			auto stoi=[&meta](const std::string& key) {return (unsigned)std::atoi(meta[key].get_string().c_str());};
+		if(meta.HasMember("music_id") && meta.HasMember("music_fade_in") && meta.HasMember("music_fade_out"), meta.HasMember("music_volume")) {
+
+			auto stoi=[&meta](const std::string& key) {
+				std::string str=meta[key.c_str()].GetString();
+				return (unsigned)std::atoi(str.c_str());
+			};
+
 			music_data={
-				stoi("music_id"), stoi("music_fade_in"), 
+				stoi("music_id"), stoi("music_fade_in"),
 				stoi("music_fade_out"), stoi("music_volume")};
 		}
 		else
@@ -127,8 +155,7 @@ void room::load(const std::string& fn)
 			throw std::runtime_error("music data missing");
 		}
 	}
-	catch(std::exception& e)
-	{
+	catch(std::exception& e) {
 		throw std::runtime_error("Unable to load "+fn+": "+e.what());
 	}
 }
@@ -153,8 +180,7 @@ const room_entrance& room::get_entrance_by_id(int id) const
 	auto res=std::find_if(std::begin(entrances), std::end(entrances),
 		[id](const room_entrance& re) {return re.get_terminus_id()==id;});
 
-	if(res==std::end(entrances))
-	{
+	if(res==std::end(entrances)) {
 		throw std::runtime_error("Unable to find terminus id "+std::to_string(id));
 	}
 
@@ -164,8 +190,9 @@ const room_entrance& room::get_entrance_by_id(int id) const
 std::vector<const app::spatiable *> room::get_obstacles() const
 {
 	std::vector<const app::spatiable *> res;
-	for(const auto& o : decorations)
+	for(const auto& o : decorations) {
 		res.push_back(&o);
+	}
 	return res;
 }
 
@@ -175,7 +202,7 @@ std::vector<const app::spatiable *>	room::get_walls_by_box(const tbox& box) cons
 	//Returns the cell value for a world value. Given that the X axis ascends
 	//and the Y one descends, we need to alternatively use floor or ceil to
 	//adjust the cell value. Also, check_remainder is used for the "end"
-	//values so if we are with a value of 32 at the end we don't include 
+	//values so if we are with a value of 32 at the end we don't include
 	//cell 1 (this changes for Y values, of course... if I am at endY -32
 	//I don't want cell -1 but 0, so I must add.
 
@@ -214,7 +241,7 @@ std::vector<const app::spatiable *>	room::get_walls_by_box(const tbox& box) cons
 	//a cell, thus including the cell in the result. It also does not allow
 	//negative values...
 
-	//TODO: Protect against right and botto limits. walls.get_w() & walls.get_h()
+	//TODO: Protect against right and bottom limits. walls.get_w() & walls.get_h()
 
 
 	auto to_cell=[](int v, int dim, bool check_remainder)
@@ -229,7 +256,7 @@ std::vector<const app::spatiable *>	room::get_walls_by_box(const tbox& box) cons
 	//The ceil part makes sense: when passed to to_cell, box.origin.x+box.w
 	//is parsed to int, which just removes its decimal part, meaning that
 	//if you have an end in 32.7 it becomes 32 (thus decremented by "to_cell")
-	//instead of 33. The beg_X values are not subjected to the floor 
+	//instead of 33. The beg_X values are not subjected to the floor
 	//treatment, as this is done by default.
 
 	size_t 	beg_x=to_cell(box.origin.x, room_wall::wall_w, false),

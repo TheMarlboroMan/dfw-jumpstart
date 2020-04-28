@@ -5,8 +5,8 @@
 #include "room_entrance.h"
 #include "object_audio_player.h"
 
-//tools
-#include <tools/dnot_parser.h>
+//external
+#include <rapidjson/document.h>
 
 
 //std
@@ -20,10 +20,10 @@ class object_logic_factory
 	public:
 
 					object_logic_factory(
-						std::vector<room_entrance>&, 
+						std::vector<room_entrance>&,
 						std::vector<object_trigger>&,
 						std::vector<object_audio_player>&);
-	void				make_object(const tools::dnot_token&);
+	void				make_object(const rapidjson::Value&);
 
 	private:
 

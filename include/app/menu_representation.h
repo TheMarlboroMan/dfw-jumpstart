@@ -16,7 +16,7 @@ namespace app
 
 struct menu_representation_config
 {
-	bool				allow_wrap=false; //!< Allows the menu to wrap from the first to last item and vice versa. 
+	bool				allow_wrap=false; //!< Allows the menu to wrap from the first to last item and vice versa.
 };
 
 //!A very simple class to control representation of a tools::options_menu
@@ -40,13 +40,13 @@ A simple example:
 	menu_rep.set_register_name_function([ttfm](const std::string&, std::vector<ldv::representation*>& v)
 	{
 		v.push_back(new ldv::ttf_representation{
-			ttfm.get("consola-mono", 16), 
+			ttfm.get("consola-mono", 16),
 			ldv::rgba8(255, 255, 255, 255), "", 1., ldv::ttf_representation::text_align::right});
 	});
 	menu_rep.set_register_value_function([ttfm](const std::string&, std::vector<ldv::representation*>& v)
 	{
 		v.push_back(new ldv::ttf_representation{
-			ttfm.get("consola-mono", 16), 
+			ttfm.get("consola-mono", 16),
 			ldv::rgba8(255, 255, 255, 255), "", 1., ldv::ttf_representation::text_align::left});
 	});
 	menu_rep.set_draw_name_function([](const std::string&, size_t index, const std::vector<ldv::representation*>& v, const std::string& val, bool current)
@@ -106,8 +106,8 @@ class menu_representation
 			tfunc_register frn, tfunc_register frv,
 			tfunc_draw fdn, tfunc_draw fdv,
 			tfunc_step fsn, tfunc_step fsv
-		):menu(m), 
-		f_register_name(frn), f_register_value(frv), 
+		):menu(m),
+		f_register_name(frn), f_register_value(frv),
 		f_draw_name(fdn), f_draw_value(fdv),
 		f_step_name(fsn), f_step_value(fsv),
 		config(cfg), current_index(0), total_options(menu.size()),
@@ -132,8 +132,10 @@ class menu_representation
 		for(const auto& k : menu.get_keys())
 		{
 			bool current=index_to_t[current_index]==k;
-			f_step_name(k, i, delta, name_representations[k], menu.get_name(k), current);
-			f_step_value(k, i, delta, value_representations[k], menu.get_title(k), current);
+			//f_step_name(k, i, delta, name_representations[k], menu.get_name(k), current);
+			//f_step_value(k, i, delta, value_representations[k], menu.get_title(k), current);
+			f_step_name(k, i, delta, name_representations[k], "KEY__##", current);
+			f_step_value(k, i, delta, value_representations[k], "VALUE__##", current);
 			++i;
 		}
 	}
@@ -172,9 +174,9 @@ class menu_representation
 	void				select_option(size_t v) {select_option(index_to_t[v]);}
 	void				select_option(T k)
 	{
-		for(const auto& p : index_to_t) 
+		for(const auto& p : index_to_t)
 		{
-			if(p.second==k) 
+			if(p.second==k)
 			{
 				current_index=p.first;
 				regenerate_representations();
@@ -190,9 +192,15 @@ class menu_representation
 	size_t				get_current_index() const {return current_index;}
 
 	//!Forwards to "browse" in the current option of the menu.
-	void				browse_current(int d) 
-	{	
-		menu.browse(index_to_t[current_index], d);
+	void				browse_current(int d) {
+
+		using m=tools::options_menu<T>;
+
+		auto dir=d > 0
+			? m::browse_dir::next
+			: m::browse_dir::previous;
+
+		menu.browse(index_to_t[current_index], dir);
 		regenerate_representations();
 	}
 
@@ -217,8 +225,10 @@ class menu_representation
 		for(const auto& k : menu.get_keys())
 		{
 			bool current=index_to_t[current_index]==k;
-			f_draw_name(k, i, name_representations[k], menu.get_name(k), current);
-			f_draw_value(k, i, value_representations[k], menu.get_title(k), current);
+//			f_draw_name(k, i, name_representations[k], menu.get_name(k), current);
+//			f_draw_value(k, i, value_representations[k], menu.get_title(k), current);
+			f_draw_name(k, i, name_representations[k], "__KEY__##", current);
+			f_draw_value(k, i, value_representations[k], "__VALUE__##", current);
 			++i;
 		}
 	}

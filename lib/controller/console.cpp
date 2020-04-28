@@ -5,7 +5,7 @@
 
 //tools
 #include <tools/compatibility_patches.h>
-#include <tools/dnot_parser.h>
+#include <tools/json.h>
 
 //ld
 #include <ldv/ttf_representation.h>
@@ -133,8 +133,9 @@ bool console::can_leave_state() const {
 }
 
 void console::do_color_change(const std::string& key, int& r, int& g, int& b) {
-	auto tok=tools::dnot_parse_string(current_command);
-	r=tok[key][0];
-	g=tok[key][1];
-	b=tok[key][2];
+
+	auto tok=tools::parse_json_string(current_command);
+	r=tok[key.c_str()][0].GetInt();
+	g=tok[key.c_str()][1].GetInt();
+	b=tok[key.c_str()][2].GetInt();
 }

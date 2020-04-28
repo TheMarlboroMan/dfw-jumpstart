@@ -10,9 +10,7 @@
 #include "object_audio_player.h"
 
 //Tools
-#include <tools/dnot_token.h>
 #include <tools/matrix_2d.h>
-
 
 //Std
 #include <vector>
@@ -61,9 +59,9 @@ class room
 	const room_music_data&		get_music_data() const {return music_data;}
 
 #ifdef WDEBUG_CODE
-	const tools::matrix_2d<room_wall>& get_all_walls() {return walls;} 
+	const tools::matrix_2d<room_wall>& get_all_walls() {return walls;}
 #endif
-	
+
 	private:
 
 	//Constants...

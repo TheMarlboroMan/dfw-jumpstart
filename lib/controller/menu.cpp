@@ -9,6 +9,9 @@
 
 #include <ldv/ttf_representation.h>
 
+#include <tools/json.h>
+#include <tools/file_utils.h>
+
 //std
 #include <cassert>
 
@@ -118,8 +121,8 @@ void menu::do_options_menu_input(dfw::input& input, float delta)
 	{
 		if(!key_held_time) s_resources.get_audio().play_sound(s_resources.get_audio_resource_manager().get_sound(app::sound_defs::menu_change));
 
-		if(key_held_time > 0.4f || !key_held_time)
-		{
+		if(key_held_time > 0.4f || !key_held_time) {
+
 			options_menu_rep.browse_current(dir);
 			update_options_value(options_menu_rep.get_current_key());
 		}
@@ -189,7 +192,7 @@ void menu::learn_control(dfw::input& input)
 		input.configure(input.from_description({t, code, device}, it));
 
 		//Set the new value, force refresh.
-		controls_menu.set_string(controls_menu_rep.get_current_key(), translate_input(input.locate_description(it)));
+		controls_menu.set(controls_menu_rep.get_current_key(), translate_input(input.locate_description(it)));
 		controls_menu_rep.refresh();
 
 		//End the "learn" mode.
@@ -201,7 +204,7 @@ void menu::learn_control(dfw::input& input)
 	input().set_event_processing_function(f);
 
 	//Show a "learning" message...
-	controls_menu.set_string(controls_menu_rep.get_current_key(), menu_localization.get("menu-1066"));
+	controls_menu.set(controls_menu_rep.get_current_key(), menu_localization.get("menu-1066"));
 	controls_menu_rep.refresh();
 }
 
@@ -211,7 +214,7 @@ void menu::restore_default_controls(dfw::input& input)
 	{
 		input.clear(it);
 		input.configure(input.from_description({dfw::input_description::types::keyboard, code, 0}, it));
-		controls_menu.set_string(key, translate_input(input.locate_description(it)));
+		controls_menu.set(key, translate_input(input.locate_description(it)));
 	};
 
 	f(input::up, SDL_SCANCODE_UP, "10_UP");
@@ -226,9 +229,9 @@ void menu::restore_default_controls(dfw::input& input)
 void menu::update_options_value(const std::string& key)
 {
 	if(key=="10_VIDEO_SIZE")
-		broadcaster.send_signal(signal_video_size(options_menu.get_value_templated<std::string>(key)));
+		broadcaster.send_signal(signal_video_size(options_menu.get_string(key)));
 	else if(key=="25_VIDEO_VSYNC")
-		broadcaster.send_signal(signal_video_vsync{options_menu.get_value_templated<bool>(key)});
+		broadcaster.send_signal(signal_video_vsync{options_menu.get_bool(key)});
 	else if(key=="30_SOUND_VOLUME")
 		broadcaster.send_signal(signal_audio_volume{options_menu.get_int(key)});
 	else if(key=="40_MUSIC_VOLUME")
@@ -311,22 +314,32 @@ void menu::mount_menus()
 {
 	const auto& loc=menu_localization;
 
-	auto mount_menu=[&loc](tools::options_menu<std::string>& m, const std::string& file, const std::string& key)
-	{
-		std::map<std::string, std::string>	translation_map;
-		tools::mount_from_dnot(tools::dnot_parse_file(file)[key], m, &translation_map);
-		std::vector<tools::options_menu<std::string>::translation_struct > trad;
-		for(const auto& p: translation_map) trad.push_back({p.first, loc.get(p.second)});
-		m.translate(trad);
+	auto mount_menu=[&loc](tools::options_menu<std::string>& m, const std::string& _file, const std::string& _key) {
+
+		//std::map<std::string, std::string>	translation_map;
+
+		auto root=tools::parse_json_string(
+			tools::dump_file(
+				_file
+			)
+		);
+
+		tools::options_menu_from_json(
+			root[_key.c_str()].GetObject(),
+			m
+		);
+//		std::vector<tools::options_menu<std::string>::translation_struct > trad;
+//		for(const auto& p: translation_map) trad.push_back({p.first, loc.get(p.second)});
+//		m.translate(trad);
 	};
 
 	auto init_menu=[](
 		app::menu_representation<std::string>& m,
-		app::menu_representation<std::string>::tfunc_register f1, 
+		app::menu_representation<std::string>::tfunc_register f1,
 		app::menu_representation<std::string>::tfunc_register f2,
-		app::menu_representation<std::string>::tfunc_draw f3, 
+		app::menu_representation<std::string>::tfunc_draw f3,
 		app::menu_representation<std::string>::tfunc_draw f4,
-		app::menu_representation<std::string>::tfunc_step f5, 
+		app::menu_representation<std::string>::tfunc_step f5,
 		app::menu_representation<std::string>::tfunc_step f6)
 	{
 		m.set_register_name_function(f1); 	m.set_register_value_function(f2);
@@ -350,10 +363,10 @@ void menu::mount_menus()
 		: std::to_string(config.int_from_path("config:video:window_w_px"))
 				+"x"+std::to_string(config.int_from_path("config:video:window_h_px"));
 
-	options_menu.set_by_value_templated("10_VIDEO_SIZE", window_size);
-	options_menu.set_by_value_templated("25_VIDEO_VSYNC", config.get_screen_vsync());
-	options_menu.set_int("30_SOUND_VOLUME", config.get_audio_volume());
-	options_menu.set_int("40_MUSIC_VOLUME", config.get_music_volume());
+	options_menu.set("10_VIDEO_SIZE", window_size);
+	options_menu.set("25_VIDEO_VSYNC", config.get_screen_vsync());
+	options_menu.set("30_SOUND_VOLUME", config.get_audio_volume());
+	options_menu.set("40_MUSIC_VOLUME", config.get_music_volume());
 
 	init_menu(options_menu_rep, register_funcs[rf_txt], register_funcs[rf_txt],
 			draw_funcs[df_txt_left_composite], draw_funcs[df_txt_right_composite],
@@ -362,11 +375,11 @@ void menu::mount_menus()
 	//Control menus...
 	mount_menu(controls_menu, "data/app_data/menus.dat", "controls");
 
-	controls_menu.set_string("10_UP", translate_input(dfwimpl::input_description_from_config_token(config.token_from_path("config:input:up"))));
-	controls_menu.set_string("20_DOWN", translate_input(dfwimpl::input_description_from_config_token(config.token_from_path("config:input:down"))));
-	controls_menu.set_string("30_LEFT", translate_input(dfwimpl::input_description_from_config_token(config.token_from_path("config:input:left"))));
-	controls_menu.set_string("40_RIGHT", translate_input(dfwimpl::input_description_from_config_token(config.token_from_path("config:input:right"))));
-	controls_menu.set_string("50_ACTIVATE", translate_input(dfwimpl::input_description_from_config_token(config.token_from_path("config:input:activate"))));
+	controls_menu.set("10_UP", translate_input(dfwimpl::input_description_from_config_token(config.token_from_path("config:input:up"))));
+	controls_menu.set("20_DOWN", translate_input(dfwimpl::input_description_from_config_token(config.token_from_path("config:input:down"))));
+	controls_menu.set("30_LEFT", translate_input(dfwimpl::input_description_from_config_token(config.token_from_path("config:input:left"))));
+	controls_menu.set("40_RIGHT", translate_input(dfwimpl::input_description_from_config_token(config.token_from_path("config:input:right"))));
+	controls_menu.set("50_ACTIVATE", translate_input(dfwimpl::input_description_from_config_token(config.token_from_path("config:input:activate"))));
 
 	init_menu(controls_menu_rep, register_funcs[rf_txt], register_funcs[rf_txt],
 			draw_funcs[df_txt_left_composite], draw_funcs[df_txt_right_composite],
@@ -386,10 +399,10 @@ std::string menu::translate_input(const dfw::input_description& id)
 			res=menu_localization.get("menu-1100")+" "+std::string(SDL_GetKeyName(SDL_GetKeyFromScancode((SDL_Scancode)id.code)));
 		break;
 		case dfw::input_description::types::joystick:
-			res=menu_localization.get("menu-1101")+" "+compat::to_string(id.device)+" "+menu_localization.get("menu-1102")+" "+compat::to_string(id.code);
+			res=menu_localization.get("menu-1101")+" "+std::to_string(id.device)+" "+menu_localization.get("menu-1102")+" "+std::to_string(id.code);
 		break;
 		case dfw::input_description::types::mouse:
-			res=menu_localization.get("menu-1103")+" "+menu_localization.get("menu-1102")+" "+compat::to_string(id.code);
+			res=menu_localization.get("menu-1103")+" "+menu_localization.get("menu-1102")+" "+std::to_string(id.code);
 		break;
 	}
 
@@ -406,7 +419,14 @@ void menu::mount_layout()
 
 	//Finally, mount the layout...
 	layout.map_font("code_font", s_resources.get_ttf_manager().get("consola-mono", 12));
-	layout.parse("data/app_data/layouts.dat", "main_menu_layout");
+
+	auto root=tools::parse_json_string(
+		tools::dump_file(
+			"data/app_data/layouts.dat"
+		)
+	);
+
+	layout.parse(root["main_menu_layout"]);
 
 	//...and get references to its data...
 	menu_decorations.push_back({*(layout.get_by_id("boxr")), 0.f, 0.8f});

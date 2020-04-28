@@ -1,13 +1,11 @@
 cmake_minimum_required(VERSION 3.5.1)
-
 project(dfw-jumpstart)
-
 set(CMAKE_BUILD_TYPE Release)
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
 add_compile_options(-Wall -Wextra -Wundef -Wcast-align -Wwrite-strings -Wlogical-op -Wmissing-declarations -Wredundant-decls -Wshadow -Woverloaded-virtual -Wno-deprecated -ansi -pedantic -fno-rtti)
-
-#TODO: Should also allow for c++14
-add_compile_options(-std=c++11)
 
 #In a system where the libs are not installed, add them.
 #include_directories(../libdansdl2/include)

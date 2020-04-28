@@ -1,37 +1,48 @@
 #include "../../include/app/object_decoration_factory.h"
 
+#include <tools/json.h>
+#include <tools/file_utils.h>
+
 #include <ldt/polygon_2d.h>
 
 using namespace app;
 
-object_decoration_factory::object_decoration_factory()
-{
-	auto t=tools::dnot_parse_file("data/app_data/decoration-data.dat");
-	data=t["data"].get_map();
+object_decoration_factory::object_decoration_factory() {
+
+	auto document=tools::parse_json_string(
+		tools::dump_file(
+			"data/app_data/decoration-data.json"
+		)
+	);
+
+	for(const auto& entry : document.GetArray()) {
+
+		std::string key=entry["id"].GetString();
+		data[key]={
+			entry["w"].GetInt(),
+			entry["h"].GetInt(),
+			entry["frame_index"].GetInt()
+		};
+	}
 }
 
-object_decoration object_decoration_factory::make_object(const tools::dnot_token& t)
-{
-	try
-	{
-		//This is in "t" {p:{}, t:5, x:517, y:352}
+object_decoration object_decoration_factory::make_object(const rapidjson::Value& _t) {
 
-		//This is in "info" {w:27, h:17, frame_index: 1},
-		const auto& info=data["type_"+std::to_string(t["t"].get_int())];
+	try {
+		const auto& info=data["type_"+std::to_string(_t["t"].GetInt())];
 
-		tpos 	x=t["x"].get_int(), 
-			y=t["y"].get_int(), 
-			w=info["w"].get_int(), 
-			h=info["h"].get_int();
+		tpos 	x=_t["x"].GetInt(),
+			y=_t["y"].GetInt(),
+			w=info.w,
+			h=info.h;
 
 		tpoly poly{
 			{ {x,y}, {x+w,y}, {x+w,y+h}, {x,y+h} },
 			{x, y}};
 
-		return object_decoration(poly, info["frame_index"].get_int());
+		return object_decoration(poly, info.frame_index);
 	}
-	catch(std::exception &e)
-	{
+	catch(std::exception &e) {
 		std::string msg="Unable to make object:";
 		throw std::runtime_error(msg+e.what());
 	}

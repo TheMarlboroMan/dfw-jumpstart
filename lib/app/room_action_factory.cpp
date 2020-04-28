@@ -10,18 +10,18 @@ room_action_factory::room_action_factory(std::vector<std::unique_ptr<room_action
 
 }
 
-void room_action_factory::make_action(const tools::dnot_token& tok)
+void room_action_factory::make_action(const rapidjson::Value& tok)
 {
-	int 	id=tok["id"].get_int();
-	bool	repeat=tok["repeat"].get_bool();
+	int 	id=tok["id"].GetInt();
+	bool	repeat=tok["repeat"].GetBool();
 
-	switch(tok["type"].get_int())
+	switch(tok["type"].GetInt())
 	{
 		case 1: //Room exit
-			actions.emplace_back(new room_action_exit(id, repeat, tok["room"].get_string(), tok["terminus_id"].get_int()));
+			actions.emplace_back(new room_action_exit(id, repeat, tok["room"].GetString(), tok["terminus_id"].GetInt()));
 		break;
 		case 2:	//Text trigger
-			actions.emplace_back(new room_action_text(id, repeat, tok["text_id"].get_int()));
+			actions.emplace_back(new room_action_text(id, repeat, tok["text_id"].GetInt()));
 		break;
 		case 3: //Console
 			actions.emplace_back(new room_action_console(id, repeat));

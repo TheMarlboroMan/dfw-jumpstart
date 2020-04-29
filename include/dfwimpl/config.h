@@ -9,6 +9,7 @@
 
 //std
 #include <iostream>
+#include <vector>
 
 namespace dfwimpl
 {
@@ -45,7 +46,7 @@ class config:
 };
 
 dfw::input_description          input_description_from_config_token(const rapidjson::Value&);
-rapidjson::Value                config_token_from_input_description(const dfw::input_description&);
+std::vector<int>                config_token_from_input_description(const dfw::input_description&);
 dfw::input_description::types   input_description_type_from_int(int);
 int                             input_description_int_from_type(dfw::input_description::types);
 

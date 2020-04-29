@@ -227,16 +227,16 @@ void state_driver::receive_signal(dfw::kernel& kernel, const dfw::broadcast_sign
 			config.set_music_volume(kernel.get_audio()().get_main_music_volume());
 			config.set_screen_vsync(ldv::get_vsync());
 			config.set("config:video:fullscreen", kernel.get_screen().is_fullscreen());
-			config.set<int>("config:video:window_w_px", kernel.get_screen().get_w());
-			config.set<int>("config:video:window_h_px", kernel.get_screen().get_h());
+			config.set("config:video:window_w_px", kernel.get_screen().get_w());
+			config.set("config:video:window_h_px", kernel.get_screen().get_h());
 			config.save();
 		break;
 		case controller::t_signal_save_controls:
-			config.set<tools::dnot_token>("config:input:up", 	config_token_from_input_description(kernel.get_input().locate_description(input::up)));
-			config.set<tools::dnot_token>("config:input:down",  	config_token_from_input_description(kernel.get_input().locate_description(input::down)));
-			config.set<tools::dnot_token>("config:input:left", 	config_token_from_input_description(kernel.get_input().locate_description(input::left)));
-			config.set<tools::dnot_token>("config:input:right", 	config_token_from_input_description(kernel.get_input().locate_description(input::right)));
-			config.set<tools::dnot_token>("config:input:activate", 	config_token_from_input_description(kernel.get_input().locate_description(input::activate)));
+			config.set_vector("config:input:up", 		config_token_from_input_description(kernel.get_input().locate_description(input::up)));
+			config.set_vector("config:input:down",  	config_token_from_input_description(kernel.get_input().locate_description(input::down)));
+			config.set_vector("config:input:left", 	config_token_from_input_description(kernel.get_input().locate_description(input::left)));
+			config.set_vector("config:input:right", 	config_token_from_input_description(kernel.get_input().locate_description(input::right)));
+			config.set_vector("config:input:activate", config_token_from_input_description(kernel.get_input().locate_description(input::activate)));
 			config.save();
 		break;
 	}

@@ -1,0 +1,23 @@
+{
+	"video":{
+		"center_camera":true,
+		"draw_main_plane":true,
+		"draw_player_bounding_boxes":true,
+		"draw_wall_bounding_boxes":true,
+		"draw_background":true,
+		"draw_fps":true
+	},
+	"physics":{
+		"player_full_stop_threshold": 30.0,
+		"player_acceleration": 1000.0,
+		"player_base_turn_factor":200.0,
+		"player_max_turn_velocity":1100.0,
+		"player_max_thrust":15.0,
+		"player_min_thrust":-2.5,
+		"friction_coeficient":1.5,
+		"wrap_max_x": 1400.0,
+		"wrap_min_x": -1400.0,
+		"wrap_max_y": 4300.0,
+		"wrap_min_y": -1400.0
+	}
+}

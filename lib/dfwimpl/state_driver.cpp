@@ -2,7 +2,6 @@
 #include "../../include/input/input.h"
 
 //tools
-#include <tools/dnot_parser.h>
 #include <tools/string_utils.h>
 #include <lm/sentry.h>
 //std
@@ -12,8 +11,8 @@ using namespace dfwimpl;
 
 state_driver::state_driver(dfw::kernel& kernel, dfwimpl::config& c)
 	:state_driver_interface(t_states::state_menu),
-	config(c), 
-	log(kernel.get_log()), 
+	config(c),
+	log(kernel.get_log()),
 	receiver(get_signal_dispatcher()
 ) {
 

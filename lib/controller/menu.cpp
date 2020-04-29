@@ -358,10 +358,10 @@ void menu::mount_menus()
 	mount_menu(options_menu, "data/app_data/menus.dat", "options");
 
 
-	std::string window_size=config.bool_from_path("config:video:fullscreen")
+	std::string window_size=config.bool_from_path("video:fullscreen")
 		? "fullscreen"
-		: std::to_string(config.int_from_path("config:video:window_w_px"))
-				+"x"+std::to_string(config.int_from_path("config:video:window_h_px"));
+		: std::to_string(config.int_from_path("video:window_w_px"))
+				+"x"+std::to_string(config.int_from_path("video:window_h_px"));
 
 	options_menu.set("10_VIDEO_SIZE", window_size);
 	options_menu.set("25_VIDEO_VSYNC", config.get_screen_vsync());
@@ -375,11 +375,11 @@ void menu::mount_menus()
 	//Control menus...
 	mount_menu(controls_menu, "data/app_data/menus.dat", "controls");
 
-	controls_menu.set("10_UP", translate_input(dfwimpl::input_description_from_config_token(config.token_from_path("config:input:up"))));
-	controls_menu.set("20_DOWN", translate_input(dfwimpl::input_description_from_config_token(config.token_from_path("config:input:down"))));
-	controls_menu.set("30_LEFT", translate_input(dfwimpl::input_description_from_config_token(config.token_from_path("config:input:left"))));
-	controls_menu.set("40_RIGHT", translate_input(dfwimpl::input_description_from_config_token(config.token_from_path("config:input:right"))));
-	controls_menu.set("50_ACTIVATE", translate_input(dfwimpl::input_description_from_config_token(config.token_from_path("config:input:activate"))));
+	controls_menu.set("10_UP", translate_input(dfwimpl::input_description_from_config_token(config.token_from_path("input:up"))));
+	controls_menu.set("20_DOWN", translate_input(dfwimpl::input_description_from_config_token(config.token_from_path("input:down"))));
+	controls_menu.set("30_LEFT", translate_input(dfwimpl::input_description_from_config_token(config.token_from_path("input:left"))));
+	controls_menu.set("40_RIGHT", translate_input(dfwimpl::input_description_from_config_token(config.token_from_path("input:right"))));
+	controls_menu.set("50_ACTIVATE", translate_input(dfwimpl::input_description_from_config_token(config.token_from_path("input:activate"))));
 
 	init_menu(controls_menu_rep, register_funcs[rf_txt], register_funcs[rf_txt],
 			draw_funcs[df_txt_left_composite], draw_funcs[df_txt_right_composite],

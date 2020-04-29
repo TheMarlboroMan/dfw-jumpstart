@@ -60,17 +60,17 @@ state_driver::state_driver(dfw::kernel& kernel, dfwimpl::config& c)
 void state_driver::prepare_video(dfw::kernel& kernel) {
 
 	kernel.init_video_system({
-		config.int_from_path("config:video:window_w_px"),
-		config.int_from_path("config:video:window_h_px"),
-		config.int_from_path("config:video:window_w_logical"),
-		config.int_from_path("config:video:window_h_logical"),
-		config.string_from_path("config:video:window_title"),
-		config.bool_from_path("config:video:window_show_cursor"),
+		config.int_from_path("video:window_w_px"),
+		config.int_from_path("video:window_h_px"),
+		config.int_from_path("video:window_w_logical"),
+		config.int_from_path("video:window_h_logical"),
+		config.string_from_path("video:window_title"),
+		config.bool_from_path("video:window_show_cursor"),
 		config.get_screen_vsync()
 	});
 
 	auto& screen=kernel.get_screen();
-	screen.set_fullscreen(config.bool_from_path("config:video:fullscreen"));
+	screen.set_fullscreen(config.bool_from_path("video:fullscreen"));
 }
 
 void state_driver::prepare_audio(dfw::kernel& kernel) {
@@ -91,15 +91,15 @@ void state_driver::prepare_input(dfw::kernel& kernel) {
 
 	std::vector<input_pair> pairs{
 		{{input_description::types::keyboard, SDL_SCANCODE_ESCAPE, 0}, input::escape},
-		{input_description_from_config_token(config.token_from_path("config:input:left")), input::left},
-		{input_description_from_config_token(config.token_from_path("config:input:right")), input::right},
-		{input_description_from_config_token(config.token_from_path("config:input:up")), input::up},
-		{input_description_from_config_token(config.token_from_path("config:input:down")), input::down},
-		{input_description_from_config_token(config.token_from_path("config:input:activate")), input::activate},
-		{input_description_from_config_token(config.token_from_path("config:input:console_newline")), input::console_newline},
-		{input_description_from_config_token(config.token_from_path("config:input:console_backspace")), input::console_backspace}
+		{input_description_from_config_token(config.token_from_path("input:left")), input::left},
+		{input_description_from_config_token(config.token_from_path("input:right")), input::right},
+		{input_description_from_config_token(config.token_from_path("input:up")), input::up},
+		{input_description_from_config_token(config.token_from_path("input:down")), input::down},
+		{input_description_from_config_token(config.token_from_path("input:activate")), input::activate},
+		{input_description_from_config_token(config.token_from_path("input:console_newline")), input::console_newline},
+		{input_description_from_config_token(config.token_from_path("input:console_backspace")), input::console_backspace}
 #ifdef WDEBUG_CODE
-		,{input_description_from_config_token(config.token_from_path("config:input:reload_debug_config")), input::reload_debug_config}
+		,{input_description_from_config_token(config.token_from_path("input:reload_debug_config")), input::reload_debug_config}
 #endif
 	};
 
@@ -202,7 +202,7 @@ void state_driver::receive_signal(dfw::kernel& kernel, const dfw::broadcast_sign
 		case controller::t_signal_video_size: {
 			const std::string& val=static_cast<const controller::signal_video_size&>(s).value;
 			if(val=="fullscreen") {
-				kernel.get_screen().set_size(config.int_from_path("config:video:window_h_logical"), config.int_from_path("config:video:window_h_logical"));
+				kernel.get_screen().set_size(config.int_from_path("video:window_h_logical"), config.int_from_path("video:window_h_logical"));
 				kernel.get_screen().set_fullscreen(true);
 			}
 			else {
@@ -225,17 +225,17 @@ void state_driver::receive_signal(dfw::kernel& kernel, const dfw::broadcast_sign
 			config.set_audio_volume(kernel.get_audio()().get_main_sound_volume());
 			config.set_music_volume(kernel.get_audio()().get_main_music_volume());
 			config.set_screen_vsync(ldv::get_vsync());
-			config.set("config:video:fullscreen", kernel.get_screen().is_fullscreen());
-			config.set("config:video:window_w_px", kernel.get_screen().get_w());
-			config.set("config:video:window_h_px", kernel.get_screen().get_h());
+			config.set("video:fullscreen", kernel.get_screen().is_fullscreen());
+			config.set("video:window_w_px", kernel.get_screen().get_w());
+			config.set("video:window_h_px", kernel.get_screen().get_h());
 			config.save();
 		break;
 		case controller::t_signal_save_controls:
-			config.set_vector("config:input:up", 		config_token_from_input_description(kernel.get_input().locate_description(input::up)));
-			config.set_vector("config:input:down",  	config_token_from_input_description(kernel.get_input().locate_description(input::down)));
-			config.set_vector("config:input:left", 	config_token_from_input_description(kernel.get_input().locate_description(input::left)));
-			config.set_vector("config:input:right", 	config_token_from_input_description(kernel.get_input().locate_description(input::right)));
-			config.set_vector("config:input:activate", config_token_from_input_description(kernel.get_input().locate_description(input::activate)));
+			config.set_vector("input:up", 		config_token_from_input_description(kernel.get_input().locate_description(input::up)));
+			config.set_vector("input:down",  	config_token_from_input_description(kernel.get_input().locate_description(input::down)));
+			config.set_vector("input:left", 	config_token_from_input_description(kernel.get_input().locate_description(input::left)));
+			config.set_vector("input:right", 	config_token_from_input_description(kernel.get_input().locate_description(input::right)));
+			config.set_vector("input:activate", config_token_from_input_description(kernel.get_input().locate_description(input::activate)));
 			config.save();
 		break;
 	}

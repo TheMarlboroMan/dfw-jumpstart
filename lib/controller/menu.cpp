@@ -65,8 +65,13 @@ void menu::loop(dfw::input& input, const dfw::loop_iteration_data& lid) {
 }
 
 void menu::draw(ldv::screen& screen, int fps) {
+
 	layout.draw(screen);
-	ldv::ttf_representation txtfps{s_resources.get_ttf_manager().get("consola-mono", 16), ldv::rgba8(255, 255, 255, 255), std::to_string(fps), 1.};
+
+	ldv::ttf_representation txtfps{
+		s_resources.get_ttf_manager().get("consola-mono", 16), 
+		ldv::rgba8(255, 255, 255, 255), 
+		std::to_string(fps), 1.};
 	txtfps.draw(screen);
 }
 
@@ -78,8 +83,8 @@ void menu::do_main_menu_input(dfw::input& input) {
  	if(input.is_input_down(input::escape))						set_leave(true);
 	else if(input.is_input_down(input::up) || input().is_key_down(SDL_SCANCODE_UP)) 	main_menu_rep->previous();
 	else if(input.is_input_down(input::down) || input().is_key_down(SDL_SCANCODE_DOWN)) main_menu_rep->next();
-	else if(input.is_input_down(input::activate) || input().is_key_down(SDL_SCANCODE_RETURN))
-	{
+	else if(input.is_input_down(input::activate) || input().is_key_down(SDL_SCANCODE_RETURN)) {
+
 		const auto current_key=main_menu_rep->get_current_key();
 
 		//Restart. As a courtesy we force selection of "continue", in case we return.
@@ -105,13 +110,13 @@ void menu::do_main_menu_input(dfw::input& input) {
 }
 
 //Logic for the controls menu...
-void menu::do_controls_menu_input(dfw::input& input)
-{
+void menu::do_controls_menu_input(dfw::input& input) {
+
  	if(input.is_input_down(input::escape))							choose_current_menu(main_menu_rep.get());
 	else if(input.is_input_down(input::up) || input().is_key_down(SDL_SCANCODE_UP)) 		controls_menu_rep->previous();
 	else if(input.is_input_down(input::down) || input().is_key_down(SDL_SCANCODE_DOWN)) 	controls_menu_rep->next();
-	else if(input.is_input_down(input::activate) || input().is_key_down(SDL_SCANCODE_RETURN))
-	{
+	else if(input.is_input_down(input::activate) || input().is_key_down(SDL_SCANCODE_RETURN)) {
+
 		const auto& key=controls_menu_rep->get_current_key();
 
 		if(key=="55_RESTORE") {
@@ -122,7 +127,6 @@ void menu::do_controls_menu_input(dfw::input& input)
 			choose_current_menu(main_menu_rep.get());
 		}
 		else {
-			//TODO: Are you even doing this?????????
 			learn_control(input);
 		}
 	}
@@ -160,8 +164,8 @@ void menu::do_options_menu_input(dfw::input& input, float delta) {
 	key_held_time=0.f;
 }
 
-void menu::learn_control(dfw::input& input)
-{
+void menu::learn_control(dfw::input& input) {
+
 	int it=0;
 	const auto key=controls_menu_rep->get_current_key();
 
@@ -172,8 +176,8 @@ void menu::learn_control(dfw::input& input)
 	else if(key=="50_ACTIVATE") it=input::activate;
 
 	//This is the input learning function...
-	auto f=[this, &input, it](SDL_Event& e, ldi::sdl_input::tf_default& df)
-	{
+	auto f=[this, &input, it](SDL_Event& e, ldi::sdl_input::tf_default& df) {
+
 		dfw::input_description::types t=dfw::input_description::types::none;
 		int code=0, device=0;
 
@@ -216,14 +220,18 @@ void menu::learn_control(dfw::input& input)
 	input().set_event_processing_function(f);
 
 	//Show a "learning" message...
-	controls_menu.set(controls_menu_rep->get_current_key(), menu_localization.get("menu-1066"));
+	controls_menu.set(
+		controls_menu_rep->get_current_key(), 
+		menu_localization.get("menu-1066")
+	);
+
 	controls_menu_rep->refresh();
 }
 
-void menu::restore_default_controls(dfw::input& input)
-{
-	auto f=[&input, this](int it, int code, const std::string& key)
-	{
+void menu::restore_default_controls(dfw::input& input) {
+
+	auto f=[&input, this](int it, int code, const std::string& key)	{
+
 		input.clear(it);
 		input.configure(input.from_description({dfw::input_description::types::keyboard, code, 0}, it));
 		controls_menu.set(key, translate_input(input.locate_description(it)));
@@ -263,12 +271,11 @@ void menu::update_options_value(const std::string& _key) {
 }
 
 //Creates all functions needed to draw the menus...
-void menu::create_functions()
-{
+void menu::create_functions() {
+
 	const auto& ttfm=s_resources.get_ttf_manager();
 
 	//functions to register representations...
-
 	register_funcs[rf_txt]=[ttfm](const std::string& /*k*/, std::vector<ldv::representation*>& v)
 	{
 		v.push_back(new ldv::ttf_representation{
@@ -279,40 +286,37 @@ void menu::create_functions()
 	register_funcs[rf_empty]=[](const std::string&, std::vector<ldv::representation*>&){};
 
 	//functions to draw.
-
-	auto draw_txt=[](ldv::ttf_representation& r, size_t index, const std::string& val, bool current, ldv::ttf_representation::text_align al)
-	{
+	auto draw_txt=[](ldv::ttf_representation& r, size_t index, const std::string& val, bool current, ldv::ttf_representation::text_align al) {
 		r.lock_changes();
 			r.set_color(current ? ldv::rgb8(255, 255, 255) : ldv::rgb8(192, 0, 0));
 			r.set_text(val);
 			r.set_text_align(al);
 		r.unlock_changes();
 		r.go_to({0, 20+(int)index*20});
-
 	};
 
 	using alh=ldv::representation_alignment::h;
 	using alv=ldv::representation_alignment::v;
 
 	//Draws a menu that is key only... Like the main one.
-	draw_funcs[df_txt_right_single]=[draw_txt](const std::string& /*k*/, size_t index, const std::vector<ldv::representation*>& v, const std::string& val, bool current)
-	{
+	draw_funcs[df_txt_right_single]=[draw_txt](const std::string& /*k*/, size_t index, const std::vector<ldv::representation*>& v, const std::string& val, bool current) {
+
 		auto& r=*(static_cast<ldv::ttf_representation*>(v[0]));
 		draw_txt(r, index, val, current, ldv::ttf_representation::text_align::right);
 		r.align({0,0,700,1}, {alh::inner_right, alv::none, 20,0});
 	};
 
 	//Draws key part of a menu with key and value.
-	draw_funcs[df_txt_left_composite]=[draw_txt](const std::string& /*k*/, size_t index, const std::vector<ldv::representation*>& v, const std::string& val, bool current)
-	{
+	draw_funcs[df_txt_left_composite]=[draw_txt](const std::string& /*k*/, size_t index, const std::vector<ldv::representation*>& v, const std::string& val, bool current) {
+
 		auto& r=*(static_cast<ldv::ttf_representation*>(v[0]));
 		draw_txt(r, index, val, current, ldv::ttf_representation::text_align::right);
 		r.align({0,0,450,1}, {alh::inner_right, alv::none, 0, 0});
 	};
 
 	//Draws the value part of a menu with key and value.
-	draw_funcs[df_txt_right_composite]=[draw_txt](const std::string& /*k*/, size_t index, const std::vector<ldv::representation*>& v, const std::string& val, bool current)
-	{
+	draw_funcs[df_txt_right_composite]=[draw_txt](const std::string& /*k*/, size_t index, const std::vector<ldv::representation*>& v, const std::string& val, bool current) {
+
 		if(!v.size()) return; //Some options may not have a value...
 		auto& r=*(static_cast<ldv::ttf_representation*>(v[0]));
 		draw_txt(r, index, val, current, ldv::ttf_representation::text_align::left);
@@ -323,8 +327,8 @@ void menu::create_functions()
 
 	//functions to step.
 	const auto& rpul=pulse; //The alpha of the font pulsates...
-	step_funcs[sf_pulse]=[&rpul](const std::string& /*k*/, size_t /*index*/, float /*delta*/, const std::vector<ldv::representation*>& v, const std::string& /*val*/, bool current)
-	{
+	step_funcs[sf_pulse]=[&rpul](const std::string& /*k*/, size_t /*index*/, float /*delta*/, const std::vector<ldv::representation*>& v, const std::string& /*val*/, bool current) {
+
 		if(!v.size()) return; //Again, some options may not have a value.
 		v[0]->set_alpha(current ? 255 : rpul.val);
 	};
@@ -333,8 +337,8 @@ void menu::create_functions()
 }
 
 //Mounts the menus, load values, use draw functions.
-void menu::mount_menus()
-{
+void menu::mount_menus() {
+
 	const auto& loc=menu_localization;
 
 	auto mount_menu=[&loc](tools::options_menu<std::string>& m, const std::string& _file, const std::string& _key) {
@@ -452,11 +456,14 @@ void menu::mount_menus()
 			},
 			[this](const std::string& _key) -> std::string {
 
-				if(_key=="10_UP") return translate_input(dfwimpl::input_description_from_config_token(config.token_from_path("input:up")));
-				if(_key=="20_DOWN") return translate_input(dfwimpl::input_description_from_config_token(config.token_from_path("input:down")));
-				if(_key=="30_LEFT") return translate_input(dfwimpl::input_description_from_config_token(config.token_from_path("input:left")));
-				if(_key=="40_RIGHT") return translate_input(dfwimpl::input_description_from_config_token(config.token_from_path("input:right")));
-				if(_key=="50_ACTIVATE") return translate_input(dfwimpl::input_description_from_config_token(config.token_from_path("input:activate")));
+				if(_key=="10_UP" || 
+					_key=="20_DOWN" ||
+					_key=="30_LEFT" ||
+					_key=="40_RIGHT" ||
+					_key=="50_ACTIVATE") {
+
+					return controls_menu.get_string(_key);
+				}
 
 				return "";
 			}
@@ -465,8 +472,8 @@ void menu::mount_menus()
 }
 
 //Translates a token from the config file (input part) to std::string, human readable.
-std::string menu::translate_input(const dfw::input_description& id)
-{
+std::string menu::translate_input(const dfw::input_description& id) {
+
 	std::string res;
 
 	switch(id.type) {
@@ -488,8 +495,8 @@ std::string menu::translate_input(const dfw::input_description& id)
 }
 
 //Mounts the layout.
-void menu::mount_layout()
-{
+void menu::mount_layout() {
+
 	//Register external representations and fonts...
 	layout.register_as_external("menu_main", main_menu_rep->get_representation());
 	layout.register_as_external("menu_options", options_menu_rep->get_representation());

@@ -11,14 +11,13 @@
 #include <map>
 #include <functional>
 
-namespace app
-{
+namespace app {
 
 //!A very simple class to control representation of a tools::options_menu
 
 template <typename T>
-class menu_representation
-{
+class menu_representation {
+
 	public:
 
 	typedef std::function<void(const T&, std::vector<ldv::representation*>&)> tfunc_register;
@@ -45,14 +44,14 @@ class menu_representation
 		total_options(menu.size()),
 		group({0,0}),
 		title_translator{tft},
-		value_translator{tfv}
-	{
+		value_translator{tfv} {
+
 		create_data();
 		regenerate_representations();
 	}
 
-	void				step(float delta)
-	{
+	void				step(float delta) {
+
 		size_t i=0;
 		for(const auto& k : menu.get_keys()) {
 
@@ -65,11 +64,14 @@ class menu_representation
 	void				previous() {
 		
 		current_key=menu.adjacent_key(current_key, tools::options_menu<T>::browse_dir::previous);
+		regenerate_representations();
+
 	}
 
 	void				next() {
 
 		current_key=menu.adjacent_key(current_key, tools::options_menu<T>::browse_dir::next);
+		regenerate_representations();
 	}
 
 	void				select_option(const T& _key) {
@@ -112,8 +114,8 @@ class menu_representation
 
 	private:
 
-	void				regenerate_representations()
-	{
+	void				regenerate_representations() {
+
 		size_t i=0;
 		for(const auto& k : menu.get_keys()) {
 

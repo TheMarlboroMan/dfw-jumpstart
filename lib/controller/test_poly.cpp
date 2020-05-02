@@ -354,7 +354,7 @@ void test_poly::load()
 
 		int index=0;
 
-		for(const auto& t : root["data"]["obstacles"].GetArray()) {
+		for(const auto& t : root["obstacles"].GetArray()) {
 
 			ldt::polygon_2d<double> poly;
 			for(const auto& v: t["poly"].GetArray()) {
@@ -375,7 +375,7 @@ void test_poly::load()
 		}
 
 		index=0;
-		for(const auto& t : root["data"]["waypoints"].GetArray()) {
+		for(const auto& t : root["waypoints"].GetArray()) {
 
 			ldt::polygon_2d<double> poly;
 			for(const auto& v: t["poly"].GetArray()) {
@@ -563,7 +563,7 @@ void test_poly::editor_save()
 	}
 
 	//Adding it all up.
-	mroot["data"]=second_level
+	mroot=second_level
 
 
 /*

@@ -112,7 +112,7 @@
 		{
 			"type":"ttf",
 			"location":[0, 0],
-			"text":"auto draw_txt_align_right=[](const std::string& /*k*/, size_t index, const std::vector<ldv::representation*>& v, const std::string& val, bool current){\\n\\tauto& r=*(static_cast<ldv::ttf_representation*>(v[0]));\\n\\t\\tr.lock_changes();\\n\\t\\t\\tr.set_color(current ? ldv::rgb8(255,255,255) : ldv::rgb8(64,64,64));\\n\\t\\t\\tr.set_text_align(ldv::ttf_representation::text_align::right);\\n\\t\\t\\tr.set_text(val);\\n\\t\\t\\tr.unlock_changes();\\n\\t\\tr.go_to({0, (int)index*20});\\n};",
+			"text":"auto draw_txt_align_right=[](const std::string& /*k*/, size_t index, const std::vector<ldv::representation*>& v, const std::string& val, bool current){\n\tauto& r=*(static_cast<ldv::ttf_representation*>(v[0]));\n\t\tr.lock_changes();\n\t\t\tr.set_color(current ? ldv::rgb8(255,255,255) : ldv::rgb8(64,64,64));\n\t\t\tr.set_text_align(ldv::ttf_representation::text_align::right);\n\t\t\tr.set_text(val);\n\t\t\tr.unlock_changes();\n\t\tr.go_to({0, (int)index*20});\n};",
 			"font":"code_font",
 			"rgba":[0, 64, 0, 128],
 			"id":"code_text",

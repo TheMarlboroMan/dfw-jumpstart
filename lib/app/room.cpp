@@ -21,13 +21,12 @@ using namespace app;
 room::room()
 	:music_data{0,0,0,0},
 	trigger_memory(nullptr),
-	walls{1,1}
-{
+	walls{1,1} {
 
 }
 
-room_drawable_collection room::get_drawables() const
-{
+room_drawable_collection room::get_drawables() const {
+
 	room_drawable_collection res;
 
 	//The order of insertion goes "floor" then "shadows".
@@ -47,8 +46,8 @@ room_drawable_collection room::get_drawables() const
 //Loads a room from the file indicated by fn. fn is only the name, like map01.dat,
 //without the full path.
 
-void room::load(const std::string& fn)
-{
+void room::load(const std::string& fn) {
+
 	try
 	{
 		//This is non transactional. Any failure and we drop it.
@@ -62,7 +61,7 @@ void room::load(const std::string& fn)
 		);
 
 		//First, layers...
-		const auto& layers=root["data"]["layers"].GetArray();
+		const auto& layers=root["layers"].GetArray();
 
 		//Lambda to push decoration tiles...
 		auto push_tile=[](const rapidjson::Value& i, std::vector<tile_decoration>& tiles, int tset_id, int res_id, int alpha)
@@ -104,7 +103,7 @@ void room::load(const std::string& fn)
 		}
 
 		//Next, object layers...
-		const auto& logic=root["data"]["logic"].GetArray();
+		const auto& logic=root["logic"].GetArray();
 
 		//First layer is a lot of logic objects...
 		if(logic.Size() >= 1) {
@@ -121,20 +120,21 @@ void room::load(const std::string& fn)
 		}
 
 		//There are no more layers. so now, meta.
-		const auto& meta=root["data"]["meta"].GetObject();
+		const auto& meta=root["meta"].GetObject();
 
 		if(meta.HasMember("actions")) {
 
 			room_action_factory fac(actions);
 
 			std::string root_act_filename="data/app_data/maps/"+std::string{meta["actions"].GetString()};
+
 			auto root_act=tools::parse_json_string(
 				tools::dump_file(
 					root_act_filename
 				)
 			);
 
-			for(const auto& n : root_act["actions"].GetArray()) {
+			for(const auto& n : root_act.GetArray()) {
 				fac.make_action(n);
 			}
 		}
@@ -152,7 +152,18 @@ void room::load(const std::string& fn)
 		}
 		else
 		{
-			throw std::runtime_error("music data missing");
+
+			std::string missing_nodes{};
+			for(const auto& key : std::vector<std::string>{
+				"music_id", "music_fade_in", "music_fade_out", "music_volume"
+			}) {
+
+				if(!meta.HasMember(key.c_str())) {
+					missing_nodes=key+" ";
+				}
+			}
+
+			throw std::runtime_error("music data missing, missing nodes "+missing_nodes);
 		}
 	}
 	catch(std::exception& e) {

@@ -31,7 +31,7 @@ try
 	//TODO: I'd actually like to have this in the constructor.
 	game_player.inject_dispatcher(game_audio_dispatcher);
 
-	do_room_change("map01.dat", 0);
+	do_room_change("map01.json", 0);
 }
 catch(std::exception& e) {
 	lm::log(s_resources.get_log(), lm::lvl::error)<<"Unable to create main controller: "<<e.what()<<std::endl;
@@ -337,7 +337,7 @@ void test_2d::do_trigger(const app::object_trigger& trig) {
 	else
 	{
 */
-//			do_room_change("map01.dat", 0);	
+//			do_room_change("map01.json", 0);	
 /*	}
 */
 
@@ -346,7 +346,7 @@ void test_2d::setup_signal_receiver() {
 		if(s.get_type()==t_signal_reset_state)
 		{
 			unique_actions.clear();
-			do_room_change("map01.dat", 0);
+			do_room_change("map01.json", 0);
 		}
 	};
 }

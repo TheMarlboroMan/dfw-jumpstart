@@ -47,7 +47,7 @@ class menu:
 	void					create_functions();
 	void					mount_menus();
 	void					mount_layout();
-	void					choose_current_menu(app::menu_representation<std::string>&);
+	void					choose_current_menu(app::menu_representation<std::string>*);
 	void					do_main_menu_input(dfw::input&);
 	void					do_options_menu_input(dfw::input&, float);
 	void					do_controls_menu_input(dfw::input&);
@@ -91,11 +91,12 @@ class menu:
 	std::map<int, app::menu_representation<std::string>::tfunc_draw>	draw_funcs;
 	std::map<int, app::menu_representation<std::string>::tfunc_step>	step_funcs;
 
-	tools::options_menu<std::string>		main_menu,
+	tools::options_menu<std::string> main_menu,
 							options_menu,
 							controls_menu;
 
-	app::menu_representation<std::string>		main_menu_rep,
+	std::unique_ptr< app::menu_representation<std::string>>
+							main_menu_rep,
 							options_menu_rep,
 							controls_menu_rep;
 

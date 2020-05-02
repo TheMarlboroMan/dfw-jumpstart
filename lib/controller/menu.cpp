@@ -18,31 +18,33 @@
 using namespace controller;
 
 menu::menu(app::shared_resources& s, dfw::signal_dispatcher& sd, dfwimpl::config& c)
-	:s_resources(s), config(c), broadcaster(sd),
-	main_menu_rep(main_menu),
-	options_menu_rep(options_menu),
-	controls_menu_rep(controls_menu),
+	:s_resources(s), 
+	config(c), 
+	broadcaster(sd),
+	main_menu_rep(nullptr),
+	options_menu_rep(nullptr),
+	controls_menu_rep(nullptr),
 	menu_localization("data/app_data/localization", "en", {"texts.dat"}),
 	key_held_time{0.f},
 	flicker{false, false, 1.f} {
 
-
 	create_functions();
 	mount_menus();
 	mount_layout();
-	choose_current_menu(main_menu_rep);
+	choose_current_menu(main_menu_rep.get());
 }
 
 void menu::loop(dfw::input& input, const dfw::loop_iteration_data& lid) {
+
 	if(input().is_exit_signal()) {
 		set_leave(true);
 		return;
 	}
 
 	if(input().is_event_input_with_pressed()) {
-		if(current_menu_ptr==&main_menu_rep) 		do_main_menu_input(input);
-		else if(current_menu_ptr==&options_menu_rep) 	do_options_menu_input(input, lid.delta);
-		else if(current_menu_ptr==&controls_menu_rep) 	do_controls_menu_input(input);
+		if(current_menu_ptr==main_menu_rep.get())	do_main_menu_input(input);
+		else if(current_menu_ptr==options_menu_rep.get()) do_options_menu_input(input, lid.delta);
+		else if(current_menu_ptr==controls_menu_rep.get()) do_controls_menu_input(input);
 	}
 
 	//There are a few steps...
@@ -53,6 +55,7 @@ void menu::loop(dfw::input& input, const dfw::loop_iteration_data& lid) {
 	pulse.step(lid.delta);
 	flicker.step(lid.delta);
 	if(flicker.changed) {
+
 		tools::int_generator g(0, 300);
 		auto &r=*(layout.get_by_id("code_text"));
 		r.set_visible(flicker.visible);
@@ -71,25 +74,32 @@ void menu::draw(ldv::screen& screen, int fps) {
 //An interesting thing here is to duplicate the checks, because inputs can
 //be redefined: we check for the app input but also for the fixed scancode.
 void menu::do_main_menu_input(dfw::input& input) {
+
  	if(input.is_input_down(input::escape))						set_leave(true);
-	else if(input.is_input_down(input::up) || input().is_key_down(SDL_SCANCODE_UP)) 	main_menu_rep.previous();
-	else if(input.is_input_down(input::down) || input().is_key_down(SDL_SCANCODE_DOWN)) main_menu_rep.next();
+	else if(input.is_input_down(input::up) || input().is_key_down(SDL_SCANCODE_UP)) 	main_menu_rep->previous();
+	else if(input.is_input_down(input::down) || input().is_key_down(SDL_SCANCODE_DOWN)) main_menu_rep->next();
 	else if(input.is_input_down(input::activate) || input().is_key_down(SDL_SCANCODE_RETURN))
 	{
-		switch(main_menu_rep.get_current_index()) //An alternative is to use get_current_key() and use std::strings.
-		{
-			case 0: //Restart. As a courtesy we force selection of "continue", in case we return.
+		const auto current_key=main_menu_rep->get_current_key();
+
+		//Restart. As a courtesy we force selection of "continue", in case we return.
+		if(current_key=="10_START") {
 				broadcaster.send_signal(signal_reset_state{});
 				started=true;
-				main_menu_rep.select_option("20_CONTINUE");
+				main_menu_rep->select_option("20_CONTINUE");
 				set_state(state_test_2d);
-			break;
-			case 1: //Continue...
-				if(started) set_state(continue_state);
-			break;
-			case 2: choose_current_menu(controls_menu_rep);	break;
-			case 3: choose_current_menu(options_menu_rep);	break;
-			case 4: set_leave(true); break;
+		}
+		else if(current_key=="20_CONTINUE") {
+			if(started) set_state(continue_state);
+		}
+		else if(current_key=="30_CONTROLS") {
+			choose_current_menu(controls_menu_rep.get());
+		}
+		else if(current_key=="40_OPTIONS") {
+			choose_current_menu(options_menu_rep.get());
+		}
+		else if(current_key=="50_EXIT") {
+			set_leave(true);
 		}
 	}
 }
@@ -97,50 +107,52 @@ void menu::do_main_menu_input(dfw::input& input) {
 //Logic for the controls menu...
 void menu::do_controls_menu_input(dfw::input& input)
 {
- 	if(input.is_input_down(input::escape))							choose_current_menu(main_menu_rep);
-	else if(input.is_input_down(input::up) || input().is_key_down(SDL_SCANCODE_UP)) 		controls_menu_rep.previous();
-	else if(input.is_input_down(input::down) || input().is_key_down(SDL_SCANCODE_DOWN)) 	controls_menu_rep.next();
+ 	if(input.is_input_down(input::escape))							choose_current_menu(main_menu_rep.get());
+	else if(input.is_input_down(input::up) || input().is_key_down(SDL_SCANCODE_UP)) 		controls_menu_rep->previous();
+	else if(input.is_input_down(input::down) || input().is_key_down(SDL_SCANCODE_DOWN)) 	controls_menu_rep->next();
 	else if(input.is_input_down(input::activate) || input().is_key_down(SDL_SCANCODE_RETURN))
 	{
-		switch(controls_menu_rep.get_current_index())
-		{
-			default: learn_control(input); break;
-			case 5: restore_default_controls(input); break;
-			case 6:
-				broadcaster.send_signal(signal_save_controls{});
-				choose_current_menu(main_menu_rep);
-			break;
+		const auto& key=controls_menu_rep->get_current_key();
+
+		if(key=="55_RESTORE") {
+			restore_default_controls(input); 
+		}
+		else if(key=="60_BACK") {
+			broadcaster.send_signal(signal_save_controls{});
+			choose_current_menu(main_menu_rep.get());
+		}
+		else {
+			learn_control(input);
 		}
 	}
 }
 
 //Logic for the options menu...
-void menu::do_options_menu_input(dfw::input& input, float delta)
-{
+void menu::do_options_menu_input(dfw::input& input, float delta) {
+
 	auto f_dir=[delta, this](int dir) -> void
 	{
 		if(!key_held_time) s_resources.get_audio().play_sound(s_resources.get_audio_resource_manager().get_sound(app::sound_defs::menu_change));
 
 		if(key_held_time > 0.4f || !key_held_time) {
 
-			options_menu_rep.browse_current(dir);
-			update_options_value(options_menu_rep.get_current_key());
+			options_menu_rep->browse_current(dir);
+			update_options_value(options_menu_rep->get_current_key());
 		}
 		key_held_time+=delta;
 	};
 
+	if(input.is_input_down(input::escape))							choose_current_menu(main_menu_rep.get());
+	else if(input.is_input_down(input::up) || input().is_key_down(SDL_SCANCODE_UP)) 		options_menu_rep->previous();
+	else if(input.is_input_down(input::down) || input().is_key_down(SDL_SCANCODE_DOWN)) 	options_menu_rep->next();
 	//f_dir is returned so key_held_time is not reset.
- 	if(input.is_input_down(input::escape))							choose_current_menu(main_menu_rep);
-	else if(input.is_input_down(input::up) || input().is_key_down(SDL_SCANCODE_UP)) 		options_menu_rep.previous();
-	else if(input.is_input_down(input::down) || input().is_key_down(SDL_SCANCODE_DOWN)) 	options_menu_rep.next();
 	else if(input.is_input_pressed(input::left) || input().is_key_pressed(SDL_SCANCODE_LEFT)) 	return f_dir(-1);
 	else if(input.is_input_pressed(input::right) || input().is_key_down(SDL_SCANCODE_RIGHT)) 	return f_dir(1);
 	else if(input.is_input_down(input::activate) || input().is_key_down(SDL_SCANCODE_RETURN))
 	{
-		if(options_menu_rep.get_current_index()==4)
-		{
+		if(options_menu_rep->get_current_key()=="50_BACK") {
 			broadcaster.send_signal(signal_save_configuration{});
-			choose_current_menu(main_menu_rep);
+			choose_current_menu(main_menu_rep.get());
 		}
 	}
 
@@ -150,14 +162,13 @@ void menu::do_options_menu_input(dfw::input& input, float delta)
 void menu::learn_control(dfw::input& input)
 {
 	int it=0;
-	switch(controls_menu_rep.get_current_index())
-	{
-		case 0: it=input::up; break;
-		case 1: it=input::down; break;
-		case 2: it=input::left; break;
-		case 3: it=input::right; break;
-		case 4: it=input::activate; break;
-	}
+	const auto key=controls_menu_rep->get_current_key();
+
+	if(key=="10_UP") it=input::up;
+	else if(key=="20_DOWN") it=input::down;
+	else if(key=="30_LEFT") it=input::left;
+	else if(key=="40_RIGHT") it=input::right;
+	else if(key=="50_ACTIVATE") it=input::activate;
 
 	//This is the input learning function...
 	auto f=[this, &input, it](SDL_Event& e, ldi::sdl_input::tf_default& df)
@@ -192,8 +203,8 @@ void menu::learn_control(dfw::input& input)
 		input.configure(input.from_description({t, code, device}, it));
 
 		//Set the new value, force refresh.
-		controls_menu.set(controls_menu_rep.get_current_key(), translate_input(input.locate_description(it)));
-		controls_menu_rep.refresh();
+		controls_menu.set(controls_menu_rep->get_current_key(), translate_input(input.locate_description(it)));
+		controls_menu_rep->refresh();
 
 		//End the "learn" mode.
 		input().reset_event_processing_function();
@@ -204,8 +215,8 @@ void menu::learn_control(dfw::input& input)
 	input().set_event_processing_function(f);
 
 	//Show a "learning" message...
-	controls_menu.set(controls_menu_rep.get_current_key(), menu_localization.get("menu-1066"));
-	controls_menu_rep.refresh();
+	controls_menu.set(controls_menu_rep->get_current_key(), menu_localization.get("menu-1066"));
+	controls_menu_rep->refresh();
 }
 
 void menu::restore_default_controls(dfw::input& input)
@@ -222,22 +233,33 @@ void menu::restore_default_controls(dfw::input& input)
 	f(input::left, SDL_SCANCODE_LEFT, "30_LEFT");
 	f(input::right, SDL_SCANCODE_RIGHT, "40_RIGHT");
 	f(input::activate, SDL_SCANCODE_SPACE ,"50_ACTIVATE");
-	controls_menu_rep.refresh();
+	controls_menu_rep->refresh();
 }
 
 //Sends signal to update a particular options key.
-void menu::update_options_value(const std::string& key)
-{
-	if(key=="10_VIDEO_SIZE")
-		broadcaster.send_signal(signal_video_size(options_menu.get_string(key)));
-	else if(key=="25_VIDEO_VSYNC")
-		broadcaster.send_signal(signal_video_vsync{options_menu.get_bool(key)});
-	else if(key=="30_SOUND_VOLUME")
-		broadcaster.send_signal(signal_audio_volume{options_menu.get_int(key)});
-	else if(key=="40_MUSIC_VOLUME")
-		broadcaster.send_signal(signal_music_volume{options_menu.get_int(key)});
-}
+void menu::update_options_value(const std::string& _key) {
 
+	if(_key=="10_VIDEO_SIZE") {
+		broadcaster.send_signal(signal_video_size(options_menu.get_string(_key)));
+		return;
+	}
+
+	if(_key=="25_VIDEO_VSYNC") {
+		broadcaster.send_signal(signal_video_vsync{options_menu.get_bool(_key)});
+		return;
+	}
+
+
+	if(_key=="30_SOUND_VOLUME") {
+		broadcaster.send_signal(signal_audio_volume{options_menu.get_int(_key)});
+		return;
+	}
+
+	if(_key=="40_MUSIC_VOLUME") {
+		broadcaster.send_signal(signal_music_volume{options_menu.get_int(_key)});
+		return;
+	}
+}
 
 //Creates all functions needed to draw the menus...
 void menu::create_functions()
@@ -316,8 +338,6 @@ void menu::mount_menus()
 
 	auto mount_menu=[&loc](tools::options_menu<std::string>& m, const std::string& _file, const std::string& _key) {
 
-		//std::map<std::string, std::string>	translation_map;
-
 		auto root=tools::parse_json_string(
 			tools::dump_file(
 				_file
@@ -328,35 +348,32 @@ void menu::mount_menus()
 			root[_key.c_str()].GetObject(),
 			m
 		);
-//		std::vector<tools::options_menu<std::string>::translation_struct > trad;
-//		for(const auto& p: translation_map) trad.push_back({p.first, loc.get(p.second)});
-//		m.translate(trad);
-	};
-
-	auto init_menu=[](
-		app::menu_representation<std::string>& m,
-		app::menu_representation<std::string>::tfunc_register f1,
-		app::menu_representation<std::string>::tfunc_register f2,
-		app::menu_representation<std::string>::tfunc_draw f3,
-		app::menu_representation<std::string>::tfunc_draw f4,
-		app::menu_representation<std::string>::tfunc_step f5,
-		app::menu_representation<std::string>::tfunc_step f6)
-	{
-		m.set_register_name_function(f1); 	m.set_register_value_function(f2);
-		m.set_draw_name_function(f3);		m.set_draw_value_function(f4);
-		m.set_step_name_function(f5);		m.set_step_value_function(f6);
-		m.init();
 	};
 
 	//Main menu...
-	mount_menu(main_menu, "data/app_data/menus.dat", "main");
-	init_menu(main_menu_rep, register_funcs[rf_txt], register_funcs[rf_empty],
+	mount_menu(main_menu, "data/app_data/menus.json", "main");
+	main_menu_rep.reset(
+		new app::menu_representation<std::string>{
+			main_menu,
+			register_funcs[rf_txt], register_funcs[rf_empty],
 			draw_funcs[df_txt_right_single], draw_funcs[df_empty],
-			step_funcs[sf_pulse], step_funcs[sf_empty]);
+			step_funcs[sf_pulse], step_funcs[sf_empty],
+			[this](const std::string& _k) -> std::string {
+
+				if(_k=="10_START") return menu_localization.get("menu-1000");
+				if(_k=="20_CONTINUE") return menu_localization.get(" menu-1001");
+				if(_k=="30_CONTROLS") return menu_localization.get(" menu-1002");
+				if(_k=="40_OPTIONS") return menu_localization.get(" menu-1003");
+				else return menu_localization.get("menu-1004");
+			},
+			[](const std::string&) -> std::string {
+				return "";
+			},
+		}
+	);
 
 	//Options menu..
-	mount_menu(options_menu, "data/app_data/menus.dat", "options");
-
+	mount_menu(options_menu, "data/app_data/menus.json", "options");
 
 	std::string window_size=config.bool_from_path("video:fullscreen")
 		? "fullscreen"
@@ -368,12 +385,47 @@ void menu::mount_menus()
 	options_menu.set("30_SOUND_VOLUME", config.get_audio_volume());
 	options_menu.set("40_MUSIC_VOLUME", config.get_music_volume());
 
-	init_menu(options_menu_rep, register_funcs[rf_txt], register_funcs[rf_txt],
+	options_menu_rep.reset(
+		new app::menu_representation<std::string>{
+			options_menu,
+			register_funcs[rf_txt], register_funcs[rf_txt],
 			draw_funcs[df_txt_left_composite], draw_funcs[df_txt_right_composite],
-			step_funcs[sf_pulse], step_funcs[sf_pulse]);
+			step_funcs[sf_pulse], step_funcs[sf_pulse],
+			[this](const std::string& _k) -> std::string {
+
+				if(_k=="10_VIDEO_SIZE") return menu_localization.get("menu-1010");
+				if(_k=="25_VIDEO_VSYNC") return menu_localization.get("menu-1025");
+				if(_k=="30_SOUND_VOLUME") return menu_localization.get("menu-1030");
+				if(_k=="40_MUSIC_VOLUME") return menu_localization.get("menu-1040");
+				return menu_localization.get("menu-1050");
+			},
+			[this](const std::string& _k) -> std::string {
+
+				if(_k=="10_VIDEO_SIZE") {
+					const auto& v=options_menu.get_string(_k);
+					if(v=="700x500") return menu_localization.get("menu-1011");
+					if(v=="1100x750") return menu_localization.get("menu-1012");
+					if(v=="1400x1000") return menu_localization.get("menu-1013");
+					return menu_localization.get("menu-1014");
+				}
+
+				if(_k=="25_VIDEO_VSYNC") {
+					return options_menu.get_bool(_k)
+						? menu_localization.get("menu-1026")
+						: menu_localization.get("menu-1027");
+				}
+
+				if(_k=="30_SOUND_VOLUME" || _k=="40_MUSIC_VOLUME") {
+					return std::to_string(options_menu.get_int(_k));
+				}
+
+				return "";
+			},
+		}
+	);
 
 	//Control menus...
-	mount_menu(controls_menu, "data/app_data/menus.dat", "controls");
+	mount_menu(controls_menu, "data/app_data/menus.json", "controls");
 
 	controls_menu.set("10_UP", translate_input(dfwimpl::input_description_from_config_token(config.token_from_path("input:up"))));
 	controls_menu.set("20_DOWN", translate_input(dfwimpl::input_description_from_config_token(config.token_from_path("input:down"))));
@@ -381,9 +433,29 @@ void menu::mount_menus()
 	controls_menu.set("40_RIGHT", translate_input(dfwimpl::input_description_from_config_token(config.token_from_path("input:right"))));
 	controls_menu.set("50_ACTIVATE", translate_input(dfwimpl::input_description_from_config_token(config.token_from_path("input:activate"))));
 
-	init_menu(controls_menu_rep, register_funcs[rf_txt], register_funcs[rf_txt],
+	controls_menu_rep.reset(
+		new app::menu_representation<std::string>{
+			controls_menu,
+			register_funcs[rf_txt], register_funcs[rf_txt],
 			draw_funcs[df_txt_left_composite], draw_funcs[df_txt_right_composite],
-			step_funcs[sf_pulse], step_funcs[sf_pulse]);
+			step_funcs[sf_pulse], step_funcs[sf_pulse],
+			[this](const std::string& _key) -> std::string {
+
+				if(_key=="10_UP") return menu_localization.get("menu-1060");
+				if(_key=="20_DOWN") return menu_localization.get("menu-1061");
+				if(_key=="30_LEFT") return menu_localization.get("menu-1062");
+				if(_key=="40_RIGHT") return menu_localization.get("menu-1063");
+				if(_key=="50_ACTIVATE") return menu_localization.get("menu-1064");
+				if(_key=="55_RESTORE") return menu_localization.get("menu-1066");
+				else return menu_localization.get("menu-1065");
+			},
+			[](const std::string&) -> std::string {
+				//TODO: This one is particularly stinky...
+				//is it translate input...
+				return "";
+			}
+		}
+	);
 }
 
 //Translates a token from the config file (input part) to std::string, human readable.
@@ -413,16 +485,16 @@ std::string menu::translate_input(const dfw::input_description& id)
 void menu::mount_layout()
 {
 	//Register external representations and fonts...
-	layout.register_as_external("menu_main", main_menu_rep.get_representation());
-	layout.register_as_external("menu_options", options_menu_rep.get_representation());
-	layout.register_as_external("menu_controls", controls_menu_rep.get_representation());
+	layout.register_as_external("menu_main", main_menu_rep->get_representation());
+	layout.register_as_external("menu_options", options_menu_rep->get_representation());
+	layout.register_as_external("menu_controls", controls_menu_rep->get_representation());
 
 	//Finally, mount the layout...
 	layout.map_font("code_font", s_resources.get_ttf_manager().get("consola-mono", 12));
 
 	auto root=tools::parse_json_string(
 		tools::dump_file(
-			"data/app_data/layouts.dat"
+			"data/app_data/layouts.json"
 		)
 	);
 
@@ -435,16 +507,16 @@ void menu::mount_layout()
 }
 
 //Sets visibility of menus and updates the current_menu_ptr...
-void menu::choose_current_menu(app::menu_representation<std::string>& m)
-{
-	main_menu_rep.get_representation().set_visible(false);
-	options_menu_rep.get_representation().set_visible(false);
-	controls_menu_rep.get_representation().set_visible(false);
+void menu::choose_current_menu(app::menu_representation<std::string>* _m) {
+
+	main_menu_rep->get_representation().set_visible(false);
+	options_menu_rep->get_representation().set_visible(false);
+	controls_menu_rep->get_representation().set_visible(false);
 
 	//Manually set the first option of these...
-	options_menu_rep.select_option(0);
-	controls_menu_rep.select_option(0);
+	options_menu_rep->select_option("10_VIDEO_SIZE");
+	controls_menu_rep->select_option("10_UP");
 
-	current_menu_ptr=&m;
+	current_menu_ptr=_m;
 	current_menu_ptr->get_representation().set_visible(true);
 }

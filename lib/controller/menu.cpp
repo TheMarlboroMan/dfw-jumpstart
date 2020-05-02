@@ -122,6 +122,7 @@ void menu::do_controls_menu_input(dfw::input& input)
 			choose_current_menu(main_menu_rep.get());
 		}
 		else {
+			//TODO: Are you even doing this?????????
 			learn_control(input);
 		}
 	}
@@ -361,9 +362,9 @@ void menu::mount_menus()
 			[this](const std::string& _k) -> std::string {
 
 				if(_k=="10_START") return menu_localization.get("menu-1000");
-				if(_k=="20_CONTINUE") return menu_localization.get(" menu-1001");
-				if(_k=="30_CONTROLS") return menu_localization.get(" menu-1002");
-				if(_k=="40_OPTIONS") return menu_localization.get(" menu-1003");
+				if(_k=="20_CONTINUE") return menu_localization.get("menu-1001");
+				if(_k=="30_CONTROLS") return menu_localization.get("menu-1002");
+				if(_k=="40_OPTIONS") return menu_localization.get("menu-1003");
 				else return menu_localization.get("menu-1004");
 			},
 			[](const std::string&) -> std::string {
@@ -446,12 +447,17 @@ void menu::mount_menus()
 				if(_key=="30_LEFT") return menu_localization.get("menu-1062");
 				if(_key=="40_RIGHT") return menu_localization.get("menu-1063");
 				if(_key=="50_ACTIVATE") return menu_localization.get("menu-1064");
-				if(_key=="55_RESTORE") return menu_localization.get("menu-1066");
+				if(_key=="55_RESTORE") return menu_localization.get("menu-1067");
 				else return menu_localization.get("menu-1065");
 			},
-			[](const std::string&) -> std::string {
-				//TODO: This one is particularly stinky...
-				//is it translate input...
+			[this](const std::string& _key) -> std::string {
+
+				if(_key=="10_UP") return translate_input(dfwimpl::input_description_from_config_token(config.token_from_path("input:up")));
+				if(_key=="20_DOWN") return translate_input(dfwimpl::input_description_from_config_token(config.token_from_path("input:down")));
+				if(_key=="30_LEFT") return translate_input(dfwimpl::input_description_from_config_token(config.token_from_path("input:left")));
+				if(_key=="40_RIGHT") return translate_input(dfwimpl::input_description_from_config_token(config.token_from_path("input:right")));
+				if(_key=="50_ACTIVATE") return translate_input(dfwimpl::input_description_from_config_token(config.token_from_path("input:activate")));
+
 				return "";
 			}
 		}

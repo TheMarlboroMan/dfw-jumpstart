@@ -125,7 +125,6 @@ class menu_representation
 
 	void				create_data()
 	{
-		size_t i=0;
 		for(const auto& k : menu.get_keys()) {
 		
 			name_representations[k]=std::vector<ldv::representation*>{};

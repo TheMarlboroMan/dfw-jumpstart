@@ -4,6 +4,8 @@
 		"draw_main_plane":true,
 		"draw_player_bounding_boxes":true,
 		"draw_wall_bounding_boxes":true,
+		"draw_trigger_bounding_boxes":true,
+		"draw_entity_bounding_boxes":true,
 		"draw_background":true,
 		"draw_fps":true
 	},

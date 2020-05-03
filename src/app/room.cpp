@@ -15,7 +15,6 @@
 //Std
 #include <algorithm>
 
-
 using namespace app;
 
 room::room()
@@ -159,7 +158,7 @@ void room::load(const std::string& fn) {
 			}) {
 
 				if(!meta.HasMember(key.c_str())) {
-					missing_nodes=key+" ";
+					missing_nodes+=key+" ";
 				}
 			}
 

@@ -18,7 +18,7 @@ shared_resources::shared_resources(dfw::audio& au,
 )
 	:audio(au), a_manager(am), v_manager(rm), log(l), controller_chrono(cc), arg_manager(argm)
 #ifdef WDEBUG_CODE
-	,debug_config("data/config/debug_config.dnot")
+	,debug_config("data/config/debug_config.json")
 #endif
 {
 	register_fonts();

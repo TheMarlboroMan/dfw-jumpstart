@@ -20,6 +20,12 @@
 #include <ldv/raster_representation.h>
 #include <ldv/color.h>
 
+#ifdef WDEBUG_CODE
+#include <ldv/box_representation.h>
+#include <ldv/line_representation.h>
+#include <ldt/sat_2d.h>
+#endif
+
 
 //std
 #include <cmath>

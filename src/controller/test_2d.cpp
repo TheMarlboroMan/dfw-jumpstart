@@ -34,6 +34,7 @@ try
 	do_room_change("map01.json", 0);
 }
 catch(std::exception& e) {
+
 	lm::log(s_resources.get_log(), lm::lvl::error)<<"Unable to create main controller: "<<e.what()<<std::endl;
 	//This would still propagate: initialization lists and exceptions work like that.
 }
@@ -124,15 +125,17 @@ void test_2d::loop(dfw::input& input, const dfw::loop_iteration_data& lid) {
 
 		//Check if there was trigger memory and if we need to clear it.
 		auto ttm=game_room.get_trigger_memory();
-		if(ttm && !game_player.is_colliding_with(*ttm)) game_room.clear_trigger_memory();
+		if(ttm && !game_player.is_colliding_with(*ttm)) {
+			game_room.clear_trigger_memory();
+		}
 		
-		//Now se if we are colliding with any trigger...ll 
+		//Now se if we are colliding with any trigger...
 		const auto& trig=game_room.get_triggers();
 		auto it_touch=std::find_if(std::begin(trig), std::end(trig), [this, ttm](const app::object_trigger& tr) {
 
-			return tr.is_touch() 				//Is touch trigger...
+			return tr.is_touch()                        //Is touch trigger...
 				&& game_player.is_colliding_with(tr)	//The player is touching
-				&& (!ttm || !(*ttm == tr));		//If there's a memory trigger, it is not this one.
+				&& (!ttm || !(*ttm == tr));		        //If there's a memory trigger, it is not this one.
 		});
 
 		if(it_touch!=std::end(trig)) {
@@ -142,12 +145,16 @@ void test_2d::loop(dfw::input& input, const dfw::loop_iteration_data& lid) {
 	}
 
 	if(gi.activate) {
+	
 		const auto& act_poly=game_player.get_activate_poly();
 		const auto& trig=game_room.get_triggers();
 		auto it_act=std::find_if(std::begin(trig), std::end(trig), [this, &act_poly](const app::object_trigger& tr) {
+		
+		
 			return tr.is_activate()				//Is activate trigger...
 				&& tr.is_colliding_with(act_poly);	//The player activation box is touching
 		});
+		
 		if(it_act!=std::end(trig)) {
 			do_trigger(*it_act);
 		}
@@ -187,18 +194,18 @@ void test_2d::draw(ldv::screen& screen, int fps)
 
 #else
 
-	if(s_resources.get_debug_config().bool_from_path("debug:video:center_camera")) {
+	if(s_resources.get_debug_config().bool_from_path("video:center_camera")) {
 		game_camera.center_on(
 			game_draw_struct.drawable_box_from_box_polygon(game_player.get_poly()));
 	}
 
-	if(s_resources.get_debug_config().bool_from_path("debug:video:draw_background")) {
+	if(s_resources.get_debug_config().bool_from_path("video:draw_background")) {
 		for(const auto& d: game_room.get_drawables().background) {
 			d->draw(screen, game_camera, game_draw_struct, s_resources);
 		}
 	}
 
-	if(s_resources.get_debug_config().bool_from_path("debug:video:draw_main_plane")) {
+	if(s_resources.get_debug_config().bool_from_path("video:draw_main_plane")) {
 		auto dc=game_room.get_drawables();
 		dc.main.push_back(&game_player);
 		std::sort(std::begin(dc.main), std::end(dc.main), app::drawable_order); 
@@ -207,7 +214,7 @@ void test_2d::draw(ldv::screen& screen, int fps)
 		}
 	}
 
-	if(s_resources.get_debug_config().bool_from_path("debug:video:draw_fps")) {
+	if(s_resources.get_debug_config().bool_from_path("video:draw_fps")) {
 		ldv::ttf_representation fps_text{
 			s_resources.get_ttf_manager().get("consola-mono", 12), 
 			ldv::rgba8(0, 0, 255, 255), s_resources.get_audio()().debug_state()+" "+std::to_string(fps)};
@@ -224,17 +231,31 @@ void test_2d::draw(ldv::screen& screen, int fps)
 		game_draw_struct.rep->draw(screen, game_camera);
 	};
 
-	if(s_resources.get_debug_config().bool_from_path("debug:video:draw_wall_bounding_boxes")) {
+	if(s_resources.get_debug_config().bool_from_path("video:draw_wall_bounding_boxes")) {
 		//Draw collision boxes of all walls.
 		const auto w=game_room.get_all_walls();
-		auto fdraw_walls=[this, &screen, draw_bounding_box](const room_wall& wall) {
-			draw_bounding_box(wall, ldv::rgb8(0,255,0));
+		auto fdraw_walls=[this, &screen, draw_bounding_box](const app::room_wall& wall) {
+			draw_bounding_box(wall, ldv::rgb8(0,255,0) );
 		};
 		w.apply(fdraw_walls);
 	}
 
-	if(s_resources.get_debug_config().bool_from_path("debug:video:draw_player_bounding_boxes")) {
+	if(s_resources.get_debug_config().bool_from_path("video:draw_player_bounding_boxes")) {
 		draw_bounding_box(game_player, ldv::rgb8(255,0,0));
+	}
+	
+	if(s_resources.get_debug_config().bool_from_path("video:draw_trigger_bounding_boxes")) {
+				
+		for(const auto& t : game_room.get_triggers() ) {
+			draw_bounding_box(t, ldv::rgb8(0,0,255));
+		}
+	}
+	
+	if(s_resources.get_debug_config().bool_from_path("video:draw_entity_bounding_boxes")) {
+	
+		for(const auto& o : game_room.get_obstacles() ) {
+			draw_bounding_box(*o, ldv::rgb8(255, 128, 128));
+		}
 	}
 
 	//A set of dots...
@@ -280,7 +301,12 @@ void test_2d::do_room_change(const app::room_action_exit& a) {
 }
 
 void test_2d::do_text_display(const app::room_action_text& a) {
-	broadcaster.send_signal(signal_text_display{game_localization.get("desc-"+std::to_string(a.text_id))});
+
+	const std::string localization_key{ std::string{"desc-"}+std::to_string(a.text_id)};
+
+	lm::log(s_resources.get_log(), lm::lvl::info)<<"displaying "<<localization_key<<" : '"<<game_localization.get(localization_key)<<"'"<<std::endl;
+
+	broadcaster.send_signal(signal_text_display{game_localization.get(localization_key)});
 	set_state(state_test_2d);
 }
 
@@ -293,6 +319,8 @@ void test_2d::do_arcade_transition(const app::room_action_arcade&) {
 }
 
 void test_2d::do_trigger(const app::object_trigger& trig) {
+
+	lm::log(s_resources.get_log(), lm::lvl::info)<<"doing trigger "<<trig.get_action_id()<<std::endl;
 
 	if(trig.is_touch()) {
 		game_room.set_trigger_memory(trig);
@@ -318,12 +346,13 @@ void test_2d::do_trigger(const app::object_trigger& trig) {
 	{
 					d(test_2d * ct):c{ct}{}
 
-		virtual void		resolve(const app::room_action_exit& a) 	{c->do_room_change(a);}
-		virtual void		resolve(const app::room_action_text& a) 	{c->do_text_display(a);}
-		virtual void		resolve(const app::room_action_console& a) {c->do_console_transition(a);}
-		virtual void		resolve(const app::room_action_arcade& a) 	{c->do_arcade_transition(a);}
+		virtual void		resolve(const app::room_action_exit& a)       {c->do_room_change(a);}
+		virtual void		resolve(const app::room_action_text& a)       {c->do_text_display(a);}
+		virtual void		resolve(const app::room_action_console& a)    {c->do_console_transition(a);}
+		virtual void		resolve(const app::room_action_arcade& a)     {c->do_arcade_transition(a);}
 		test_2d *	c;
 	}ad(this);
+	
 	act->dispatch(ad);
 }
 

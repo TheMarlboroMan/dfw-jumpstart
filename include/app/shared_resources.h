@@ -26,11 +26,10 @@
 #include <ldtools/sprite_table.h>
 #include <ldtools/animation_table.h>
 
-
 #ifdef WDEBUG_CODE
-#include <tools/dnot_config_file.h>
+#include <tools/json_config_file.h>
+#include <rapidjson/document.h>
 #endif
-
 
 namespace app
 {
@@ -41,7 +40,7 @@ class shared_resources {
 						shared_resources(dfw::audio&, lda::resource_manager&, ldv::resource_manager&, lm::logger&, tools::chrono&, tools::arg_manager&);
 
 #ifdef WDEBUG_CODE
-	const tools::dnot_config_file&		get_debug_config() const {return debug_config;}
+	const tools::json_config_file&		get_debug_config() const {return debug_config;}
 	void					reload_debug_config() {debug_config.reload();}
 #endif
 
@@ -75,7 +74,7 @@ class shared_resources {
 	std::vector<ldtools::animation_table>	animations;
 
 #ifdef WDEBUG_CODE
-	tools::dnot_config_file			debug_config;
+	tools::json_config_file			debug_config;
 #endif
 };
 

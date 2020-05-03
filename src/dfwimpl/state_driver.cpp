@@ -17,7 +17,9 @@ state_driver::state_driver(dfw::kernel& kernel, dfwimpl::config& c)
 ) {
 
 	lm::log(log, lm::lvl::info)<<"setting state check function..."<<std::endl;
-	states.set_function([](int v){
+	states.set_function([this](int v){
+	
+		lm::log(log, lm::lvl::info)<<"check state "<<state_min<<" < "<<v<<" < "<<state_max<<"..."<<std::endl;
 		return v > state_min && v < state_max;
 	});
 
@@ -138,6 +140,8 @@ void state_driver::register_controllers(dfw::kernel& /*kernel*/) {
 
 void state_driver::prepare_state(int next, int current) {
 
+	lm::log(log, lm::lvl::debug)<<"state change from "<<current<<" to "<<next<<"..."<<std::endl;
+
 	switch(next) {
 		case t_states::state_menu:
 			c_menu->set_continue_state(current);
@@ -197,6 +201,8 @@ void state_driver::setup_signal_receiver(dfw::kernel& kernel) {
 }
 
 void state_driver::receive_signal(dfw::kernel& kernel, const dfw::broadcast_signal& s) {
+
+	lm::log(log, lm::lvl::debug)<<"got a signal"<<std::endl;
 
 	switch(s.get_type()) {
 		case controller::t_signal_video_size: {

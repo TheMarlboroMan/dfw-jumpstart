@@ -10,6 +10,7 @@
 #include <tools/json.h>
 #include <tools/file_utils.h>
 
+#include <rapidjson/rapidjson.h>
 #include <rapidjson/document.h>
 
 #include <sstream>
@@ -265,10 +266,10 @@ void test_poly::player_step(float delta)
 
 #ifdef WDEBUG_CODE
 		const auto& dc=s_resources.get_debug_config();
-		double 	wrap_max_x=dc.double_from_path("debug:physics:wrap_max_x"),
-			wrap_min_x=dc.double_from_path("debug:physics:wrap_min_x"),
-			wrap_max_y=dc.double_from_path("debug:physics:wrap_max_y"),
-			wrap_min_y=dc.double_from_path("debug:physics:wrap_min_y");
+		double 	wrap_max_x=dc.double_from_path("physics:wrap_max_x"),
+			wrap_min_x=dc.double_from_path("physics:wrap_min_x"),
+			wrap_max_y=dc.double_from_path("physics:wrap_max_y"),
+			wrap_min_y=dc.double_from_path("physics:wrap_min_y");
 		auto cntrd=player.poly.get_centroid();
 
 		if(cntrd.x > wrap_max_x) player.poly.center_in({wrap_min_x, cntrd.y});
@@ -430,13 +431,13 @@ void test_poly::draw_raster(ldv::screen& screen, ldv::raster_representation& r)
 
 void test_poly::reload_physics_values()
 {
-	player_acceleration=s_resources.get_debug_config().double_from_path("debug:physics:player_acceleration");
-	player_base_turn_factor=s_resources.get_debug_config().double_from_path("debug:physics:player_base_turn_factor");
-	player_max_turn_velocity=s_resources.get_debug_config().double_from_path("debug:physics:player_max_turn_velocity");
-	player_full_stop_threshold=s_resources.get_debug_config().double_from_path("debug:physics:player_full_stop_threshold");
-	player_max_thrust=s_resources.get_debug_config().double_from_path("debug:physics:player_max_thrust");
-	player_min_thrust=s_resources.get_debug_config().double_from_path("debug:physics:player_min_thrust");
-	friction_coeficient=s_resources.get_debug_config().double_from_path("debug:physics:friction_coeficient");
+	player_acceleration=s_resources.get_debug_config().double_from_path("physics:player_acceleration");
+	player_base_turn_factor=s_resources.get_debug_config().double_from_path("physics:player_base_turn_factor");
+	player_max_turn_velocity=s_resources.get_debug_config().double_from_path("physics:player_max_turn_velocity");
+	player_full_stop_threshold=s_resources.get_debug_config().double_from_path("physics:player_full_stop_threshold");
+	player_max_thrust=s_resources.get_debug_config().double_from_path("physics:player_max_thrust");
+	player_min_thrust=s_resources.get_debug_config().double_from_path("physics:player_min_thrust");
+	friction_coeficient=s_resources.get_debug_config().double_from_path("physics:friction_coeficient");
 
 	std::cout<<"physics values reloaded (if values didn't change remember to hit r):"<<std::endl;
 }
@@ -472,34 +473,34 @@ void test_poly::editor_loop(dfw::input& input)
 		}
 	}
 
-	if(input.is_input_pressed(input_app::activate))
+	if(input.is_input_pressed(input::activate))
 	{
-		if(input.is_input_down(input_app::left) && camera.get_zoom() > 0.2) 	camera.set_zoom(camera.get_zoom()-0.1);
-		else if(input.is_input_down(input_app::right)) 				camera.set_zoom(camera.get_zoom()+0.1);
+		if(input.is_input_down(input::left) && camera.get_zoom() > 0.2) 	camera.set_zoom(camera.get_zoom()-0.1);
+		else if(input.is_input_down(input::right)) 				camera.set_zoom(camera.get_zoom()+0.1);
 
 		switch(editor_mode)
 		{
 			case editor_modes::obstacles:
-				if(input.is_input_down(input_app::up)) 		editor_select_color(-1);
-				else if(input.is_input_down(input_app::down)) 	editor_select_color(1);
+				if(input.is_input_down(input::up)) 		editor_select_color(-1);
+				else if(input.is_input_down(input::down)) 	editor_select_color(1);
 			break;
 			case editor_modes::waypoints:
-				if(input.is_input_down(input_app::up)) 		editor_select_waypoint(-1);
-				else if(input.is_input_down(input_app::down)) 	editor_select_waypoint(1);
+				if(input.is_input_down(input::up)) 		editor_select_waypoint(-1);
+				else if(input.is_input_down(input::down)) 	editor_select_waypoint(1);
 			break;
 		}
 
-		if(input.is_input_down(input_app::console_newline)) editor_active=!editor_active;;
+		if(input.is_input_down(input::console_newline)) editor_active=!editor_active;;
 	}
 	else
 	{
-		if(input.is_input_down(input_app::down)) 	camera.move_by(0, -editor_grid_size/2);
-		else if(input.is_input_down(input_app::up)) 	camera.move_by(0, editor_grid_size/2);
-		else if(input.is_input_down(input_app::left)) 	camera.move_by(-editor_grid_size/2, 0);
-		else if(input.is_input_down(input_app::right)) 	camera.move_by(editor_grid_size/2, 0);
+		if(input.is_input_down(input::down)) 	camera.move_by(0, -editor_grid_size/2);
+		else if(input.is_input_down(input::up)) 	camera.move_by(0, editor_grid_size/2);
+		else if(input.is_input_down(input::left)) 	camera.move_by(-editor_grid_size/2, 0);
+		else if(input.is_input_down(input::right)) 	camera.move_by(editor_grid_size/2, 0);
 
-		if(input.is_input_down(input_app::console_backspace)) editor_save();
-		if(input.is_input_down(input_app::console_newline)) editor_change_state();
+		if(input.is_input_down(input::console_backspace)) editor_save();
+		if(input.is_input_down(input::console_newline)) editor_change_state();
 	}
 }
 
@@ -508,66 +509,50 @@ void test_poly::editor_save()
 	using namespace tools;
 
 	//Building the first level map
-	rapidjson::Value mroot;
+	rapidjson::Document mroot;
 	mroot.SetObject();
-
-	//Building the second level maps.
-	rapidjson::Value second_level;
-	second_level.SetObject();
-
-	auto fill_vertexes=[](ldt::polygon_2d<double> poly, rapidjson::Value& tok) {
+	
+	auto fill_vertices=[&mroot](ldt::polygon_2d<double> poly, rapidjson::Value& tok) {
 		for(const auto& p: poly.get_vertices()) {
 
-			rapidjson::Value arr;
-			arr.SetArray();
-			arr.PushBack(p.x);
-			arr.PushBack(p.y);
+			rapidjson::Value arr(rapidjson::kArrayType);
+			arr.PushBack(p.x, mroot.GetAllocator());
+			arr.PushBack(p.y, mroot.GetAllocator());
 
-			tok.GetArray().PushBack(arr);
+			tok.GetArray().PushBack(arr, mroot.GetAllocator());
 		}
 	};
 
-	second_level["obstacles"]=rapidJson::Value;
-	second_level["obstacles"].SetArray();
+	mroot["obstacles"]=rapidjson::Value(rapidjson::kArrayType);
 	for(const auto& o : obstacles)
 	{
-		rapidJson::Value data;
-		data.SetObject();
+		rapidjson::Value data(rapidjson::kObjectType);
 
-		data["color"]=rapidJson::Value;
+		data["color"]=rapidjson::Value(rapidjson::kArrayType);
 		data["color"].SetArray();
-		data["color"].PushBack(.color.r);
-		data["color"].PushBack(.color.g);
-		data["color"].PushBack(.color.b);
+		data["color"].PushBack(o.color.r, mroot.GetAllocator());
+		data["color"].PushBack(o.color.g, mroot.GetAllocator());
+		data["color"].PushBack(o.color.b, mroot.GetAllocator());
 
-		data["poly"]=rapidJson::Value;
-		data["poly"].SetArray();
-
-		fill_vertexes(o.poly, data["poly"]);
-		second_level["obstacles"].GetArray().PushBack(dnot_token{data});
+		data["poly"]=rapidjson::Value(rapidjson::kArrayType);
+		fill_vertices(o.poly, data["poly"]);
+		
+		mroot["obstacles"].GetArray().PushBack(data, mroot.GetAllocator());
 	}
 
-	second_level["waypoints"]=Rapidjson::Value;
-	second_level["waypoints"].SetArray();
+	mroot["waypoints"]=rapidjson::Value(rapidjson::kArrayType);
 	for(const auto& w : waypoints) {
 
-		rapidJson::Value data;
-		data.SetObject();
-
+		rapidjson::Value data(rapidjson::kObjectType);
 		data["index"]=w.index;
-		data["poly"]=rapidJson::Value;
-		data["poly"].SetArray();
+		data["poly"]=rapidjson::Value(rapidjson::kArrayType);
 
-		fill_vertexes(w.poly, data["poly"]);
-		second_level["waypoints"].GetArray().PushBack(data);
+		fill_vertices(w.poly, data["poly"]);
+		mroot["waypoints"].GetArray().PushBack(data, mroot.GetAllocator());
 	}
 
-	//Adding it all up.
-	mroot=second_level
-
-
-/*
-	rapidJson::Value root;
+	/*
+	rapidjson::Value root;
 	dnot_token root;
 	root.set(mroot);
 

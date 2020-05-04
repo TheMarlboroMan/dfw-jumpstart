@@ -41,7 +41,7 @@ catch(std::exception& e) {
 
 void test_2d::loop(dfw::input& input, const dfw::loop_iteration_data& lid) {
 
-	if(input().is_exit_signal()) { 
+	if(input().is_exit_signal()) {
 		set_leave(true);
 		return;
 	}
@@ -70,7 +70,7 @@ void test_2d::loop(dfw::input& input, const dfw::loop_iteration_data& lid) {
 	//Player movement...
 	auto movement_phase=[this, lid](app::motion::axis axis) {
 
-		//This is the laziest approach: revert the movement as soon as 
+		//This is the laziest approach: revert the movement as soon as
 		//a collision is detected, opting for an early exit.
 		//Works with walls of different shapes but may leave the player
 		//visibly separated from the wall. Of course, could be made complex so
@@ -98,7 +98,7 @@ void test_2d::loop(dfw::input& input, const dfw::loop_iteration_data& lid) {
 		if(solve_collisions(game_room.get_obstacles())) {
 			return;
 		}
-		
+
 		if(solve_collisions(game_room.get_walls_by_box(app::coarse_bounding_box(game_player)))) {
 			return;
 		}
@@ -119,7 +119,7 @@ void test_2d::loop(dfw::input& input, const dfw::loop_iteration_data& lid) {
 	if(gi.y) movement_phase(app::motion::axis::y);
 	game_player.solve_movement_phase();
 
-	//Now effect collisions... These only apply to the final position, 
+	//Now effect collisions... These only apply to the final position,
 	//by design. Not like level design allows crazy things anyway.
 	if(gi.x || gi.y) {
 
@@ -128,7 +128,7 @@ void test_2d::loop(dfw::input& input, const dfw::loop_iteration_data& lid) {
 		if(ttm && !game_player.is_colliding_with(*ttm)) {
 			game_room.clear_trigger_memory();
 		}
-		
+
 		//Now se if we are colliding with any trigger...
 		const auto& trig=game_room.get_triggers();
 		auto it_touch=std::find_if(std::begin(trig), std::end(trig), [this, ttm](const app::object_trigger& tr) {
@@ -145,21 +145,21 @@ void test_2d::loop(dfw::input& input, const dfw::loop_iteration_data& lid) {
 	}
 
 	if(gi.activate) {
-	
+
 		const auto& act_poly=game_player.get_activate_poly();
 		const auto& trig=game_room.get_triggers();
 		auto it_act=std::find_if(std::begin(trig), std::end(trig), [this, &act_poly](const app::object_trigger& tr) {
-		
-		
+
+
 			return tr.is_activate()				//Is activate trigger...
 				&& tr.is_colliding_with(act_poly);	//The player activation box is touching
 		});
-		
+
 		if(it_act!=std::end(trig)) {
 			do_trigger(*it_act);
 		}
 	}
-	
+
 	game_camera.center_on(
 		game_draw_struct.drawable_box_from_spatiable(
 			game_player));
@@ -168,7 +168,7 @@ void test_2d::loop(dfw::input& input, const dfw::loop_iteration_data& lid) {
 void test_2d::draw(ldv::screen& screen, int fps)
 {
 	screen.clear(ldv::rgba8(0, 0, 0, 0));
-	
+
 #ifndef WDEBUG_CODE
 	auto dc=game_room.get_drawables();
 
@@ -179,7 +179,7 @@ void test_2d::draw(ldv::screen& screen, int fps)
 
 	//Second layer... add player and sort.
 	dc.main.push_back(&game_player);
-	std::sort(std::begin(dc.main), std::end(dc.main), app::drawable_order); 
+	std::sort(std::begin(dc.main), std::end(dc.main), app::drawable_order);
 
 	for(const auto& d: dc.main) {
 		d->draw(screen, game_camera, game_draw_struct, s_resources);
@@ -187,7 +187,7 @@ void test_2d::draw(ldv::screen& screen, int fps)
 
 	//Draw fps.
 	ldv::ttf_representation fps_text{
-		s_resources.get_ttf_manager().get("consola-mono", 12), 
+		s_resources.get_ttf_manager().get("consola-mono", 12),
 		ldv::rgba8(0, 0, 255, 255), std::to_string(fps)};
 	fps_text.go_to({500,0});
 	fps_text.draw(screen);
@@ -208,7 +208,7 @@ void test_2d::draw(ldv::screen& screen, int fps)
 	if(s_resources.get_debug_config().bool_from_path("video:draw_main_plane")) {
 		auto dc=game_room.get_drawables();
 		dc.main.push_back(&game_player);
-		std::sort(std::begin(dc.main), std::end(dc.main), app::drawable_order); 
+		std::sort(std::begin(dc.main), std::end(dc.main), app::drawable_order);
 		for(const auto& d: dc.main) {
 			d->draw(screen, game_camera, game_draw_struct, s_resources);
 		}
@@ -216,11 +216,11 @@ void test_2d::draw(ldv::screen& screen, int fps)
 
 	if(s_resources.get_debug_config().bool_from_path("video:draw_fps")) {
 		ldv::ttf_representation fps_text{
-			s_resources.get_ttf_manager().get("consola-mono", 12), 
+			s_resources.get_ttf_manager().get("consola-mono", 12),
 			ldv::rgba8(0, 0, 255, 255), s_resources.get_audio()().debug_state()+" "+std::to_string(fps)};
 		fps_text.go_to({200,0});
 		fps_text.draw(screen);
-	}	
+	}
 
 	auto draw_bounding_box=[this, &screen](const app::spatiable& s, ldv::rgb_color col) {
 		game_draw_struct.set_type(app::draw_struct::types::box);
@@ -243,16 +243,16 @@ void test_2d::draw(ldv::screen& screen, int fps)
 	if(s_resources.get_debug_config().bool_from_path("video:draw_player_bounding_boxes")) {
 		draw_bounding_box(game_player, ldv::rgb8(255,0,0));
 	}
-	
+
 	if(s_resources.get_debug_config().bool_from_path("video:draw_trigger_bounding_boxes")) {
-				
+
 		for(const auto& t : game_room.get_triggers() ) {
 			draw_bounding_box(t, ldv::rgb8(0,0,255));
 		}
 	}
-	
+
 	if(s_resources.get_debug_config().bool_from_path("video:draw_entity_bounding_boxes")) {
-	
+
 		for(const auto& o : game_room.get_obstacles() ) {
 			draw_bounding_box(*o, ldv::rgb8(255, 128, 128));
 		}
@@ -304,10 +304,15 @@ void test_2d::do_text_display(const app::room_action_text& a) {
 
 	const std::string localization_key{ std::string{"desc-"}+std::to_string(a.text_id)};
 
-	lm::log(s_resources.get_log(), lm::lvl::info)<<"displaying "<<localization_key<<" : '"<<game_localization.get(localization_key)<<"'"<<std::endl;
+	lm::log(s_resources.get_log(), lm::lvl::debug)<<"displaying "<<localization_key<<" : '"<<game_localization.get(localization_key)<<"'"<<std::endl;
 
+	lm::log(s_resources.get_log(), lm::lvl::debug)<<"sending signal..."<<std::endl;
 	broadcaster.send_signal(signal_text_display{game_localization.get(localization_key)});
-	set_state(state_test_2d);
+
+	lm::log(s_resources.get_log(), lm::lvl::debug)<<"setting state..."<<std::endl;
+	set_state(state_test_2d_text);
+
+	lm::log(s_resources.get_log(), lm::lvl::debug)<<"done..."<<std::endl;
 }
 
 void test_2d::do_console_transition(const app::room_action_console&) {
@@ -325,14 +330,14 @@ void test_2d::do_trigger(const app::object_trigger& trig) {
 	if(trig.is_touch()) {
 		game_room.set_trigger_memory(trig);
 	}
- 
+
 	const app::room_action * act=game_room.get_action(trig.get_action_id());
 	if(!act) {
-	
+
 		lm::log(s_resources.get_log(), lm::lvl::warning)<<"unavailable action "<<trig.get_action_id()<<std::endl;
 		return;
 	}
-	
+
 	//If it is repeatable we may skip the action.
 	if(!act->repeat) {
 		if(unique_actions.count(act->action_id)) return;
@@ -352,7 +357,7 @@ void test_2d::do_trigger(const app::object_trigger& trig) {
 		virtual void		resolve(const app::room_action_arcade& a)     {c->do_arcade_transition(a);}
 		test_2d *	c;
 	}ad(this);
-	
+
 	act->dispatch(ad);
 }
 
@@ -366,7 +371,7 @@ void test_2d::do_trigger(const app::object_trigger& trig) {
 	else
 	{
 */
-//			do_room_change("map01.json", 0);	
+//			do_room_change("map01.json", 0);
 /*	}
 */
 

@@ -12,6 +12,8 @@
 
 #include <rapidjson/rapidjson.h>
 #include <rapidjson/document.h>
+#include <rapidjson/stringbuffer.h>
+#include <rapidjson/prettywriter.h>
 
 #include <sstream>
 #include <iomanip>
@@ -34,7 +36,8 @@ test_poly::test_poly(app::shared_resources& sr, dfw::signal_dispatcher& /*sd*/)
 #ifdef WDEBUG_CODE
 	,editor_mode(editor_modes::obstacles),
 	editor_vertex_rep{{0,0,10,10}, ldv::rgb8(0,0,128)},
-	editor_line_rep({0,0}, {0,0}, ldv::rgb8(0,0,64))
+	editor_line_rep({0,0}, {0,0}, ldv::rgb8(0,0,64)),
+	help_time{10.f}
 #endif
 {
 	camera.set_coordinate_system(ldv::camera::tsystem::cartesian);
@@ -61,12 +64,18 @@ void test_poly::loop(dfw::input& input, const dfw::loop_iteration_data& lid)
 
 #ifdef WDEBUG_CODE
 	if(editor_active) {
-		editor_loop(input);
+		editor_loop(input, lid.delta);
 		return;
 	}
 
-	if(input.is_input_down(input::console_newline)) editor_active=!editor_active;
-	if(input.is_input_down(input::console_backspace)) reload_physics_values();
+	if(input.is_input_down(input::console_newline)) {
+		editor_active=!editor_active;
+		help_time=10.f;
+	}
+	
+	if(input.is_input_down(input::console_backspace)) {
+		reload_physics_values();
+	}
 #endif
 
 	switch(state)
@@ -442,8 +451,12 @@ void test_poly::reload_physics_values()
 	std::cout<<"physics values reloaded (if values didn't change remember to hit r):"<<std::endl;
 }
 
-void test_poly::editor_loop(dfw::input& input)
+void test_poly::editor_loop(dfw::input& input, float _delta)
 {
+	if(help_time > 0.0f) {
+		help_time-=_delta;	
+	}
+
 	editor_mouse_position=input().get_mouse_position();
 
 	if(input().is_mouse_button_down(SDL_BUTTON_LEFT))
@@ -490,7 +503,10 @@ void test_poly::editor_loop(dfw::input& input)
 			break;
 		}
 
-		if(input.is_input_down(input::console_newline)) editor_active=!editor_active;;
+		if(input.is_input_down(input::console_newline)) {
+			editor_active=!editor_active;
+			help_time=10.f;
+		}
 	}
 	else
 	{
@@ -509,9 +525,8 @@ void test_poly::editor_save()
 	using namespace tools;
 
 	//Building the first level map
-	rapidjson::Document mroot;
-	mroot.SetObject();
-	
+	rapidjson::Document mroot{rapidjson::kObjectType};
+
 	auto fill_vertices=[&mroot](ldt::polygon_2d<double> poly, rapidjson::Value& tok) {
 		for(const auto& p: poly.get_vertices()) {
 
@@ -519,50 +534,52 @@ void test_poly::editor_save()
 			arr.PushBack(p.x, mroot.GetAllocator());
 			arr.PushBack(p.y, mroot.GetAllocator());
 
-			tok.GetArray().PushBack(arr, mroot.GetAllocator());
+			tok.PushBack(arr, mroot.GetAllocator());
 		}
 	};
-
-	mroot["obstacles"]=rapidjson::Value(rapidjson::kArrayType);
-	for(const auto& o : obstacles)
-	{
-		rapidjson::Value data(rapidjson::kObjectType);
-
-		data["color"]=rapidjson::Value(rapidjson::kArrayType);
-		data["color"].SetArray();
-		data["color"].PushBack(o.color.r, mroot.GetAllocator());
-		data["color"].PushBack(o.color.g, mroot.GetAllocator());
-		data["color"].PushBack(o.color.b, mroot.GetAllocator());
-
-		data["poly"]=rapidjson::Value(rapidjson::kArrayType);
-		fill_vertices(o.poly, data["poly"]);
+	
+	rapidjson::Value arr_obstacles{rapidjson::kArrayType};	
+	for(const auto& o : obstacles) {
+	
+		rapidjson::Value colours{rapidjson::kArrayType};
+		colours.PushBack(o.color.r, mroot.GetAllocator());
+		colours.PushBack(o.color.g, mroot.GetAllocator());
+		colours.PushBack(o.color.b, mroot.GetAllocator());
 		
-		mroot["obstacles"].GetArray().PushBack(data, mroot.GetAllocator());
-	}
-
-	mroot["waypoints"]=rapidjson::Value(rapidjson::kArrayType);
-	for(const auto& w : waypoints) {
-
+		rapidjson::Value poly{rapidjson::kArrayType};
+		fill_vertices(o.poly, poly);
+		
 		rapidjson::Value data(rapidjson::kObjectType);
-		data["index"]=w.index;
-		data["poly"]=rapidjson::Value(rapidjson::kArrayType);
-
-		fill_vertices(w.poly, data["poly"]);
-		mroot["waypoints"].GetArray().PushBack(data, mroot.GetAllocator());
+		data.AddMember("color", colours, mroot.GetAllocator());
+		data.AddMember("poly", poly, mroot.GetAllocator());
+		
+		arr_obstacles.PushBack(data, mroot.GetAllocator());
 	}
+	mroot.AddMember("obstacles", arr_obstacles, mroot.GetAllocator());
 
-	/*
-	rapidjson::Value root;
-	dnot_token root;
-	root.set(mroot);
-
-	TODO: Still need the printer for this.
-
-	//Save to disk.
+	rapidjson::Value arr_waypoints{rapidjson::kArrayType};	
+	for(const auto& w : waypoints) {
+				
+		rapidjson::Value poly{rapidjson::kArrayType};
+		fill_vertices(w.poly, poly);
+		
+		rapidjson::Value data{rapidjson::kObjectType};		
+		data.AddMember("index", w.index, mroot.GetAllocator());
+		data.AddMember("poly", poly, mroot.GetAllocator());
+		
+		arr_waypoints.GetArray().PushBack(data, mroot.GetAllocator());
+	}
+	mroot.AddMember("waypoints", arr_waypoints, mroot.GetAllocator());
+	
+	//Convert to string...
+	rapidjson::StringBuffer sb;
+    rapidjson::PrettyWriter<rapidjson::StringBuffer> writer(sb);
+    mroot.Accept(writer);
+    
+    //Save to disk.
 	std::ofstream file("data/app_data/arcade_data.json");
-	file<<root.serialize();
-	file.close();
-*/
+	file<<sb.GetString();
+	
 	std::cout<<"saved"<<std::endl;
 }
 
@@ -615,18 +632,41 @@ void test_poly::editor_draw(ldv::screen& screen)
 		break;
 	}
 
-	//HUD data.
-	auto pos=editor_cursor_position();
-	std::string cdata=
-		"cam: "+std::to_string(camera.get_x())+","+std::to_string(camera.get_y())
-		+" coords: "+std::to_string(pos.x)+","+std::to_string(pos.y)
-		+" zoom:"+std::to_string(camera.get_zoom());
+	if(help_time >= 0.f) {
+	
+		const std::string help="arrows: move\n"
+"activate+arrows: zoom / color / waypoint\n"
+"activate+newline: change mode\n"
+"backspace: save\n"
+"newline: obstacles / waypoint\n"
+"left click:  add vertex / select\n"
+"right click: delete\n"
+"enter and exit editor mode to see this message again";
 
-	ldv::ttf_representation fps_text{
+		ldv::ttf_representation help_text{
+			s_resources.get_ttf_manager().get("consola-mono", 16),
+			ldv::rgba8(0, 255, 255, 255), 
+			help
+		};
+		help_text.go_to({0,0});
+		help_text.draw(screen);
+	
+	}
+	else {
+	
+		//HUD data.
+		auto pos=editor_cursor_position();
+		std::string cdata=
+			"cam: "+std::to_string(camera.get_x())+","+std::to_string(camera.get_y())
+			+" coords: "+std::to_string(pos.x)+","+std::to_string(pos.y)
+			+" zoom:"+std::to_string(camera.get_zoom());
+	
+		ldv::ttf_representation fps_text{
 		s_resources.get_ttf_manager().get("consola-mono", 16),
 		ldv::rgba8(0, 255, 255, 255), cdata};
-	fps_text.go_to({0,0});
-	fps_text.draw(screen);
+		fps_text.go_to({0,0});
+		fps_text.draw(screen);
+	}
 }
 
 void test_poly::editor_draw_grid(ldv::screen& screen)

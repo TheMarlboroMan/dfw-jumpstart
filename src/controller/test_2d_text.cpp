@@ -21,6 +21,7 @@ try
 	:s_resources(sr), 
 	receiver(sd),
 	state(tstates::dictate), 
+	text_buffer{{"This is the elusive text you will never see unless\nyou run this controller directly."}, {"Congratulations. You saw it."}, {"Now, please, move along."}},
 	current_index(0),
 	time_text(0.f), 
 	time_blink(0.f) {

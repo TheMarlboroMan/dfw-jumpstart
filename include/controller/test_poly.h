@@ -122,7 +122,7 @@ class test_poly:
 	//Editor trash...
 	typedef ldt::point_2d<int>		editor_pt;
 
-	void 					editor_loop(dfw::input&);
+	void 					editor_loop(dfw::input&, float delta);
 	void					editor_draw(ldv::screen&);
 	void					editor_draw_grid(ldv::screen&);
 	void					editor_draw_vertex(ldv::screen&, ldt::point_2d<int>, ldv::rgb_color);
@@ -196,6 +196,7 @@ class test_poly:
 						editor_waypoint_index=1;
 	ldv::box_representation 		editor_vertex_rep;
 	ldv::line_representation 		editor_line_rep;
+	float                           help_time;
 #endif
 };
 

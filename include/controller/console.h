@@ -34,7 +34,7 @@ class console:
 
 	private:
 
-	void					do_color_change(const std::string&, int&, int&, int&);
+	void					do_color_change(int&, int&, int&);
 
 	//references...
 	app::shared_resources&				s_resources;

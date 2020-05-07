@@ -4,8 +4,6 @@
 #include "../../include/input/input.h"
 
 //tools
-#include <tools/compatibility_patches.h>
-#include <tools/json.h>
 
 //ld
 #include <ldv/ttf_representation.h>
@@ -13,6 +11,7 @@
 
 //std
 #include <cassert>
+#include <sstream>
 
 using namespace controller;
 
@@ -59,25 +58,25 @@ void console::loop(dfw::input& input, const dfw::loop_iteration_data& lid) {
 			history.clear();
 		}
 		else if(current_command=="help") {
-			history.push_back("clear, bgcolor:, fgcolor:, exit");
+			history.push_back("clear, bgcolor r g b, fgcolor r g b:, exit");
 		}
 		else if(current_command=="exit") {
 			set_state(state_test_2d);
 		}
-		else if(current_command.substr(0, 8)=="bgcolor:") {
+		else if(current_command.substr(0, 7)=="bgcolor") {
 			try {
-				do_color_change("bgcolor", bgc_r, bgc_g, bgc_b);
+				do_color_change(bgc_r, bgc_g, bgc_b);
 			}
 			catch(std::exception& e) {
-				history.push_back("Syntax: bgcolor:[r,g,b] "+std::string(e.what()));
+				history.push_back("Syntax: bgcolor r g b "+std::string(e.what()));
 			}
 		}
-		else if(current_command.substr(0, 8)=="fgcolor:") {
+		else if(current_command.substr(0, 7)=="fgcolor") {
 			try {
-				do_color_change("fgcolor", fgc_r, fgc_g, fgc_b);
+				do_color_change(fgc_r, fgc_g, fgc_b);
 			}
 			catch(std::exception& e) {
-				history.push_back("Syntax: fgcolor:[r,g,b] "+std::string(e.what()));
+				history.push_back("Syntax: fgcolor r g b "+std::string(e.what()));
 			}
 		}
 		else {
@@ -132,10 +131,19 @@ bool console::can_leave_state() const {
 	return true;
 }
 
-void console::do_color_change(const std::string& key, int& r, int& g, int& b) {
+void console::do_color_change(int& r, int& g, int& b) {
 
-	auto tok=tools::parse_json_string(current_command);
-	r=tok[key.c_str()][0].GetInt();
-	g=tok[key.c_str()][1].GetInt();
-	b=tok[key.c_str()][2].GetInt();
+	std::string type;
+	std::stringstream ss{current_command};
+	int pr{}, pg{}, pb{};
+
+	ss>>type>>pr>>pg>>pb;
+		
+	if(ss.fail()) {
+		throw std::runtime_error("invalid syntax");	
+	}
+		
+	r=pr;
+	g=pg;
+	b=pb;
 }

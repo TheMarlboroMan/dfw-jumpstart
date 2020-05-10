@@ -12,6 +12,7 @@ fi
 if [ -z $1 ] || [ -z $2 ]
 then
 	echo "use: setup_fresh.sh #project_name# #cmake_binary#"
+	echo "this will destroy the git directory of the project!!!"
 	exit 1
 fi
 
@@ -29,7 +30,7 @@ cd ..
 
 #remove build, if need be...
 if [ -d build ]
-then 
+then
 	rm -rf build
 fi
 
@@ -37,7 +38,7 @@ fi
 rm -rf integration logs include lib data main.cpp tiles.sh editor.sh README.md CMakeLists.txt .git resources
 
 #refresh the directories...
-mkdir -p lib/dfwimpl lib/controller include/dfwimpl include/controller
+mkdir -p src/dfwimpl src/controller include/dfwimpl include/controller
 
 #decompress the blank templates...
 tar -xzf scripts/templates.tar.gz
@@ -58,6 +59,7 @@ fi
 #cleanup
 cd ..
 rm scripts/setup_fresh.sh;
+rm scripts/make_templates.sh
 rm scripts/templates.tar.gz
 
 #give a little help, which was on the tar file.

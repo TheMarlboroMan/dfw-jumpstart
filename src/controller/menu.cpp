@@ -18,8 +18,8 @@
 using namespace controller;
 
 menu::menu(app::shared_resources& s, dfw::signal_dispatcher& sd, dfwimpl::config& c)
-	:s_resources(s), 
-	config(c), 
+	:s_resources(s),
+	config(c),
 	broadcaster(sd),
 	main_menu_rep(nullptr),
 	options_menu_rep(nullptr),
@@ -69,8 +69,8 @@ void menu::draw(ldv::screen& screen, int fps) {
 	layout.draw(screen);
 
 	ldv::ttf_representation txtfps{
-		s_resources.get_ttf_manager().get("consola-mono", 16), 
-		ldv::rgba8(255, 255, 255, 255), 
+		s_resources.get_ttf_manager().get("consola-mono", 16),
+		ldv::rgba8(255, 255, 255, 255),
 		std::to_string(fps), 1.};
 	txtfps.draw(screen);
 }
@@ -120,7 +120,7 @@ void menu::do_controls_menu_input(dfw::input& input) {
 		const auto& key=controls_menu_rep->get_current_key();
 
 		if(key=="55_RESTORE") {
-			restore_default_controls(input); 
+			restore_default_controls(input);
 		}
 		else if(key=="60_BACK") {
 			broadcaster.send_signal(signal_save_controls{});
@@ -208,7 +208,7 @@ void menu::learn_control(dfw::input& input) {
 		input.configure(input.from_description({t, code, device}, it));
 
 		//Set the new value, force refresh.
-		controls_menu.set(controls_menu_rep->get_current_key(), translate_input(input.locate_description(it)));
+		controls_menu.set(controls_menu_rep->get_current_key(), translate_input(input.locate_first_description(it)));
 		controls_menu_rep->refresh();
 
 		//End the "learn" mode.
@@ -221,7 +221,7 @@ void menu::learn_control(dfw::input& input) {
 
 	//Show a "learning" message...
 	controls_menu.set(
-		controls_menu_rep->get_current_key(), 
+		controls_menu_rep->get_current_key(),
 		menu_localization.get("menu-1066")
 	);
 
@@ -234,7 +234,7 @@ void menu::restore_default_controls(dfw::input& input) {
 
 		input.clear(it);
 		input.configure(input.from_description({dfw::input_description::types::keyboard, code, 0}, it));
-		controls_menu.set(key, translate_input(input.locate_description(it)));
+		controls_menu.set(key, translate_input(input.locate_first_description(it)));
 	};
 
 	f(input::up, SDL_SCANCODE_UP, "10_UP");
@@ -456,7 +456,7 @@ void menu::mount_menus() {
 			},
 			[this](const std::string& _key) -> std::string {
 
-				if(_key=="10_UP" || 
+				if(_key=="10_UP" ||
 					_key=="20_DOWN" ||
 					_key=="30_LEFT" ||
 					_key=="40_RIGHT" ||

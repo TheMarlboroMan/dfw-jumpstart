@@ -19,7 +19,7 @@ state_driver::state_driver(dfw::kernel& kernel, dfwimpl::config& c)
 
 	lm::log(log, lm::lvl::info)<<"setting state check function..."<<std::endl;
 	states.set_function([this](int v){
-	
+
 		lm::log(log, lm::lvl::info)<<"check state "<<state_min<<" < "<<v<<" < "<<state_max<<"..."<<std::endl;
 		return v > state_min && v < state_max;
 	});
@@ -238,11 +238,11 @@ void state_driver::receive_signal(dfw::kernel& kernel, const dfw::broadcast_sign
 			config.save();
 		break;
 		case controller::t_signal_save_controls:
-			config.set_vector("input:up", 		config_token_from_input_description(kernel.get_input().locate_description(input::up)));
-			config.set_vector("input:down",  	config_token_from_input_description(kernel.get_input().locate_description(input::down)));
-			config.set_vector("input:left", 	config_token_from_input_description(kernel.get_input().locate_description(input::left)));
-			config.set_vector("input:right", 	config_token_from_input_description(kernel.get_input().locate_description(input::right)));
-			config.set_vector("input:activate", config_token_from_input_description(kernel.get_input().locate_description(input::activate)));
+			config.set_vector("input:up", 		config_token_from_input_description(kernel.get_input().locate_first_description(input::up)));
+			config.set_vector("input:down",  	config_token_from_input_description(kernel.get_input().locate_first_description(input::down)));
+			config.set_vector("input:left", 	config_token_from_input_description(kernel.get_input().locate_first_description(input::left)));
+			config.set_vector("input:right", 	config_token_from_input_description(kernel.get_input().locate_first_description(input::right)));
+			config.set_vector("input:activate", config_token_from_input_description(kernel.get_input().locate_first_description(input::activate)));
 			config.save();
 		break;
 	}

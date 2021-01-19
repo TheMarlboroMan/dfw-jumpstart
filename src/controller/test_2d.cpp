@@ -316,11 +316,17 @@ void test_2d::do_text_display(const app::room_action_text& a) {
 }
 
 void test_2d::do_console_transition(const app::room_action_console&) {
-	//TODO
+
+	//TODO: Still needs some kind of transition...
+
+	set_state(state_console);
 }
 
 void test_2d::do_arcade_transition(const app::room_action_arcade&) {
-	//TODO
+
+	//TODO: Still needs some kind of transition...
+
+	set_state(state_test_poly);
 }
 
 void test_2d::do_trigger(const app::object_trigger& trig) {

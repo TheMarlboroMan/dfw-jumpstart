@@ -22,7 +22,7 @@ void tile_decoration::draw(ldv::screen& scr, const ldv::camera& cam, app::draw_s
 	ds.set_type(app::draw_struct::types::bitmap);
 	ds.set_texture(sr.get_video_resource_manager().get_texture(tileset_resource_id));
 	ds.set_alpha(alpha);
-	ds.set_clip(sr.get_tilesheet(tileset_id).get(tile_id).get_rect());
+	ds.set_clip(sr.get_tilesheet(tileset_id).get(tile_id).box);
 	ds.set_location({x, y, cell_size, cell_size});
 	ds.rep->draw(scr, cam);
 }

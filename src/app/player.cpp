@@ -61,7 +61,7 @@ bool player::is_in_camera(const ldv::rect&) const {
 void player::draw(ldv::screen& scr, const ldv::camera& cam, app::draw_struct& ds, const app::shared_resources& sr) const {
 	//Now the animation...
 	const auto& frame=sr.get_animation(animation_defs::player).get(choose_animation_frame()).get_for_time(walk_time).frame;
-	const auto& frect=frame.get_rect();
+	const auto& frect=frame.box;
 
 	ds.set_type(app::draw_struct::types::bitmap);
 	ds.set_texture(sr.get_video_resource_manager().get_texture(texture_defs::player_sheet));

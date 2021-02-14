@@ -19,7 +19,7 @@ bool object_decoration::is_in_camera(const ldv::rect& /*r*/) const
 void object_decoration::draw(ldv::screen& scr, const ldv::camera& cam, app::draw_struct& ds, const app::shared_resources& sr) const
 {
 	const auto& frame=sr.get_tilesheet(tileset_defs::decoration).get(frame_index);
-	const auto& frect=frame.get_rect();
+	const auto& frect=frame.box;
 
 	ds.set_type(app::draw_struct::types::bitmap);
 	ds.set_texture(sr.get_video_resource_manager().get_texture(texture_defs::decoration_object_sheet));

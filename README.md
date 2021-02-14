@@ -305,10 +305,26 @@ The documentation of the class is fairly complete in any case.
 
 ###Change application states (controllers).
 
+The brute force way: directly replacing states:
+
 - From the controller code use set_state(state), as in set_state(state_main). Use a state defined in states.h. 
 - From the state_driver use states.set(v), where v is a state defined in states.h. "states" is a protected property of the state_driver_interface.
 
 There are examples of both: you can see it done in main.cpp/state_driver.cpp and in the controllers.
+
+The stack based way: controllers can call the push_state and pop_state to manipulate the state stack. This way, the starting controller is at the bottom of the stack (say, the menu controller) and new controllers can be pushed and popped upon it. For example:
+
+- The initial controller is "menu".
+- Menu calls push_state(options)
+- The options controller is executed and calls pop_state()
+- Menu is brought back to the front.
+- Menu calls push_state(game)
+- Game is executed, and calls push_state(map)
+- Map is executed and calls pop_state()
+- Game is executed and calls pop_state()
+- Menu is executed. pop_state() would throw.
+
+Controllers can always call "state_size()" to see the size of the current state stack.
 
 ###Use "loop" and application step.
 

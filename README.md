@@ -6,21 +6,32 @@
 	- Check camera spatiable objects.
 	- Skip camera test (set in camera...)
 
-#Building on windows.
+# Dependencies
 
-The zlib1.dll bundled with the mingw development packages at https://www.libsdl.org/projects/SDL_image/ is out of date with regards to libpng. Basically this means that you can build the project, but it will not run. Download a more up to date version, such as the one at https://sourceforge.net/projects/uqm-mods/ and you will be ready to go.
+- A compiler supporting the C++17 standard
+- libdansdl2 (https://github.com/themarlboroman/libdansdl2)
+	- lm (https://github.com/themarlboroman/log)
+	- tools (https://github.com/themarlboroman/tools)
+		- rapidjson (https://github.com/tencent/rapidjson)
+- dfw (https://github.com/themarlboroman/dfw)
 
-Alternatively, skip the mingw and go with mingw64-win (or something of the like).
-	
-#Basic framework.
+On linux I just use gcc (currently gcc 9.3.0) and cmake to build / install all deps, then cmake to build this project.
+
+# Building on windows.
+
+In the past I have built this project and its dependencies with ming32 (or mingw64-64. As of today, I find it much easier to use msys2 and pretend I am doing things the linux way. See "building with msys2" for a complete guide.
+
+If you are using mingw32, bear in mind that the zlib1.dll bundled with the mingw development packages at https://www.libsdl.org/projects/SDL_image/ is out of date with regards to libpng. Basically this means that you can build the project, but it will not run. Download a more up to date version, such as the one at https://sourceforge.net/projects/uqm-mods/ and you will be ready to go. If I remember correctly, this does not apply to mingw64-w64.
+
+# Basic framework.
 
 The idea here is to have a very basic application so things can run with little copy and paste. It will also include a few features I tend to forget about.
 
-There are a few controllers here: 
+There are a few controllers here:
 
-- a very simple console with four commands or so (first try to implement one) 
+- a very simple console with four commands or so (first try to implement one)
 	- Demonstrates a very simple controller with text input.
-- a little game-like thing in axonometric 2d perspective (think snes rpg). 
+- a little game-like thing in axonometric 2d perspective (think snes rpg).
 	- Demonstrates screen-coordinates camera, implementation of application classes, use of animations and frames, screen representations, input, SAT collision, signal broadcasting...
 - a game thing companion that displays texts along the previous controller.
 	- Demonstrates multi-controller drawing and signal broadcasting.
@@ -36,7 +47,7 @@ The rest of this text file includes:
 	- files and directory structure.
 	- interesting examples in classes.
 
-##Getting started:
+## Getting started:
 
 - Install dependencies and compile them (libdansdl2, dfw, tools, log).
 - Alter makefile_linux/win to set the right paths.
@@ -48,38 +59,38 @@ Now for the ugly part.
 - code your own stuff
 - make -f makefile_[linux-win] all
 
-##On coordinate systems.
+## On coordinate systems.
 
 Copied and pasted from the "camera.h" header file of libdansdl2:
 
-"A particularly interesting feature is the coordinate system: in "screen", 
-the focus box will be assumed to be a rectangle with its origin in the top-left 
+"A particularly interesting feature is the coordinate system: in "screen",
+the focus box will be assumed to be a rectangle with its origin in the top-left
 corner its width extending right and its height extending down (just as the screen
-coordinate system used on the library). In "cartesian", the origin is the 
+coordinate system used on the library). In "cartesian", the origin is the
 bottom-left corner and the "height" parameter "ascends". The choice of coordinate
 system makes the camera act as a mediator between screen and application space.
-Whatever the system chosen, all representations MUST be in "screen" form. 
-The camera will not perform the transformations itself... Even if this 
+Whatever the system chosen, all representations MUST be in "screen" form.
+The camera will not perform the transformations itself... Even if this
 transformation could be implemented into the framework, I'd rather not do it
-and keep it simple. All the client code needs to do is invert the y axis 
+and keep it simple. All the client code needs to do is invert the y axis
 when creating a representation for a logic object.".
 
 Which translates to:
 
-1 - Code all your logic assuming whatever coordinate system you want. The 
+1 - Code all your logic assuming whatever coordinate system you want. The
 	geometry classes in libdansdl2 assume a cartesian space, but you may be
 	used to the trope of 0.0 being the top-left.
-2 - When it comes to draw your representations, first set the camera to 
+2 - When it comes to draw your representations, first set the camera to
 	the space you are using in the state. If you assume 0.0 is the top of the
 	screen and 0.0 is above 0.10, use "screen". Else use "cartesian".
-3 - Create your representations in 'screen' space, always. This might be 
+3 - Create your representations in 'screen' space, always. This might be
 	confusing if you are using the "cartesian" system: the trick is to invert
-	than Y axis. Seriously, just go to "test_poly.cpp" and look at the 
+	than Y axis. Seriously, just go to "test_poly.cpp" and look at the
 	draw_polygon method. It takes in a ldt::polygon_2d in cartesian space and
 	turns it into a ldv::polygon_representation by copying all its points and
 	inverting the y axis.
 
-##A few definitions:
+## A few definitions:
 
 - Controller:
 	TODOz
@@ -87,15 +98,15 @@ Which translates to:
 	TODO
 - Signal broadcasting.
 
-##Howto
+## Howto
 
 Here are a few things that need to be done in a regular basis.
 
-###Add new controllers:
+### Add new controllers:
 
 You can do the automatic or manual methods...
 
-The automatic method, under Linux: 
+The automatic method, under Linux:
 
 - from the root of the project:
 
@@ -112,14 +123,14 @@ The manual method:
 
 It is a bit clunky, but does not take more than 5 minutes...
 
-###Run code once, at application startup.
+### Run code once, at application startup.
 
 The one thing that best matches this is to use your main state_driver under the
 class/dfwimpl directory. Modify the constructor and have it call your own hooks.
 
-###Register and draw TTF fonts.
+### Register and draw TTF fonts.
 
-Use the tools::ttf_manager class. You can have a manager for each of your 
+Use the tools::ttf_manager class. You can have a manager for each of your
 instances or use the same for all of them (for example, making it property of
 the state driver).
 
@@ -130,19 +141,19 @@ bool ttf_manager::insert(const std::string& _alias, int _size, const std::string
 to insert fonts, which will return true on success (false if the font was already
 registered!).
 
-When it comes to draw the font you will need both a registered ttf and a 
+When it comes to draw the font you will need both a registered ttf and a
 drawable object:
 
 //Get the font.
 const auto& font=ttf_manager.get("myfontalias", 14);
 //Create the drawable... More parameters are available!!!!.
-ldv::ttf_representation txt(font, ldv::rgba8(255,255,255,255), "My text"); 
+ldv::ttf_representation txt(font, ldv::rgba8(255,255,255,255), "My text");
 txt.draw(screen);
 
 Alternatively, you may want to consider the layout classes if you want to skip
 creating instances all the time.
 
-###Do signal broadcasting between controllers and with the state_driver
+### Do signal broadcasting between controllers and with the state_driver
 
 There are a few classes in the dfw header "signal_broadcasting.h" which allow
 to setup a signal system. The concepts are:
@@ -151,7 +162,7 @@ to setup a signal system. The concepts are:
 	may have its own data.
 - a receiver: the entity that receives a message. It may later choose to discard
 	or interpret it. Since the receiver is designed to work by composition,
-	you will need to design and instance it, probably using a lambda to 
+	you will need to design and instance it, probably using a lambda to
 	make your controller's data accesible to it.
 - sender: the entity that sends.
 - a dispatcher: registers all receivers and senders alike. Through it, the
@@ -174,7 +185,7 @@ The easiest thing to do here is:
 	- In your controller, use your own receiver object with the dispatcher.
 	- In your controller, set up a lambda function into the receiver so it
 	forwards to your own controller logic.
-	- In your controller, setup your controller logic for receiving a 
+	- In your controller, setup your controller logic for receiving a
 	signal (it will usually involve checking the message type (get_type())
 	and later doing static casting.
 
@@ -185,7 +196,7 @@ For example, the state driver partakes in it so the screen size or audio
 properties can be updated. On this particular example the lambda is spiffed up
 so the kernel can be captured.
 
-###Use a menu
+### Use a menu
 
 Menus are time consuming if done by hand, but they are also an important part
 of a relatively polished application.
@@ -206,17 +217,17 @@ menu controller that basically goes:
 	//Translate with the translation vector.
 	menu.translate(trad);
 
-That's enough to mount and translate a menu. Now, representations are a 
+That's enough to mount and translate a menu. Now, representations are a
 completely different matter (all that tools::options_menu contains is the data).
-The end user is responsible to convert the data to representations. However, 
+The end user is responsible to convert the data to representations. However,
 this project has a "menu_representation" class that is very useful to both
-create the representations and add events (change selection, navigate...). 
+create the representations and add events (change selection, navigate...).
 Examples are in the code of the controller. It is easier to copy and paste
-than to try and explain. The two things to understand here: 
+than to try and explain. The two things to understand here:
 
 	- in tools::options_menu terms, get_name is the name of a property and
 	get_title is its value.
-	- the "menu_representation" class is just a framework that must be filled 
+	- the "menu_representation" class is just a framework that must be filled
 	with six functions (for example, with lambdas)
 
 		 - register name/value representations void(const T&, std::vector<ldv::representation*>&)
@@ -246,24 +257,24 @@ but these need to be manually rolled... In any case, complex menu systems
 option and so on) are sinonyms with grunt work... The menu controller is a good
 example of things that can be done.
 
-###Redefine keys.
+### Redefine keys.
 
 This is bound to exist on every game... The particulars are complex and the
 classes involved many, so just check the "menu" controller. There's an entire
 world of stuff there.
 
-###Draw a controller different than the active one:
+### Draw a controller different than the active one:
 
 There may be cases when you need to keep drawing a controller while executing one
-(for example, a help screen about a certain controller). While this can be done 
+(for example, a help screen about a certain controller). While this can be done
 setting up different states in controller and branching logic, input control
-and drawing, there's an alternative. When you need it, add this function in 
+and drawing, there's an alternative. When you need it, add this function in
 the controller:
 
-virtual void			request_draw(dfw::controller_view_manager& cvm) 
+virtual void			request_draw(dfw::controller_view_manager& cvm)
 {
 	//Do this to add another controller by index.
-	cvm.add(1); 
+	cvm.add(1);
 
 	//Do this to add your controller.
 	cvm.add_ptr(this);
@@ -273,60 +284,44 @@ And that's all. Controllers will be drawn in the declared order (in the example,
 first the one with the index 1 and then "this"). No logic of the controllers will be
 executed at all, so the view will be frozen.
 
-An example can be seen in the test_2d_text controller which requests text_2d to 
+An example can be seen in the test_2d_text controller which requests text_2d to
 be drawn and then overlays new elements.
 
-###Use the tools::view_composer to create static views.
+### Use the tools::view_composer to create static views.
 
-Static views can be composed with dnot files to avoid the need of hardcoded 
+Static views can be composed with dnot files to avoid the need of hardcoded
 values and recompilation. These are most useful for menus, presentation screens,
-fixed graphics... There is an example in the test_2d_text controller, using the 
+fixed graphics... There is an example in the test_2d_text controller, using the
 file in "data/app_data/layouts.dat". Another is in the menu controller, which
 does things like use external representations and manipulate representations
 in the layout from the code.
 
 The documentation of the class is fairly complete in any case.
 
-###Add new inputs:
+### Add new inputs:
 
 - Add it to the enum in class/input.h.
 - In case you need a keyboard input:
 	- Locate the sdl key mapping in SDL_keycode.h (locate SDK_scancode.h first, usually in /usr/include/SDL2).
 	- Or use the showkey -a command (second result).
 	- Remember, this is a scancode, not the ASCII value!.
-- Add this mapping to data/config/config.dnot in the "input" sequence. 
+- Add this mapping to data/config/config.dnot in the "input" sequence.
 	- The first parameter is "type" (0 is keyboard).
-	- The second is device number and 
+	- The second is device number and
 	- The third is the code.
 
 - Map it in class/dfwimpl/state_driver.cpp's prepare_input().
-- Use it in your code by referencing as indicated in class/input.h: 
+- Use it in your code by referencing as indicated in class/input.h:
 	- if(input.is_input_[down|pressed|up](input_app::your_input_here)) {...}
 
-###Change application states (controllers).
+### Change application states (controllers).
 
-The brute force way: directly replacing states:
-
-- From the controller code use set_state(state), as in set_state(state_main). Use a state defined in states.h. 
+- From the controller code use set_state(state), as in set_state(state_main). Use a state defined in states.h.
 - From the state_driver use states.set(v), where v is a state defined in states.h. "states" is a protected property of the state_driver_interface.
 
 There are examples of both: you can see it done in main.cpp/state_driver.cpp and in the controllers.
 
-The stack based way: controllers can call the push_state and pop_state to manipulate the state stack. This way, the starting controller is at the bottom of the stack (say, the menu controller) and new controllers can be pushed and popped upon it. For example:
-
-- The initial controller is "menu".
-- Menu calls push_state(options)
-- The options controller is executed and calls pop_state()
-- Menu is brought back to the front.
-- Menu calls push_state(game)
-- Game is executed, and calls push_state(map)
-- Map is executed and calls pop_state()
-- Game is executed and calls pop_state()
-- Menu is executed. pop_state() would throw.
-
-Controllers can always call "state_size()" to see the size of the current state stack.
-
-###Use "loop" and application step.
+### Use "loop" and application step.
 
 This is the main application flow:
 
@@ -337,7 +332,7 @@ This is the main application flow:
 	- Loop the state. (this is the main loop of your state).
 	- Process message queue.
 	- Evaluate possible state change. Break out of this loop if needed.
-	- 
+	-
 - If change state
 	- Confirm state change.
 - If not change state
@@ -349,30 +344,30 @@ This is the main application flow:
 Thus:
 
 - Controller loop happens X times, as much as needed to fill N seconds of logic before drawing.
-	- This time is measured by a ldt::fps_counter, property of the kernel. 
+	- This time is measured by a ldt::fps_counter, property of the kernel.
 	- The value "delta_step" on the kernel represents the 0.01 seconds of logic.
 	- Once N time units of logic are run, the screen is refreshed.
-	- The loop repeats with N being the time the screen took to refresh or a maximum value set in state_driver::get_max_timestep().	
+	- The loop repeats with N being the time the screen took to refresh or a maximum value set in state_driver::get_max_timestep().
 
-###Use and inject resource managers.
+### Use and inject resource managers.
 
 In order to obtain any resource (music, sound, texture...) first these must be
 loaded within the framework. The files in "/data/resources" contain all these
-statically loaded resources. Of course, resources can be loaded dinamically too 
-but it just doesn't pay for small applications with small memory prints. 
+statically loaded resources. Of course, resources can be loaded dinamically too
+but it just doesn't pay for small applications with small memory prints.
 
-Each resource goes into a different resource manager, property of the kernel, 
+Each resource goes into a different resource manager, property of the kernel,
 thus accesible from the state_driver:
 
 ldv::resource_manager&	kernel.get_video_resource_manager() provides access to
-textures kernel.get_video_resource_manager().get_texture(index) and 
+textures kernel.get_video_resource_manager().get_texture(index) and
 surfaces kernel.get_video_resource_manager().get_surface(index).
 
 lda::resource_manager&	kernel.get_audio_resource_manager() does the same for
-aural resources with "get_sound" and "get_music". 
+aural resources with "get_sound" and "get_music".
 
 These managers are emptied once the application stops. In order to access any
-texture from any class or controller (which happens all the time) either the 
+texture from any class or controller (which happens all the time) either the
 kernel must be accessible to these (bad idea) or the managers must be injected
 into them (better idea). The de facto way of doing this is to set a reference
 to them into your controller and pass them when the controllers are being
@@ -380,12 +375,12 @@ constructed in the state_driver. Controllers, in turn, can pass these references
 to classes or methods.
 
 Another option is the one used in this code: a single "shared_resources" object
-that has references to all managers and shared stuff, injected into the 
+that has references to all managers and shared stuff, injected into the
 controllers later. Shoddy, but quick.
 
-###Play audio
+### Play audio
 
-The simplest way to play sound and music is to obtain the dfw::audio object 
+The simplest way to play sound and music is to obtain the dfw::audio object
 from the kernel (kernel.get_audio()) and use its play_music and play_sound
 methods, that map directly to the libdansdl2 audio_controller (check the
 documentation). The play_sound method should be enclosed in a try-catch
@@ -396,18 +391,18 @@ this dfw::audio object into them... This would be the "fire and forget" method,
 as no control over the played sounds is given.
 
 To achieve control over the sounds (for example, to change their volume, panning
-or stop them on the fly), a channel must be acquired from the 
+or stop them on the fly), a channel must be acquired from the
 lda::audio_controller class (accesible through the () method of the dfw::audio,
 is in kernel.get_audio()()).
 
-To acquire a channel use lda::audio_controller::get_channel(size_t) or 
+To acquire a channel use lda::audio_controller::get_channel(size_t) or
 lda::audio_controller::get_free_channel() (which may throw). This will
-return an lda::audio_channel object that must instantly be set to play something 
-or monitored (lest the same channel is returned again with the next call). 
+return an lda::audio_channel object that must instantly be set to play something
+or monitored (lest the same channel is returned again with the next call).
 This object is "linked" to a real_audio_channel so every action upon it will
 reflect on the real channel. When the lda::audio_channel objects have long
 lifetimes this can be problematic, as different objects may point to the same
-real channel. 
+real channel.
 
 A call to "unlink" will unlink the lda::audio_channel from
 its real_audio_channel (any operation upon the channel will crash, as it is
@@ -417,14 +412,14 @@ channel should not be used except for reassigning it through
 my_channel=lda::audio_controller::get_free_channel().
 
 Channels will be reported as free if they are not playing. Any monitored channel
-will not be reported as free. Once a channel is monitored, it won't be returned 
-to the channel pool until it is unmonitored. Monitored, thus, basically means 
-"Please, do not return this channel to the pool when it is done playing, I want 
+will not be reported as free. Once a channel is monitored, it won't be returned
+to the channel pool until it is unmonitored. Monitored, thus, basically means
+"Please, do not return this channel to the pool when it is done playing, I want
 to keep using it".
 
 To control the lifetime of channels, it is possible to attach a callback
 (derived from lda::audio_callback_interface) to the channel, whose method
-operator() will be executed when the sound stops playing. This makes sense 
+operator() will be executed when the sound stops playing. This makes sense
 since you can:
 
 - Acquire a channel.
@@ -436,14 +431,14 @@ since you can:
 can be acquired again.
 
 Notice that the callback function will be called only if a lda::audio_callback_interface
-is attached. It will be executed either when the sound ends "naturally" or 
+is attached. It will be executed either when the sound ends "naturally" or
 when "stop" is called on the channel.
 
 Also, notice these methods on the channel:
 
 - free (private function).
 	unmonitors the channel, removes panning effects, removes callback_listener...
-- set_monitoring(false) 
+- set_monitoring(false)
 	only unmonitors the channel. The rest is the same.
 - stop:
 	halts the sound and frees the channel (if unmonitored).
@@ -468,9 +463,9 @@ lda::audio_channel
 	- Unlink does not affect the real channel.
 	- Unlink signals the developer (that is, YOU) that the channel should not be used.
 	- If in doubt, use the audio_channel_safe class. It will throw if you mess up.
-	- With long lived and unmonitored channels, your unlinked channel may 
+	- With long lived and unmonitored channels, your unlinked channel may
 	end up linked to a channel used by another entity. That's actually ok
-	as the relationship is not exclusive. It may, however, do unexpected 
+	as the relationship is not exclusive. It may, however, do unexpected
 	things like your sounds not playing because other entity is using the
 	real channel.
 
@@ -486,19 +481,19 @@ classes:
 - When I am destroyed
 	- My channel is playing and...
 		- ... I want it to keep playing.
-			=> If there's any call to "channel.unlink" in your code, 
+			=> If there's any call to "channel.unlink" in your code,
 			check if the channel is linked first!
-			=> Unmonitor if monitored: on the contrary it will be 
+			=> Unmonitor if monitored: on the contrary it will be
 			lost forever (not really, but well).
-			=> Remove the callback if any: specially if it lies in 
+			=> Remove the callback if any: specially if it lies in
 			the scope of your class.
 			=> You don't need to unlink it: it will do so upon destruction.
 		- ... I want it to stop:
 			=> Unmonitor if monitored. This never has side effects.
-			=> If you don't want your callback to execute, remove it. 
-			If your callback unlinks the channel you certainly want to do this, 
+			=> If you don't want your callback to execute, remove it.
+			If your callback unlinks the channel you certainly want to do this,
 			as it will do so and then crash when the destructor continues.
-			=> Call "stop"... Stop will call free. 
+			=> Call "stop"... Stop will call free.
 
 - When my audio channel ends playing ...
 	- ... I have a callback ...
@@ -513,7 +508,7 @@ classes:
 	- ... I don't have a callback and I want to do something.
 		=> Bad choice. Why do you have a lda::audio_channel member? You can use fire-and-forget techniques.
 
-###Implement text input.
+### Implement text input.
 
 Getting the text input to work properly seems tricky but it is actually easy. Two important things:
 
@@ -528,14 +523,14 @@ The "console" controller includes a full working example, which goes like this:
 	- Check non text events that are text related (backspace, enter) as regular key down events. Act upon the buffer.
 - On sleeping: stop the text input (input().stop_text_input();) so it does not affect other controllers.
 
-###Implement localization.
+### Implement localization.
 
 A very basic example of localization is shown in the test_2d controller. The class localization extends tools::base_localization. The rules are simple:
 
 - Languages are represented by integers.
 - Strings are stored in files named #file#.#id_language#.dat. Their format is fixed and simple.
 
-##Files and directory structure.
+## Files and directory structure.
 
 The most relevant files are.
 
@@ -561,7 +556,57 @@ The most relevant files are.
 
 The organisation of the class and controller files is non prescriptive. As far as you are concerned you can have all your controllers, application classes and implementation of the framework on the root directory and everything will be allright.
 
-##Interesting examples in the code:
+## Interesting examples in the code:
 
 - The use of the animation sheet class is found in class/app/player.cpp
 - The use of the sprite sheet class is found in class/app/tile_decoration.cpp
+
+## Building with msys2
+
+This example assumes a virtual machine running windows 10 (surprisingly, it can be installed for free).
+
+- go to msys2.org, download and run the installer (mind the path where you install, read what the website says!). Be patient, it might take a while.
+- run msys now (it says to in the installer, just do it)
+- by now you should be running a console that is familiar to linux users. On this console, run "pacman -Syu" (no quotes, of course) to update the package database and base packages. Confirm what necessary (including closing the terminal).
+- now, from the menu, run "Msys2 MSYS" to access that console again. run "pacman -Su" (again, no quotes) to update the thing. This time the console will not close.
+- you will need to install some more stuff with pacman so run "pacman -S --needed" on the following packages (it might ask you some questions, I went with the defaults):
+	- base-devel (build stuff)
+	- mingw-w64-x86_64-toolchain (build stuff)
+	- mingw-w64_x86_64-cmake (cmake, to build the projects, please do not use the cmake package!!!!)
+	- mingw64/mingw-w64-x86_64-SDL2 (SDL2 dependencies)
+	- mingw64/mingw-w64-x86_64-SDL2_image (SDL2 dependencies)
+	- mingw64/mingw-w64-x86_64-SDL2_mixer (SDL2 dependencies)
+	- mingw64/mingw-w64-x86_64-SDL2_ttf (SDL2 dependencies)
+	- mingw-w64-x86_64-rapidjson (rapidjson, there's a package here, no need to build and install it... besides, it would need tweaking).
+	- git (so we can pull the repositories)
+	- msys2-runtime-devel (provides sys/time.h, for the tools repository)
+	- mingw-w64-x86_64-mesa
+	- mingw64/mingw-w64-x86_64-glew
+	- mingw64/mingw-w64-x86_64-freeglut
+	A command to install everything would be "pacman -S --needed base-devel mingw-w64-x86_64-toolchain mingw-w64_x86_64-cmake mingw64/mingw-w64-x86_64-SDL2 mingw64/mingw-w64-x86_64-SDL2_image mingw64/mingw-w64-x86_64-SDL2_mixer mingw64/mingw-w64-x86_64-SDL2_ttf mingw-w64-x86_64-rapidjson git mingw-w64-x86_64-mesa msys2-runtime-devel mingw64/mingw-w64-x86_64-freeglut". This might take a long while.
+- if need be, you can search for packages with pacman -Ss #search#
+- ok, now, bear in mind that this terminal is running mounted on wherever you installed MSYS2 (this is important when you want to find whatever it is that you build!!!).
+- in MSYS2, go to a suitable directory and download the dependencies (and this, if need be).
+	- git clone https://github.com/themarlboroman/log
+	- git clone https://github.com/themarlboroman/tools
+	- git clone https://github.com/themarlboroman/libdansdl2
+	- git clone https://github.com/themarlboroman/libdansdl2-tools
+	- git clone https://github.com/themarlboroman/dfw
+	- git clone https://github.com/themarlboroman/dfw-jumpstart
+- Ok, that's for setting up repositories and dependencies. Close the terminal and from the menu, open "MSYS2 Ming64 64-bit" but run is as an administrator!!
+- cd into the place where you downloaded your stuff
+- Now, in the same order you got them:
+	- cd into the directory (cd log, for example)
+	- mkdir build
+	- cd build
+	- cmake .. -G "MSYS Makefiles"
+	- make install (just make for dfw-jumpstart!!!)
+- for dfw-jumpstart, you may need to edit the CmakeLists.txt file and uncomment the "include_directories" for the libs.
+
+### troubleshooting
+
+- make sure you set your windows git configuration right so the NL becomes CR NL. The localization files will suffer greatly and the thing won't boot if you don't!.
+- do not try to build rapidjson downloading it from source. Save you the trouble, use the pacman package.
+- it is very important that you install the cmake version listed. "tools" will not build if not.
+- it is very important that you run cmake .. -G "MSYS Makefiles" so it uses the MSYS Makefiles generator.
+- you MUST run the mingw64-bit as an administrator to install stuff.

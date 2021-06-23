@@ -583,7 +583,7 @@ This example assumes a virtual machine running windows 10 (surprisingly, it can 
 	- mingw-w64-x86_64-mesa
 	- mingw64/mingw-w64-x86_64-glew
 	- mingw64/mingw-w64-x86_64-freeglut
-	A command to install everything would be "pacman -S --needed base-devel mingw-w64-x86_64-toolchain mingw-w64_x86_64-cmake mingw64/mingw-w64-x86_64-SDL2 mingw64/mingw-w64-x86_64-SDL2_image mingw64/mingw-w64-x86_64-SDL2_mixer mingw64/mingw-w64-x86_64-SDL2_ttf mingw-w64-x86_64-rapidjson git mingw-w64-x86_64-mesa msys2-runtime-devel mingw64/mingw-w64-x86_64-freeglut". This might take a long while.
+	A command to install everything would be "pacman -S --needed base-devel mingw-w64-x86_64-toolchain mingw-w64_x86_64-cmake mingw64/mingw-w64-x86_64-SDL2 mingw64/mingw-w64-x86_64-SDL2_image mingw64/mingw-w64-x86_64-SDL2_mixer mingw64/mingw-w64-x86_64-SDL2_ttf mingw-w64-x86_64-rapidjson git mingw-w64-x86_64-mesa msys2-runtime-devel mingw64/mingw-w64-x86_64-freeglut mingw64/mingw-w64-x86_64-glew". This might take a long while.
 - if need be, you can search for packages with pacman -Ss #search#
 - ok, now, bear in mind that this terminal is running mounted on wherever you installed MSYS2 (this is important when you want to find whatever it is that you build!!!).
 - in MSYS2, go to a suitable directory and download the dependencies (and this, if need be).

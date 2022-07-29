@@ -5,7 +5,7 @@
 #include "../../include/app/game_input.h"
 #include "../../include/app/audio_defs.h"
 
-#include <lm/sentry.h>
+#include <lm/log.h>
 
 //tools
 #include <tools/ranged_value.h>
@@ -35,8 +35,7 @@ try
 }
 catch(std::exception& e) {
 
-	lm::log(s_resources.get_log(), lm::lvl::error)<<"Unable to create main controller: "<<e.what()<<std::endl;
-	//This would still propagate: initialization lists and exceptions work like that.
+	lm::log(s_resources.get_log()).error()<<"Unable to create main controller: "<<e.what()<<std::endl; //This would still propagate: initialization lists and exceptions work like that.
 }
 
 void test_2d::loop(dfw::input& input, const dfw::loop_iteration_data& lid) {
@@ -304,15 +303,15 @@ void test_2d::do_text_display(const app::room_action_text& a) {
 
 	const std::string localization_key{ std::string{"desc-"}+std::to_string(a.text_id)};
 
-	lm::log(s_resources.get_log(), lm::lvl::debug)<<"displaying "<<localization_key<<" : '"<<game_localization.get(localization_key)<<"'"<<std::endl;
+	lm::log(s_resources.get_log()).debug()<<"displaying "<<localization_key<<" : '"<<game_localization.get(localization_key)<<"'"<<std::endl;
 
-	lm::log(s_resources.get_log(), lm::lvl::debug)<<"sending signal..."<<std::endl;
+	lm::log(s_resources.get_log()).debug()<<"sending signal..."<<std::endl;
 	broadcaster.send_signal(signal_text_display{game_localization.get(localization_key)});
 
-	lm::log(s_resources.get_log(), lm::lvl::debug)<<"setting state..."<<std::endl;
+	lm::log(s_resources.get_log()).debug()<<"setting state..."<<std::endl;
 	set_state(state_test_2d_text);
 
-	lm::log(s_resources.get_log(), lm::lvl::debug)<<"done..."<<std::endl;
+	lm::log(s_resources.get_log()).debug()<<"done..."<<std::endl;
 }
 
 void test_2d::do_console_transition(const app::room_action_console&) {
@@ -331,7 +330,7 @@ void test_2d::do_arcade_transition(const app::room_action_arcade&) {
 
 void test_2d::do_trigger(const app::object_trigger& trig) {
 
-	lm::log(s_resources.get_log(), lm::lvl::info)<<"doing trigger "<<trig.get_action_id()<<std::endl;
+	lm::log(s_resources.get_log()).info()<<"doing trigger "<<trig.get_action_id()<<std::endl;
 
 	if(trig.is_touch()) {
 		game_room.set_trigger_memory(trig);
@@ -340,14 +339,14 @@ void test_2d::do_trigger(const app::object_trigger& trig) {
 	const app::room_action * act=game_room.get_action(trig.get_action_id());
 	if(!act) {
 
-		lm::log(s_resources.get_log(), lm::lvl::warning)<<"unavailable action "<<trig.get_action_id()<<std::endl;
+		lm::log(s_resources.get_log()).warning()<<"unavailable action "<<trig.get_action_id()<<std::endl;
 		return;
 	}
 
 	//If it is repeatable we may skip the action.
 	if(!act->repeat) {
 		if(unique_actions.count(act->action_id)) return;
-		lm::log(s_resources.get_log(), lm::lvl::info)<<"Adding unique trigger "<<act->action_id<<std::endl;
+		lm::log(s_resources.get_log()).info()<<"Adding unique trigger "<<act->action_id<<std::endl;
 		unique_actions.insert(act->action_id);
 	}
 

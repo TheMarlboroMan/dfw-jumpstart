@@ -1,7 +1,7 @@
 #include "../../include/app/shared_resources.h"
 
 //lm
-#include <lm/sentry.h>
+#include <lm/log.h>
 
 //tools
 #include <tools/string_utils.h>
@@ -9,11 +9,11 @@
 
 using namespace app;
 
-shared_resources::shared_resources(dfw::audio& au, 
-	lda::resource_manager& am, 
-	ldv::resource_manager& rm, 
-	lm::logger& l, 
-	tools::chrono& cc, 
+shared_resources::shared_resources(dfw::audio& au,
+	lda::resource_manager& am,
+	ldv::resource_manager& rm,
+	lm::logger& l,
+	tools::chrono& cc,
 	tools::arg_manager& argm
 )
 	:audio(au), a_manager(am), v_manager(rm), log(l), controller_chrono(cc), arg_manager(argm)
@@ -28,7 +28,7 @@ shared_resources::shared_resources(dfw::audio& au,
 
 void shared_resources::register_fonts() {
 
-	lm::log(log, lm::lvl::info)<<"registering fonts..."<<std::endl;
+	lm::log(log).info()<<"registering fonts..."<<std::endl;
 
 	using namespace tools;
 
@@ -44,12 +44,12 @@ void shared_resources::register_fonts() {
 		{
 			ttf_manager.insert(p[0], std::atoi( p[1].c_str() ), p[2] );
 		}
-	}	
+	}
 }
 
 void shared_resources::register_tilesets()
 {
-	lm::log(log, lm::lvl::info)<<"registering tilesets..."<<std::endl;
+	lm::log(log).info()<<"registering tilesets..."<<std::endl;
 
 	try {
 		tilesheets.push_back({"data/app_data/scifitiles-sheet-alt.dat"});
@@ -58,21 +58,21 @@ void shared_resources::register_tilesets()
 		tilesheets.push_back({"data/app_data/decoration-sheet.dat"});
 	}
 	catch(std::exception& e) {
-		lm::log(log, lm::lvl::info)<<"unable to load all tilesets:"<<e.what()<<std::endl;
+		lm::log(log).info()<<"unable to load all tilesets:"<<e.what()<<std::endl;
 		throw e;
 	}
 }
 
 void shared_resources::register_animations()
 {
-	lm::log(log, lm::lvl::info)<<"registering animations..."<<std::endl;
+	lm::log(log).info()<<"registering animations..."<<std::endl;
 
 	try {
 		//This 2 is "character-sheet", hopefully :).
 		animations.push_back({tilesheets[2], "data/app_data/character-animations.dat"});
 	}
 	catch(std::exception& e) {
-		lm::log(log, lm::lvl::info)<<"unable to load all animations: "<<e.what()<<std::endl;
+		lm::log(log).info()<<"unable to load all animations: "<<e.what()<<std::endl;
 		throw e;
 	}
 }

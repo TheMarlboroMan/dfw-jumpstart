@@ -42,6 +42,7 @@ int main(int argc, char ** argv)
 
 		lm::log(log_app).info()<<"init state driver..."<<std::endl;
 		sd.init(kernel);
+		sd.start(kernel);
 
 		lm::log(log_app).info()<<"finish main proccess"<<std::endl;
 	}

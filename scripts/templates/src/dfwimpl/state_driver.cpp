@@ -40,6 +40,11 @@ state_driver::state_driver(dfw::kernel& kernel, dfwimpl::config& c)
 	lm::log(log).info()<<"state driver fully constructed"<<std::endl;
 }
 
+void state_driver::init(dfw::kernel&) {
+
+}
+
+
 void state_driver::prepare_video(dfw::kernel& kernel) {
 
 	kernel.init_video_system({

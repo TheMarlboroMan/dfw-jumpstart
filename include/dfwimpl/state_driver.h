@@ -41,6 +41,7 @@ class state_driver:
 
 	void						receive_signal(dfw::kernel&, const dfw::broadcast_signal&);
 	void						startup_set_state(int v) {states.set(v);}
+	void                        init(dfw::kernel&);
 
 	private:
 

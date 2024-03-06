@@ -11,6 +11,7 @@
 
 #include <tools/json.h>
 #include <tools/file_utils.h>
+#include <dfw/input_definitions.h>
 
 //std
 #include <cassert>
@@ -432,11 +433,11 @@ void menu::mount_menus() {
 	//Control menus...
 	mount_menu(controls_menu, "data/app_data/menus.json", "controls");
 
-	controls_menu.set("10_UP", translate_input(dfwimpl::input_description_from_config_token(config.token_from_path("input:up"))));
-	controls_menu.set("20_DOWN", translate_input(dfwimpl::input_description_from_config_token(config.token_from_path("input:down"))));
-	controls_menu.set("30_LEFT", translate_input(dfwimpl::input_description_from_config_token(config.token_from_path("input:left"))));
-	controls_menu.set("40_RIGHT", translate_input(dfwimpl::input_description_from_config_token(config.token_from_path("input:right"))));
-	controls_menu.set("50_ACTIVATE", translate_input(dfwimpl::input_description_from_config_token(config.token_from_path("input:activate"))));
+	controls_menu.set("10_UP", translate_input(dfw::input_description_from_config_token(config.token_from_path("input:up"))[0]));
+	controls_menu.set("20_DOWN", translate_input(dfw::input_description_from_config_token(config.token_from_path("input:down"))[0]));
+	controls_menu.set("30_LEFT", translate_input(dfw::input_description_from_config_token(config.token_from_path("input:left"))[0]));
+	controls_menu.set("40_RIGHT", translate_input(dfw::input_description_from_config_token(config.token_from_path("input:right"))[0]));
+	controls_menu.set("50_ACTIVATE", translate_input(dfw::input_description_from_config_token(config.token_from_path("input:activate"))[0]));
 
 	controls_menu_rep.reset(
 		new app::menu_representation<std::string>{

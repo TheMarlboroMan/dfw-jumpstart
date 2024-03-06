@@ -12,44 +12,28 @@
 	},
 	"input": {
 		"activate": [
-			0,
-			0,
-			44
+			{"type": 0, "device": 0, "code": 44}
 		],
 		"console_backspace": [
-			0,
-			0,
-			42
+			{"type": 0, "device": 0, "code": 42}
 		],
 		"console_newline": [
-			0,
-			0,
-			40
+			{"type": 0, "device": 0, "code": 40}
 		],
 		"down": [
-			0,
-			0,
-			81
+			{"type": 0, "device": 0, "code": 81}
 		],
 		"left": [
-			0,
-			0,
-			80
+			{"type": 0, "device": 0, "code": 80}
 		],
 		"reload_debug_config": [
-			0,
-			0,
-			21
+			{"type": 0, "device": 0, "code": 21}
 		],
 		"right": [
-			0,
-			0,
-			79
+			{"type": 0, "device": 0, "code": 79}
 		],
 		"up": [
-			0,
-			0,
-			82
+			{"type": 0, "device": 0, "code": 82}
 		]
 	},
 	"meta": {

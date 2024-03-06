@@ -97,18 +97,27 @@ void state_driver::prepare_input(dfw::kernel& kernel) {
 	using namespace dfw;
 
 	std::vector<input_pair> pairs{
-		{{input_description::types::keyboard, SDL_SCANCODE_ESCAPE, 0}, input::escape},
-		{input_description_from_config_token(config.token_from_path("input:left")), input::left},
-		{input_description_from_config_token(config.token_from_path("input:right")), input::right},
-		{input_description_from_config_token(config.token_from_path("input:up")), input::up},
-		{input_description_from_config_token(config.token_from_path("input:down")), input::down},
-		{input_description_from_config_token(config.token_from_path("input:activate")), input::activate},
-		{input_description_from_config_token(config.token_from_path("input:console_newline")), input::console_newline},
-		{input_description_from_config_token(config.token_from_path("input:console_backspace")), input::console_backspace}
-#ifdef WDEBUG_CODE
-		,{input_description_from_config_token(config.token_from_path("input:reload_debug_config")), input::reload_debug_config}
-#endif
+		{{input_description::types::keyboard, SDL_SCANCODE_ESCAPE, 0}, input::escape}
 	};
+
+	auto add=[&](std::string _token, int _input_type) {
+
+		for(const auto desc : input_description_from_config_token(config.token_from_path(_token))) {
+
+			pairs.push_back({desc, _input_type});
+		}
+	};
+
+	add("input:left", input::left);
+	add("input:right", input::right);
+	add("input:up", input::up);
+	add("input:down", input::down);
+	add("input:activate", input::activate);
+	add("input:console_newline", input::console_newline);
+	add("input:console_backspace", input::console_backspace);
+#ifdef WDEBUG_CODE
+	add("input:reload_debug_config", input::reload_debug_config);
+#endif
 
 	kernel.init_input_system(pairs);
 }
@@ -241,13 +250,28 @@ void state_driver::receive_signal(dfw::kernel& kernel, const dfw::broadcast_sign
 			config.set("video:window_h_px", kernel.get_screen().get_h());
 			config.save();
 		break;
-		case controller::t_signal_save_controls:
-			config.set_vector("input:up", 		config_token_from_input_description(kernel.get_input().locate_first_description(input::up)));
-			config.set_vector("input:down",  	config_token_from_input_description(kernel.get_input().locate_first_description(input::down)));
-			config.set_vector("input:left", 	config_token_from_input_description(kernel.get_input().locate_first_description(input::left)));
-			config.set_vector("input:right", 	config_token_from_input_description(kernel.get_input().locate_first_description(input::right)));
-			config.set_vector("input:activate", config_token_from_input_description(kernel.get_input().locate_first_description(input::activate)));
+		case controller::t_signal_save_controls:{
+
+			auto set=[&](const std::string _key, int _input) -> void {
+
+				auto tokenobj=config_token_from_input_description(
+					kernel.get_input().locate_first_description(_input), 
+					config
+				);
+
+				rapidjson::Value vec(rapidjson::kArrayType);
+				config.add_to_vector(vec, tokenobj);
+				config.set_vector(_key, vec);
+			};
+
+			set("input:up", input::up);
+			set("input:down", input::down);
+			set("input:left", input::left);
+			set("input:right", input::right);
+			set("input:activate", input::activate);
+
 			config.save();
+		}
 		break;
 	}
 }

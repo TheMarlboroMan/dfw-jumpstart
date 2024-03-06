@@ -78,12 +78,21 @@ void state_driver::prepare_input(dfw::kernel& kernel) {
 	using namespace dfw;
 
 	std::vector<input_pair> pairs{
-		{{input_description::types::keyboard, SDL_SCANCODE_ESCAPE, 0}, input::escape},
-		{input_description_from_config_token(config.token_from_path("input:left")), input::left},
-		{input_description_from_config_token(config.token_from_path("input:right")), input::right},
-		{input_description_from_config_token(config.token_from_path("input:up")), input::up},
-		{input_description_from_config_token(config.token_from_path("input:down")), input::down}
+		{{input_description::types::keyboard, SDL_SCANCODE_ESCAPE, 0}, input::escape}
 	};
+
+	auto add=[&](std::string _token, int _input_type) {
+
+		for(const auto desc : input_description_from_config_token(config.token_from_path(_token))) {
+
+			pairs.push_back({desc, _input_type})
+		}
+	};
+
+	add("input:left", input::left);
+	add("input:right", input::right);
+	add("input:up", input::up);
+	add("input:down", input::down);
 
 	kernel.init_input_system(pairs);
 }

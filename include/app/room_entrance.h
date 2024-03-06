@@ -21,7 +21,7 @@ class room_entrance:
 	{}
 
 	int				get_terminus_id() const {return terminus_id;}
-	bearing				get_bearing() const {return val_bearing;}
+	const bearing&				get_bearing() const {return val_bearing;}
 
 	private:
 

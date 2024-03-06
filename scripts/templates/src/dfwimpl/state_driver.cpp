@@ -85,7 +85,7 @@ void state_driver::prepare_input(dfw::kernel& kernel) {
 
 		for(const auto desc : input_description_from_config_token(config.token_from_path(_token))) {
 
-			pairs.push_back({desc, _input_type})
+			pairs.push_back({desc, _input_type});
 		}
 	};
 

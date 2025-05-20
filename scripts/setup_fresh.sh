@@ -61,6 +61,7 @@ cd ..
 rm scripts/setup_fresh.sh;
 rm scripts/make_templates.sh
 rm scripts/templates.tar.gz
+rm CHANGELOG.md README.md UNLICENSE TODO.txt
 
 #give a little help, which was on the tar file.
 cat GETTING_STARTED.txt;

@@ -20,6 +20,9 @@
 //Framework
 #include <dfw/state_driver_interface.h>
 
+//Other
+#include <ldtools/time_definitions.h>
+
 //std
 #include <memory>
 
@@ -32,12 +35,12 @@ class state_driver:
 	public:
 									state_driver(dfw::kernel& kernel, dfwimpl::config& config);
 
-	virtual void					common_pre_loop_input(dfw::input& input, float delta);
-	virtual void					common_pre_loop_step(float delta);
-	virtual void					common_loop_input(dfw::input& input, float delta);
-	virtual void					common_loop_step(float delta);
+	virtual void					common_pre_loop_input(dfw::input& input, ldtools::tdelta);
+	virtual void					common_pre_loop_step(ldtools::tdelta);
+	virtual void					common_loop_input(dfw::input& input, ldtools::tdelta);
+	virtual void					common_loop_step(ldtools::tdelta);
 	virtual void					prepare_state(int, int);
-	virtual float					get_max_timestep() const {return 0.03f;}
+	virtual ldtools::tdelta         get_max_timestep() const {return 0.03;}
 
 	void						receive_signal(dfw::kernel&, const dfw::broadcast_signal&);
 	void						startup_set_state(int v) {states.set(v);}

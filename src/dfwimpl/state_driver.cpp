@@ -55,7 +55,7 @@ state_driver::state_driver(dfw::kernel& kernel, dfwimpl::config& c)
 
 	lm::log(log).info()<<"virtualizing input..."<<std::endl;
 	virtualize_input(kernel.get_input());
-//	kernel.set_delta_step(0.01f);
+//	kernel.set_delta_step(0.01);
 
 	lm::log(log).info()<<"state driver fully constructed"<<std::endl;
 }
@@ -170,7 +170,10 @@ void state_driver::prepare_state(int next, int current) {
 	}
 }
 
-void state_driver::common_pre_loop_input(dfw::input& input, float /*delta*/) {
+void state_driver::common_pre_loop_input(
+	dfw::input& input, 
+	ldtools::tdelta
+	) {
 
 	if(input().is_event_joystick_connected()) {
 		lm::log(log).info()<<"New joystick detected..."<<std::endl;
@@ -179,24 +182,35 @@ void state_driver::common_pre_loop_input(dfw::input& input, float /*delta*/) {
 }
 
 #ifdef WDEBUG_CODE
-void state_driver::common_loop_input(dfw::input& input, float /*delta*/) {
+void state_driver::common_loop_input(
+	dfw::input& input, 
+	ldtools::tdelta
+) {
+
 	if(input.is_input_down(input::reload_debug_config)) {
 		lm::log(log).info()<<"reloading debug configuration"<<std::endl;
 		s_resources->reload_debug_config();
 	}
 }
 #else
-void state_driver::common_loop_input(dfw::input& /*input*/, float /*delta*/) {
+void state_driver::common_loop_input(
+	dfw::input& /*input*/, 
+	ldtools::tdelta
+) {
 
 }
 #endif
 
 
-void state_driver::common_pre_loop_step(float /*delta*/) {
+void state_driver::common_pre_loop_step(
+	ldtools::tdelta
+) {
 
 }
 
-void state_driver::common_loop_step(float /*delta*/) {
+void state_driver::common_loop_step(
+	ldtools::tdelta
+) {
 
 }
 

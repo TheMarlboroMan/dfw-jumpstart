@@ -12,6 +12,10 @@ Changes will be documented under Added, Changed, Deprecated, Removed, Fixed or S
 
 ### Pending
 
+## [v1.1.1]: 2025-05-20
+### Changed
+- Adapted to breaking changes in dfw.
+
 ## [v1.1.0]: 2024-02-06
 ### Changed
 - Adapted to breaking changes in dfw and tools.

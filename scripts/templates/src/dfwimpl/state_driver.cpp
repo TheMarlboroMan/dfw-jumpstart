@@ -9,9 +9,14 @@
 
 using namespace dfwimpl;
 
-state_driver::state_driver(dfw::kernel& kernel, dfwimpl::config& c)
+state_driver::state_driver(
+	dfw::kernel& kernel, 
+	dfwimpl::config& c
+)
 	:state_driver_interface(controller::t_states::state_min),
-	config(c), log(kernel.get_log()) {
+	config(c), 
+	log(kernel.get_log()) 
+{
 
 	lm::log(log).info()<<"setting state check function..."<<std::endl;
 
@@ -40,12 +45,16 @@ state_driver::state_driver(dfw::kernel& kernel, dfwimpl::config& c)
 	lm::log(log).info()<<"state driver fully constructed"<<std::endl;
 }
 
-void state_driver::init(dfw::kernel&) {
+void state_driver::init(
+	dfw::kernel&
+) {
 
 }
 
 
-void state_driver::prepare_video(dfw::kernel& kernel) {
+void state_driver::prepare_video(
+	dfw::kernel& kernel
+) {
 
 	kernel.init_video_system({
 		config.int_from_path("video:window_w_px"),
@@ -61,7 +70,9 @@ void state_driver::prepare_video(dfw::kernel& kernel) {
 	screen.set_fullscreen(config.bool_from_path("video:fullscreen"));
 }
 
-void state_driver::prepare_audio(dfw::kernel& kernel) {
+void state_driver::prepare_audio(
+	dfw::kernel& kernel
+) {
 
 	kernel.init_audio_system({
 		config.get_audio_ratio(),
@@ -73,7 +84,9 @@ void state_driver::prepare_audio(dfw::kernel& kernel) {
 	});
 }
 
-void state_driver::prepare_input(dfw::kernel& kernel) {
+void state_driver::prepare_input(
+	dfw::kernel& kernel
+) {
 
 	using namespace dfw;
 
@@ -97,7 +110,9 @@ void state_driver::prepare_input(dfw::kernel& kernel) {
 	kernel.init_input_system(pairs);
 }
 
-void state_driver::prepare_resources(dfw::kernel& /*kernel*/) {
+void state_driver::prepare_resources(
+	dfw::kernel& 
+) {
 
 /*
 	dfw::resource_loader r_loader(kernel.get_video_resource_manager(), kernel.get_audio_resource_manager());
@@ -108,7 +123,9 @@ void state_driver::prepare_resources(dfw::kernel& /*kernel*/) {
 */
 }
 
-void state_driver::register_controllers(dfw::kernel& /*kernel*/) {
+void state_driver::register_controllers(
+	dfw::kernel&
+) {
 
 	auto reg=[this](ptr_controller& _ptr, int _i, dfw::controller_interface * _ci) {
 		_ptr.reset(_ci);
@@ -118,7 +135,10 @@ void state_driver::register_controllers(dfw::kernel& /*kernel*/) {
 	//[new-controller-mark]
 }
 
-void state_driver::prepare_state(int /*next*/, int /*current*/) {
+void state_driver::prepare_state(
+	int /*next*/, 
+	int /*current*/
+) {
 
 /*
 	switch(next) {
@@ -130,7 +150,10 @@ void state_driver::prepare_state(int /*next*/, int /*current*/) {
 */
 }
 
-void state_driver::common_pre_loop_input(dfw::input& input, float /*delta*/) {
+void state_driver::common_pre_loop_input(
+	dfw::input& input, 
+	ldtools::tdelta
+) {
 
 	if(input().is_event_joystick_connected()) {
 		lm::log(log).info()<<"New joystick detected..."<<std::endl;
@@ -138,19 +161,28 @@ void state_driver::common_pre_loop_input(dfw::input& input, float /*delta*/) {
 	}
 }
 
-void state_driver::common_loop_input(dfw::input& /*input*/, float /*delta*/) {
+void state_driver::common_loop_input(
+	dfw::input&,
+	ldtools::tdelta
+) {
 
 }
 
-void state_driver::common_pre_loop_step(float /*delta*/) {
+void state_driver::common_pre_loop_step(
+	ldtools::tdelta
+) {
 
 }
 
-void state_driver::common_loop_step(float /*delta*/) {
+void state_driver::common_loop_step(
+	ldtools::tdelta
+) {
 
 }
 
-void state_driver::virtualize_input(dfw::input& input) {
+void state_driver::virtualize_input(
+	dfw::input& input
+) {
 
 	lm::log(log).info()<<"trying to virtualize "<<input().get_joysticks_size()<<" controllers..."<<std::endl;
 

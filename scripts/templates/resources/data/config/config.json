@@ -12,16 +12,16 @@
 	}, 
 	"input":{
 		"down":[
-			0, 0, 81
+			{"type": 0, "device":0, "code":81}
 		], 
 		"left":[
-			0, 0, 80
+			{"type": 0, "device":0, "code":80}
 		], 
 		"right":[
-			0, 0, 79
+			{"type": 0, "device":0, "code":79}
 		], 
 		"up":[
-			0, 0, 82
+			{"type": 0, "device":0, "code":82}
 		]
 	}, 
 	"meta":{

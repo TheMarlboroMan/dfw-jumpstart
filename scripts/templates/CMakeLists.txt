@@ -2,6 +2,11 @@ cmake_minimum_required(VERSION 3.5.1)
 
 project(project-placeholder)
 
+#version
+set(MAJOR_VERSION 0)
+set(MINOR_VERSION 0)
+set(PATCH_VERSION 0)
+
 option(BUILD_DEBUG "Build a debug release" OFF)
 
 set(CMAKE_CXX_STANDARD 17)
@@ -12,6 +17,21 @@ if(${BUILD_DEBUG})
 else()
 	set(CMAKE_BUILD_TYPE Release)
 endif()
+
+if(${CMAKE_VERSION} VERSION_LESS "3.22.0")
+
+	add_definitions(-DMAJOR_VERSION=${MAJOR_VERSION})
+	add_definitions(-DMINOR_VERSION=${MINOR_VERSION})
+	add_definitions(-DPATCH_VERSION=${PATCH_VERSION})
+	add_definitions(-DRELEASE_VERSION=\"${RELEASE_VERSION}\")
+else()
+
+	add_compile_definitions(MAJOR_VERSION=${MAJOR_VERSION})
+	add_compile_definitions(MINOR_VERSION=${MINOR_VERSION})
+	add_compile_definitions(PATCH_VERSION=${PATCH_VERSION})
+	add_compile_definitions(RELEASE_VERSION=\"${RELEASE_VERSION}\")
+endif()
+
 
 add_compile_options(-Wall -Wextra -Wundef -Wcast-align -Wwrite-strings -Wlogical-op -Wmissing-declarations -Wredundant-decls -Wshadow -Woverloaded-virtual -Wno-deprecated -ansi -pedantic -fno-rtti)
 
@@ -45,4 +65,5 @@ set_target_properties(dfw PROPERTIES IMPORTED_LOCATION /usr/local/lib/libdfw.a)
 add_executable(project-placeholder main.cpp ${SOURCE})
 set_target_properties(project-placeholder PROPERTIES RUNTIME_OUTPUT_DIRECTORY build)
 add_custom_command(TARGET project-placeholder POST_BUILD COMMAND cp -r ../resources/* ./build)
+add_custom_command(TARGET project-placeholder POST_BUILD COMMAND mkdir ./build/logs)
 target_link_libraries(project-placeholder dfw tools dansdl2 ldtools lm SDL2 SDL2_ttf SDL2_mixer SDL2_image GL)

@@ -35,16 +35,18 @@ then
 fi
 
 #remove the project specifics...
-rm -rf integration logs include src data main.cpp tiles.sh editor.sh README.md CMakeLists.txt .git resources
+rm -rf integration logs include src data main.cpp tiles.sh editor.sh CHANGELOG.md CMakeLists.txt .git resources TODO.txt UNLICENSE
 
 #refresh the directories...
-mkdir -p src/dfwimpl src/controller include/dfwimpl include/controller
+mkdir -p src/dfwimpl src/controller include/dfwimpl include/controller include/app
 
 #decompress the blank templates...
 tar -xzf scripts/templates.tar.gz
 
 #rename the project
 sed -i s/project-placeholder/$PROJECT/g CMakeLists.txt
+sed -i s/project-placeholder/$PROJECT/g CHANGELOG.md
+sed -i s/project-placeholder/$PROJECT/g include/app/env.h
 
 #create the build directory
 mkdir build
@@ -61,7 +63,6 @@ cd ..
 rm scripts/setup_fresh.sh;
 rm scripts/make_templates.sh
 rm scripts/templates.tar.gz
-rm CHANGELOG.md README.md UNLICENSE TODO.txt
 
 #give a little help, which was on the tar file.
 cat GETTING_STARTED.txt;

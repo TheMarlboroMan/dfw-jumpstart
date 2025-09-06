@@ -1,7 +1,5 @@
-#include "../../include/controller/_template.h"
-
-//local
-#include "../../include/input/input.h"
+#include "controller/_template.h"
+#include "app/input.h"
 
 using namespace controller;
 
@@ -12,7 +10,7 @@ _template::_template(lm::logger& plog)
 
 void _template::loop(dfw::input& _input, const dfw::loop_iteration_data& /*lid*/) {
 
-	if(_input().is_exit_signal() || _input.is_input_down(input::escape)) {
+	if(_input().is_exit_signal() || _input.is_input_down(app::escape)) {
 		set_leave(true);
 		return;
 	}

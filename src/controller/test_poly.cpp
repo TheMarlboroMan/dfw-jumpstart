@@ -412,6 +412,14 @@ void test_poly::load()
 
 void test_poly::draw_polygon(ldv::screen& screen, const ldt::polygon_2d<double>& p, ldv::rgb_color color, int alpha)
 {
+
+/**
+	This is how we would calculate the y for a simple box using a cartesian
+	system...
+	int multiplier=-1;
+	int y=multiplier*(int)_item.get_y()-(int)_item.get_h();
+*/
+
 	std::vector<ldv::point> points;
 	for(const auto& pt : p.get_vertices()) points.push_back({(int)pt.x, (int)-pt.y});
 	ldv::polygon_representation poly{points, color};

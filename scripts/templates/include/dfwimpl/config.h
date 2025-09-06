@@ -14,7 +14,7 @@ class config:
 
 	public:
 
-	config();
+	config(const std::string&);
 
 	//Fullfillment of the kernel interface.
 

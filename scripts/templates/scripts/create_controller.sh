@@ -42,20 +42,20 @@ sed -i "s/_template/$name/g" src/controller/$name.cpp
 sed -i "/\[new-controller-state-mark\]/i state_$name," include/controller/states.h
 
 #Add the include and instance to the header file
-sed -i "/\[new-controller-header-mark\]/i #include \"../../include/controller/$name.h\"" include/dfwimpl/state_driver.h
 sed -i "/\[new-controller-property-mark\]/i \\\tptr_controller\t\t\t\t\tc_$name;" include/dfwimpl/state_driver.h
 
 #Instance the controller in the implementation file
+sed -i "/\[new-controller-header-mark\]/i #include \"controller/$name.h\"" src/dfwimpl/state_driver.cpp
 sed -i "/\[new-controller-mark\]/i \\\treg(c_$name, controller::t_states::state_$name, new controller::$name(log));" src/dfwimpl/state_driver.cpp
 
 #Add the file to the cmake recipes...
 sed -i "/\[new-controller-source-mark\]/i \\\t\$\{CMAKE_CURRENT_SOURCE_DIR\}/$name.cpp" src/controller/CMakeLists.txt
 
 #Finally, if that was the first controller, just set it up...
-grep -q 'state_driver_interface(controller::t_states::state_min)' src/dfwimpl/state_driver.cpp
+grep -q 'INITIAL_STATE_HERE' src/main.cpp
 if [ 0 -eq $? ]
 then
-	sed -i "s/state_driver_interface(controller::t_states::state_min)/state_driver_interface(controller::t_states::state_$name)/g" src/dfwimpl/state_driver.cpp
+	sed -i "s/INITIAL_STATE_HERE/controller::t_states::state_$name/g" src/main.cpp
 	echo "$name was setup as the starting controller"
 fi
 

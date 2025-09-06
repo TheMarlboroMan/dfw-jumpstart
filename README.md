@@ -73,7 +73,8 @@ Whatever the system chosen, all representations MUST be in "screen" form.
 The camera will not perform the transformations itself... Even if this
 transformation could be implemented into the framework, I'd rather not do it
 and keep it simple. All the client code needs to do is invert the y axis
-when creating a representation for a logic object.".
+when creating a representation for a logic object." (or invert the y axis
+and factor in the height too, for boxes!)
 
 Which translates to:
 

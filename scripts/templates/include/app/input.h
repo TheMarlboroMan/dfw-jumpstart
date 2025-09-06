@@ -1,6 +1,6 @@
 #pragma once
 
-namespace input
+namespace app
 {
 
 enum inputs{

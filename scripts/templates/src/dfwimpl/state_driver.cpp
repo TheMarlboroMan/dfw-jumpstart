@@ -229,7 +229,7 @@ void state_driver::load_resources(
 }
 
 void state_driver::ready_resources(
-	dfw::kernel& /*_kernel*/
+	dfw::kernel& _kernel
 ) {
 
 /*

@@ -2,8 +2,8 @@
 
 using namespace dfwimpl;
 
-config::config()
-	: dfw::base_config(get_file_path())
-{
-}
-
+config::config(
+	const std::string& _conf_path
+)
+	:dfw::base_config(_conf_path)
+{ }

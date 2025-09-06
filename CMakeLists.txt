@@ -41,6 +41,7 @@ add_library(tools STATIC IMPORTED)
 add_library(ldtools STATIC IMPORTED)
 add_library(dansdl2 STATIC IMPORTED)
 add_library(dfw STATIC IMPORTED)
+add_library(env STATIC IMPORTED)
 
 #If the libraries are not installed, tell them where they are.
 if(WIN32)
@@ -49,25 +50,27 @@ if(WIN32)
 	set_target_properties(dansdl2 PROPERTIES IMPORTED_LOCATION ../../libdansdl2/build/libdansdl2.a)
 	set_target_properties(ldtools PROPERTIES IMPORTED_LOCATION ../../libdansdl2-tools/build/libldtools.a)
 	set_target_properties(dfw PROPERTIES IMPORTED_LOCATION ../../dfw/build/libdfw.a)
+	set_target_properties(env PROPERTIES IMPORTED_LOCATION ../../dfw/build/libappenv.a)
 else()
-        set_target_properties(tools PROPERTIES IMPORTED_LOCATION /usr/local/lib/libtools.a)
-        set_target_properties(lm PROPERTIES IMPORTED_LOCATION /usr/local/lib/liblm.a)
-        set_target_properties(dansdl2 PROPERTIES IMPORTED_LOCATION /usr/local/lib/libdansdl2.a)
-        set_target_properties(ldtools PROPERTIES IMPORTED_LOCATION /usr/local/lib/libldtools.a)
-        set_target_properties(dfw PROPERTIES IMPORTED_LOCATION /usr/local/lib/libdfw.a)
+	set_target_properties(tools PROPERTIES IMPORTED_LOCATION /usr/local/lib/libtools.a)
+	set_target_properties(lm PROPERTIES IMPORTED_LOCATION /usr/local/lib/liblm.a)
+	set_target_properties(dansdl2 PROPERTIES IMPORTED_LOCATION /usr/local/lib/libdansdl2.a)
+	set_target_properties(ldtools PROPERTIES IMPORTED_LOCATION /usr/local/lib/libldtools.a)
+	set_target_properties(dfw PROPERTIES IMPORTED_LOCATION /usr/local/lib/libdfw.a)
+	set_target_properties(env PROPERTIES IMPORTED_LOCATION /usr/local/lib/libappenv.a)
 endif()
 
 #Configure the executable, we want it into the "build directory" and we want all resources copied
 #to the build directory.
-add_executable(dfw-jumpstart main.cpp ${SOURCE})
+add_executable(dfw-jumpstart src/main.cpp ${SOURCE})
 set_target_properties(dfw-jumpstart PROPERTIES RUNTIME_OUTPUT_DIRECTORY build)
 add_custom_command(TARGET dfw-jumpstart POST_BUILD COMMAND cp -r ../resources/* ./build)
 
 if(WIN32)
 
-	target_link_libraries(dfw-jumpstart dfw tools dansdl2 ldtools lm SDL2 SDL2_ttf SDL2_mixer SDL2_image glew32 glu32 opengl32 stdc++fs)
+	target_link_libraries(dfw-jumpstart env dfw tools dansdl2 ldtools lm SDL2 SDL2_ttf SDL2_mixer SDL2_image glew32 glu32 opengl32 stdc++fs)
 	target_link_options(dfw-jumpstart PRIVATE -lmingw32 -lSDL2main -lSDL2 -mwindows)
 else()
 
-	target_link_libraries(dfw-jumpstart dfw tools dansdl2 ldtools lm SDL2 SDL2_ttf SDL2_mixer SDL2_image GL)
+	target_link_libraries(dfw-jumpstart env dfw tools dansdl2 ldtools lm SDL2 SDL2_ttf SDL2_mixer SDL2_image GL)
 endif()

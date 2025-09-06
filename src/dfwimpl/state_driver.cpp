@@ -1,6 +1,17 @@
 #include "../../include/dfwimpl/state_driver.h"
 #include "../../include/input/input.h"
 
+//Controllers.
+#include "../../include/controller/states.h"
+#include "../../include/controller/menu.h"
+#include "../../include/controller/test_2d.h"
+#include "../../include/controller/test_2d_text.h"
+#include "../../include/controller/fps_test.h"
+#include "../../include/controller/console.h"
+#include "../../include/controller/test_poly.h"
+#include "../../include/controller/step.h"
+#include "../../include/controller/signals.h"
+
 //tools
 #include <tools/string_utils.h>
 #include <lm/log.h>
@@ -10,22 +21,30 @@
 
 using namespace dfwimpl;
 
-state_driver::state_driver(dfw::kernel& kernel, dfwimpl::config& c)
-	:state_driver_interface(t_states::state_menu),
-	config(c),
-	log(kernel.get_log()),
-	receiver(get_signal_dispatcher()
+state_driver::state_driver(
+	dfwimpl::config& _config,
+	lm::logger& _logger,
+	const appenv::env& _env,
+	int _initial_state
+)
+	:state_driver_interface(_initial_state),
+	config(_config),
+	log(_logger),
+	env{_env},
+	receiver(get_signal_dispatcher()) 
+{ }
+
+void state_driver::init(
+	dfw::kernel& kernel
 ) {
 
 	lm::log(log).info()<<"setting state check function..."<<std::endl;
-	states.set_function([this](int v){
-
-		lm::log(log).info()<<"check state "<<state_min<<" < "<<v<<" < "<<state_max<<"..."<<std::endl;
-		return v > state_min && v < state_max;
-	});
+	using std::placeholders::_1;
+	std::function<bool(int)> vfunc=std::bind(&state_driver::validate_state, this, _1);
+	states.set_function(vfunc);
 
 	lm::log(log).info()<<"init state driver building: preparing video..."<<std::endl;
-	prepare_video(kernel);
+	prepare_video(kernel, get_video_init_data(), get_fullscreen());
 
 	lm::log(log).info()<<"preparing audio..."<<std::endl;
 	prepare_audio(kernel);
@@ -54,19 +73,97 @@ state_driver::state_driver(dfw::kernel& kernel, dfwimpl::config& c)
 	register_controllers(kernel);
 
 	lm::log(log).info()<<"virtualizing input..."<<std::endl;
-	virtualize_input(kernel.get_input());
+	virtualize_input(kernel.get_input(), get_input_axis_threshold());
 //	kernel.set_delta_step(0.01);
 
 	lm::log(log).info()<<"state driver fully constructed"<<std::endl;
 }
 
-void state_driver::init(dfw::kernel&) {
+void state_driver::prepare_video(
+	dfw::kernel& _kernel,
+	dfw::window_info _window_info,
+	bool _fullscreen
+) {
+
+	_kernel.init_video_system(_window_info);
+	_kernel.get_screen().set_fullscreen(_fullscreen);
+}
+
+void state_driver::prepare_audio(dfw::kernel& kernel) {
+
+	kernel.init_audio_system(get_audio_init_data());
+}
+
+void state_driver::prepare_input(dfw::kernel& _kernel) {
+
+	auto pairs=get_input_pairs();
+	_kernel.init_input_system(pairs);
+}
+
+void state_driver::prepare_resources(dfw::kernel& _kernel) {
+
+	load_resources(_kernel);
+	ready_resources(_kernel);
+}
+
+void state_driver::virtualize_input(
+	dfw::input& input,
+	int _threshold
+) {
+
+	lm::log(log).info()<<"trying to virtualize "<<input().get_joysticks_size()<<" controllers..."<<std::endl;
+
+	for(size_t i=0; i < input().get_joysticks_size(); ++i) {
+
+		input().virtualize_joystick_hats(i);
+		input().virtualize_joystick_axis(i, _threshold);
+		lm::log(log).info()<<"Joystick virtualized "<<i<<std::endl;
+	}
+}
+
+void state_driver::common_pre_loop_input(
+	dfw::input& input, 
+	ldtools::tdelta /*delta*/
+) {
+
+	if(input().is_event_joystick_connected()) {
+
+		lm::log(log).info()<<"New joystick detected..."<<std::endl;
+		virtualize_input(input, get_input_axis_threshold());
+	}
+}
+
+#ifdef WDEBUG_CODE
+void state_driver::common_loop_input(
+	dfw::input& input, 
+	ldtools::tdelta
+) {
+
+	if(input.is_input_down(input::reload_debug_config)) {
+		lm::log(log).info()<<"reloading debug configuration"<<std::endl;
+		s_resources->reload_debug_config();
+	}
+}
+#else
+void state_driver::common_loop_input(
+	dfw::input& /*input*/, 
+	ldtools::tdelta
+) {
+
+}
+#endif
+
+void state_driver::common_pre_loop_step(ldtools::tdelta /*delta*/) {
 
 }
 
-void state_driver::prepare_video(dfw::kernel& kernel) {
+void state_driver::common_loop_step(ldtools::tdelta /*delta*/) {
 
-	kernel.init_video_system({
+}
+
+dfw::window_info state_driver::get_video_init_data() const {
+
+	return {
 		config.int_from_path("video:window_w_px"),
 		config.int_from_path("video:window_h_px"),
 		config.int_from_path("video:window_w_logical"),
@@ -74,25 +171,22 @@ void state_driver::prepare_video(dfw::kernel& kernel) {
 		config.string_from_path("video:window_title"),
 		config.bool_from_path("video:window_show_cursor"),
 		config.get_screen_vsync()
-	});
-
-	auto& screen=kernel.get_screen();
-	screen.set_fullscreen(config.bool_from_path("video:fullscreen"));
+	};
 }
 
-void state_driver::prepare_audio(dfw::kernel& kernel) {
+dfw::audio_info state_driver::get_audio_init_data() const {
 
-	kernel.init_audio_system({
+	return {
 		config.get_audio_ratio(),
 		config.get_audio_out(),
 		config.get_audio_buffers(),
 		config.get_audio_channels(),
 		config.get_audio_volume(),
 		config.get_music_volume()
-	});
+	};
 }
 
-void state_driver::prepare_input(dfw::kernel& kernel) {
+std::vector<dfw::input_pair> state_driver::get_input_pairs() const {
 
 	using namespace dfw;
 
@@ -119,17 +213,59 @@ void state_driver::prepare_input(dfw::kernel& kernel) {
 	add("input:reload_debug_config", input::reload_debug_config);
 #endif
 
-	kernel.init_input_system(pairs);
+	return pairs;
 }
 
-void state_driver::prepare_resources(dfw::kernel& kernel) {
+void state_driver::load_resources(
+	dfw::kernel& kernel
+) {
 
-	dfw::resource_loader r_loader(kernel.get_video_resource_manager(), kernel.get_audio_resource_manager());
+	dfw::resource_loader r_loader(
+		kernel.get_video_resource_manager(), 
+		kernel.get_audio_resource_manager()
+	);
 
 	r_loader.generate_textures(tools::explode_lines_from_file(std::string("data/resources/textures.txt")));
 	r_loader.generate_sounds(tools::explode_lines_from_file(std::string("data/resources/audio.txt")));
 	r_loader.generate_music(tools::explode_lines_from_file(std::string("data/resources/music.txt")));
 }
+
+void state_driver::ready_resources(
+	dfw::kernel& 
+) {
+
+}
+
+void state_driver::load_fonts(
+	ldtools::ttf_manager& 
+) {
+
+}
+
+int state_driver::get_input_axis_threshold() const {
+
+	return 15000;
+}
+
+bool state_driver::get_fullscreen() const {
+
+	return config.bool_from_path("video:fullscreen");
+}
+
+bool state_driver::validate_state(
+	int _v
+) {
+
+	return _v > state_min && _v < state_max;
+}
+
+std::string state_driver::build_resource_path(
+	const std::string,
+	const std::string
+) const {
+
+	return "";
+};
 
 void state_driver::register_controllers(dfw::kernel& /*kernel*/) {
 
@@ -157,8 +293,11 @@ void state_driver::prepare_state(int next, int current) {
 	lm::log(log).debug()<<"state change from "<<current<<" to "<<next<<"..."<<std::endl;
 
 	switch(next) {
-		case t_states::state_menu:
-			c_menu->set_continue_state(current);
+		case t_states::state_menu:{
+
+			auto ptr=c_menu.get();
+			static_cast<controller::menu *>(ptr)->set_continue_state(current);
+		}
 		break;
 		case t_states::state_test_2d:
 		case t_states::state_test_poly:
@@ -167,60 +306,6 @@ void state_driver::prepare_state(int next, int current) {
 		case t_states::state_fps_test:
 		case t_states::state_step:
 		break;
-	}
-}
-
-void state_driver::common_pre_loop_input(
-	dfw::input& input, 
-	ldtools::tdelta
-	) {
-
-	if(input().is_event_joystick_connected()) {
-		lm::log(log).info()<<"New joystick detected..."<<std::endl;
-		virtualize_input(input);
-	}
-}
-
-#ifdef WDEBUG_CODE
-void state_driver::common_loop_input(
-	dfw::input& input, 
-	ldtools::tdelta
-) {
-
-	if(input.is_input_down(input::reload_debug_config)) {
-		lm::log(log).info()<<"reloading debug configuration"<<std::endl;
-		s_resources->reload_debug_config();
-	}
-}
-#else
-void state_driver::common_loop_input(
-	dfw::input& /*input*/, 
-	ldtools::tdelta
-) {
-
-}
-#endif
-
-
-void state_driver::common_pre_loop_step(
-	ldtools::tdelta
-) {
-
-}
-
-void state_driver::common_loop_step(
-	ldtools::tdelta
-) {
-
-}
-
-void state_driver::virtualize_input(dfw::input& input) {
-	lm::log(log).info()<<"trying to virtualize "<<input().get_joysticks_size()<<" controllers..."<<std::endl;
-
-	for(size_t i=0; i < input().get_joysticks_size(); ++i) {
-		input().virtualize_joystick_hats(i);
-		input().virtualize_joystick_axis(i, 15000);
-		lm::log(log).info()<<"Joystick virtualized "<<i<<std::endl;
 	}
 }
 
@@ -288,4 +373,11 @@ void state_driver::receive_signal(dfw::kernel& kernel, const dfw::broadcast_sign
 		}
 		break;
 	}
+}
+
+void state_driver::start_app(
+	const tools::arg_manager&,
+	dfw::input&
+) {
+
 }

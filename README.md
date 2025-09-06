@@ -54,10 +54,9 @@ The rest of this text file includes:
 
 Now for the ugly part.
 
-- chmod +x scripts/setup_fresh.sh
 - scripts/setup_fresh.sh
 - code your own stuff
-- make -f makefile_[linux-win] all
+- cd build and make 
 
 ## On coordinate systems.
 

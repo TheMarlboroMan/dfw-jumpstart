@@ -3,25 +3,16 @@
 //local.
 #include "config.h"
 
-//Controllers.
-#include "../controller/states.h"
-#include "../controller/menu.h"
-#include "../controller/test_2d.h"
-#include "../controller/test_2d_text.h"
-#include "../controller/fps_test.h"
-#include "../controller/console.h"
-#include "../controller/test_poly.h"
-#include "../controller/step.h"
-#include "../controller/signals.h"
-
 //Specific app_config
 #include "../app/shared_resources.h"
+#include "../controller/signals.h"
 
 //Framework
 #include <dfw/state_driver_interface.h>
 
 //Other
 #include <ldtools/time_definitions.h>
+#include <appenv/env.h>
 
 //std
 #include <memory>
@@ -33,7 +24,7 @@ class state_driver:
 	public dfw::state_driver_interface {
 
 	public:
-									state_driver(dfw::kernel& kernel, dfwimpl::config& config);
+	                                state_driver(dfwimpl::config& config, lm::logger&, const appenv::env&, int);
 
 	virtual void					common_pre_loop_input(dfw::input& input, ldtools::tdelta);
 	virtual void					common_pre_loop_step(ldtools::tdelta);
@@ -48,28 +39,44 @@ class state_driver:
 
 	private:
 
-	void						prepare_video(dfw::kernel&);
+	void                        prepare_video(dfw::kernel&, dfw::window_info, bool);
 	void						prepare_audio(dfw::kernel&);
 	void						prepare_input(dfw::kernel&);
 	void						prepare_resources(dfw::kernel&);
-	void						register_controllers(dfw::kernel&);
-	void 						virtualize_input(dfw::input& input);
+	void 						virtualize_input(dfw::input& input, int);
+
+	bool                        validate_state(int);
+	dfw::window_info            get_video_init_data() const;
+	dfw::audio_info             get_audio_init_data() const;
+	void                        load_resources(dfw::kernel&);
+	void                        load_fonts(ldtools::ttf_manager&);
+	void                        register_controllers(dfw::kernel&);
+	void                        ready_resources(dfw::kernel&);
+	std::vector<dfw::input_pair>    get_input_pairs() const;
+	void                        start_app(const tools::arg_manager&, dfw::input&);
+	int                         get_input_axis_threshold() const;
+	bool                        get_fullscreen() const;
+	std::string                 build_resource_path(const std::string, const std::string) const;
+
 	void						setup_signal_receiver(dfw::kernel&);
 
 	//references
 	dfwimpl::config&			config;
 	lm::logger&					log; //Kernel's log.
+	const appenv::env&          env;
 
 	controller::app_receiver	receiver;
 
 	std::unique_ptr<app::shared_resources>		s_resources;
-	std::unique_ptr<controller::menu>		c_menu;
-	std::unique_ptr<controller::test_2d>		c_test_2d;
-	std::unique_ptr<controller::test_2d_text>	c_test_2d_text;
-	std::unique_ptr<controller::test_poly>		c_test_poly;
-	std::unique_ptr<controller::console>		c_console;
-	std::unique_ptr<controller::fps_test>		c_fps;
-	std::unique_ptr<controller::step>		c_step;
+
+	typedef std::unique_ptr<dfw::controller_interface> ptr_controller;
+	ptr_controller		c_menu;
+	ptr_controller		c_test_2d;
+	ptr_controller	    c_test_2d_text;
+	ptr_controller		c_test_poly;
+	ptr_controller		c_console;
+	ptr_controller		c_fps;
+	ptr_controller		c_step;
 };
 
 }

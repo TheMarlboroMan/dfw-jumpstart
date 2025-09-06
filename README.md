@@ -9,13 +9,17 @@
 # Dependencies
 
 - A compiler supporting the C++17 standard
+
+- lm (https://github.com/themarlboroman/log)
+- tools (https://github.com/themarlboroman/tools)
+- appenv (https://github.com/themarlboroman/appenv)
 - libdansdl2 (https://github.com/themarlboroman/libdansdl2)
-	- lm (https://github.com/themarlboroman/log)
-	- tools (https://github.com/themarlboroman/tools)
-		- rapidjson (https://github.com/tencent/rapidjson)
+- ldtools (https://github.com/themarlboroman/ldtools)
 - dfw (https://github.com/themarlboroman/dfw)
 
-On linux I just use gcc (currently gcc 9.3.0) and cmake to build / install all deps, then cmake to build this project.
+- rapidjson (https://github.com/tencent/rapidjson)
+
+On linux I just use gcc (currently gcc 12) and cmake to build / install all deps, then cmake to build this project.
 
 # Building on windows.
 

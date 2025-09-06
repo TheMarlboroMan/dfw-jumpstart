@@ -1,6 +1,13 @@
 Setup was succesful!.
 
-Before compiling you must have built all previous dependencies as stated in the original project's README.md file.
+Before compiling you must have built and installed all library dependencies, which are:
+
+- lm (https://github.com/themarlboroman/log)
+- tools (https://github.com/themarlboroman/tools)
+- appenv (https://github.com/themarlboroman/appenv)
+- libdansdl2 (https://github.com/themarlboroman/libdansdl2)
+- ldtools (https://github.com/themarlboroman/ldtools)
+- dfw (https://github.com/themarlboroman/dfw)
 
 Once the dependencies are ready:
 
@@ -8,7 +15,9 @@ Once the dependencies are ready:
 - cd into scripts and do "./create_controller controller_name `which cmake`" to automatically create a controller and add it to the dependency list. This will also add the controller to the states.h file and the state_driver files. If no initial controller was setup, this script will set it.
 - To build the project, head to the build directory and execute "make". Remember that the project won't be functional until a starting controller is set!.
 
-If you haven't do so yet, please, build the libdansdl2, dfw, log and tools documentation with doxygen!.
+If you haven't do so yet, please, build the libdansdl2, dfw, log and tools documentation with doxygen!. It beats checking the header files.
+
+The CMake file links against libraries you may not need (console, appconsole, d2d...) so just remove anything you don't want.
 
 You can find many wonderful examples and information in the original project.
 

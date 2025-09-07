@@ -33,8 +33,8 @@ then
 fi 
 
 #Copy files and replace their contents
-cp scripts/templates/_template.h include/controller/$name.h
-cp scripts/templates/_template.cpp src/controller/$name.cpp
+cp scripts/templates/_controller_template.h include/controller/$name.h
+cp scripts/templates/_controller_template.cpp src/controller/$name.cpp
 sed -i "s/_template/$name/g" include/controller/$name.h
 sed -i "s/_template/$name/g" src/controller/$name.cpp
 

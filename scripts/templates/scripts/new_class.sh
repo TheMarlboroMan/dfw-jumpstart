@@ -57,12 +57,21 @@ ready_implementation() {
 
 	h_file_location="${h_file_location}${classname}.h"
 
-	mkdir -p $path
+	if [ ! -d $path ]
+	then
+
+		mkdir -p $path
+		cp templates/_cmake_source_template ${path}/CMakeLists.txt
+	fi
+
+	sed -i "/PARENT_SCOPE/i \\\t\$\{CMAKE_CURRENT_SOURCE_DIR\}/$classname.cpp" ${path}/CMakeLists.txt
+
 	cp templates/_class_template.cpp $filename
 
 	sed -i "s|_h_file_location|${h_file_location}|g" $filename
 	sed -i "s/_namespace/$namespace_str/g" $filename
 	sed -i "s/::;/;/g" $filename
+
 }
 
 argpos=1

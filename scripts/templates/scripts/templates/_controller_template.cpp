@@ -3,12 +3,16 @@
 
 using namespace controller;
 
-_template::_template(lm::logger& plog)
-	:log(plog) {
+_template::_template(
+	lm::logger& _log
+):
+	log(_log) 
+{}
 
-}
-
-void _template::loop(dfw::input& _input, const dfw::loop_iteration_data& /*lid*/) {
+void _template::loop(
+	dfw::input& _input, 
+	const dfw::loop_iteration_data& /*lid*/
+) {
 
 	if(_input().is_exit_signal() || _input.is_input_down(app::escape)) {
 		set_leave(true);
@@ -16,6 +20,10 @@ void _template::loop(dfw::input& _input, const dfw::loop_iteration_data& /*lid*/
 	}
 }
 
-void _template::draw(ldv::screen& screen, int /*fps*/) {
-	screen.clear(ldv::rgba8(0, 0, 0, 255));
+void _template::draw(
+	ldv::screen& _screen, 
+	int /*fps*/
+) {
+
+	_screen.clear(ldv::rgba8(0, 0, 0, 255));
 }

@@ -44,18 +44,14 @@ add_compile_options(-Wall -Wextra -Wundef -Wcast-align -Wwrite-strings -Wlogical
 #include_directories(../dfw/include)
 #include_directories(../tools/include)
 
-add_subdirectory("${PROJECT_SOURCE_DIR}/src")
+foreach(source_dir "app" "controller" "dfwimpl")
+	add_subdirectory("${PROJECT_SOURCE_DIR}/src/${source_dir}")
+endforeach()
 
 #add the framework dependencies
-add_library(lm SHARED IMPORTED)
-add_library(tools SHARED IMPORTED)
-add_library(ldtools SHARED IMPORTED)
-add_library(dansdl2 SHARED IMPORTED)
-add_library(dfw SHARED IMPORTED)
-add_library(env SHARED IMPORTED)
-add_library(console SHARED IMPORTED)
-add_library(appconsole SHARED IMPORTED)
-add_library(d2d SHARED IMPORTED)
+foreach(libname lm tools ldtools dansdl2 dfw env console appconsole d2d)
+	add_library(${libname} SHARED IMPORTED)
+endforeach()
 
 #If the libraries are not installed, tell them where they are.
 if(${BUILD_DEBUG})

@@ -229,15 +229,15 @@ void state_driver::load_resources(
 }
 
 void state_driver::ready_resources(
-	dfw::kernel& /*_kernel*/
+	dfw::kernel& _kern
 ) {
 
-/*
 	//The service provider is a resource.
 	service_provider.reset(
 		new app::service_provider{env, config, log, _kernel}
 	);
 
+/*
 	std::string window_title="Some title";
 	_kernel.get_screen().set_title(window_title);
 

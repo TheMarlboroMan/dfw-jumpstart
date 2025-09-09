@@ -9,7 +9,7 @@
 #include <memory>
 
 //Specific app_config
-//#include "app/placeholder.h"
+#include "app/service_provider.h"
 
 namespace dfwimpl {
 
@@ -57,6 +57,7 @@ class state_driver:
 	const appenv::env&          env;
 
 	//state driver data.
+	std::unique_ptr<app::service_provider>  service_provider{nullptr};
 	
 	//controllers.
 	typedef std::unique_ptr<dfw::controller_interface> ptr_controller;

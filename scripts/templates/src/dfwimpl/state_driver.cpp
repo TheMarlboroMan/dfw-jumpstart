@@ -229,7 +229,7 @@ void state_driver::load_resources(
 }
 
 void state_driver::ready_resources(
-	dfw::kernel& _kern
+	dfw::kernel& _kernel
 ) {
 
 	//The service provider is a resource.

@@ -5,7 +5,10 @@
 #include <lm/logger.h>
 #include <cmath>
 
-#include "app/service_provider.h"
+namespace app {
+
+	class service_provider;
+}
 
 namespace controller {
 

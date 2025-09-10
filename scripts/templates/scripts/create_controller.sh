@@ -46,7 +46,7 @@ sed -i "/\[new-controller-property-mark\]/i \\\tptr_controller\t\t\t\t\tc_$name;
 
 #Instance the controller in the implementation file
 sed -i "/\[new-controller-header-mark\]/i #include \"controller/$name.h\"" src/dfwimpl/state_driver.cpp
-sed -i "/\[new-controller-mark\]/i \\\treg(c_$name, controller::t_states::state_$name, new controller::$name(log));" src/dfwimpl/state_driver.cpp
+sed -i "/\[new-controller-mark\]/i \\\treg(c_$name, controller::t_states::state_$name, new controller::$name(\*service_provider));" src/dfwimpl/state_driver.cpp
 
 #Add the file to the cmake recipes...
 sed -i "/\[new-controller-source-mark\]/i \\\t\$\{CMAKE_CURRENT_SOURCE_DIR\}/$name.cpp" src/controller/CMakeLists.txt

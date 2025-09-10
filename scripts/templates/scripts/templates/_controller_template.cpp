@@ -1,10 +1,11 @@
 #include "controller/_template.h"
 #include "app/input.h"
+#include "app/service_provider.h"
 
 using namespace controller;
 
 _template::_template(
-	app::service_provider _sp
+	app::service_provider& _sp
 ):
 	log{_sp.get_logger()}
 {}

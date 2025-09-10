@@ -34,17 +34,19 @@ class service_provider {
 	service_provider(const appenv::env&, dfwimpl::config&, lm::logger&, dfw::kernel&);
 	~service_provider();
 
-	const appenv::env&		get_env() const;
-	dfwimpl::config&	    get_config();
-	lm::logger&				get_logger();
+	const appenv::env&      get_env() const;
+	dfwimpl::config&        get_config();
+	lm::logger&             get_logger();
 	//ldtools::ttf_manager&   get_ttf_manager();
+	//dfw::audio&             get_audio() {return dfwaudio;}
 
 
 	private:
 
-	const appenv::env&		env;
-	dfwimpl::config&	    config;
-	lm::logger&				logger;
-	std::unique_ptr<ldtools::ttf_manager>	ttf_manager{nullptr};
+	const appenv::env&      env;
+	dfwimpl::config&        config;
+	lm::logger&             logger;
+	//dfw::audio&             dfwaudio;
+	//std::unique_ptr<ldtools::ttf_manager>	ttf_manager{nullptr};
 };
 }

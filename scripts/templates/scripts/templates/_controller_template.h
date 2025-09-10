@@ -5,6 +5,8 @@
 #include <lm/logger.h>
 #include <cmath>
 
+#include "app/service_provider.h"
+
 namespace controller {
 
 class _template:
@@ -12,7 +14,7 @@ class _template:
 
 	public:
 
-	                            _template(lm::logger&);
+	                            _template(app::service_provider&);
 	virtual void                loop(dfw::input&, const dfw::loop_iteration_data&);
 	virtual void                draw(ldv::screen&, int);
 	virtual void                awake(dfw::input& /*input*/) {}

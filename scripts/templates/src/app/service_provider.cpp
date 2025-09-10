@@ -17,6 +17,8 @@ service_provider::service_provider(
 	env{_env},
 	config{_config},
 	logger{_logger}
+	//,
+	//dfwaudio{_kernel.get_audio()},
 { }
 
 service_provider::~service_provider() {

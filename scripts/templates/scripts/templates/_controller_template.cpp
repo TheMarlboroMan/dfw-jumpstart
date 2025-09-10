@@ -4,14 +4,14 @@
 using namespace controller;
 
 _template::_template(
-	lm::logger& _log
+	app::service_provider _sp
 ):
-	log(_log) 
+	log{_sp.get_logger()}
 {}
 
 void _template::loop(
 	dfw::input& _input, 
-	const dfw::loop_iteration_data& /*lid*/
+	const dfw::loop_iteration_data& /*_lid*/
 ) {
 
 	if(_input().is_exit_signal() || _input.is_input_down(app::escape)) {

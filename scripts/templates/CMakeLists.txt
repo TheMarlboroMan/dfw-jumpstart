@@ -84,7 +84,7 @@ add_executable(project-placeholder src/main.cpp ${SOURCE})
 if(${BUILD_APPIMAGE})
 
 	message("will build as appimage for packaging...")
-	target_compile_definitions(project-placeholder PUBLIC "-DAS_APP_IMAGE")
+	target_compile_definitions(project-placeholder PUBLIC "-DAS_APPIMAGE")
 endif()
 
 set_target_properties(project-placeholder PROPERTIES RUNTIME_OUTPUT_DIRECTORY ./)

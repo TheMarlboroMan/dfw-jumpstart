@@ -8,6 +8,7 @@ set(MINOR_VERSION 0)
 set(PATCH_VERSION 0)
 
 option(BUILD_DEBUG "Build a debug release" OFF)
+option(BUILD_APPIMAGE "Build as appimage" OFF)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -80,6 +81,12 @@ include_directories("${CMAKE_CURRENT_LIST_DIR}/include")
 
 #Configure the executable, copy the resources.
 add_executable(project-placeholder src/main.cpp ${SOURCE})
+if(${BUILD_APPIMAGE})
+
+	message("will build as appimage for packaging...")
+	target_compile_definitions(project-placeholder PUBLIC "-DAS_APP_IMAGE")
+endif()
+
 set_target_properties(project-placeholder PROPERTIES RUNTIME_OUTPUT_DIRECTORY ./)
 add_custom_command(TARGET project-placeholder POST_BUILD COMMAND cp -r ../resources ./)
 add_custom_command(TARGET project-placeholder POST_BUILD COMMAND mkdir -p logs)

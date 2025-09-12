@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>tld.domain.app</id>
+
+  <name></name>
+  <summary></summary>
+
+  <metadata_license></metadata_license>
+  <project_license></project_license>
+
+  <description>
+    <p>
+    </p>
+  </description>
+
+  <launchable type="desktop-id">app.desktop</launchable>
+  <screenshots>
+	<!--
+    <screenshot type="default">
+      <image>http://domain.tld/pic.png</image>
+    </screenshot>
+	-->
+</component>

@@ -1,0 +1,8 @@
+[Desktop Entry]
+Categories=Game;
+Icon=icon
+Name=Game
+Type=Application
+Exec=project-placeholder
+
+Name[en_US]=app.desktop

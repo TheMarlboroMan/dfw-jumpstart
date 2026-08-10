@@ -35,6 +35,19 @@ menu::menu(app::shared_resources& s, dfw::signal_dispatcher& sd, dfwimpl::config
 	choose_current_menu(main_menu_rep.get());
 }
 
+void menu::awake(
+	dfw::input&,
+	int _previous_state
+) {
+
+	if(-1==_previous_state) {
+
+		return;
+	}
+
+	continue_state=_previous_state;
+}
+
 void menu::loop(dfw::input& input, const dfw::loop_iteration_data& lid) {
 
 	if(input().is_exit_signal()) {

@@ -291,22 +291,6 @@ void state_driver::register_controllers(dfw::kernel& /*kernel*/) {
 void state_driver::prepare_state(int next, int current) {
 
 	lm::log(log).debug()<<"state change from "<<current<<" to "<<next<<"..."<<std::endl;
-
-	switch(next) {
-		case t_states::state_menu:{
-
-			auto ptr=c_menu.get();
-			static_cast<controller::menu *>(ptr)->set_continue_state(current);
-		}
-		break;
-		case t_states::state_test_2d:
-		case t_states::state_test_poly:
-		case t_states::state_test_2d_text:
-		case t_states::state_console:
-		case t_states::state_fps_test:
-		case t_states::state_step:
-		break;
-	}
 }
 
 void state_driver::setup_signal_receiver(dfw::kernel& kernel) {

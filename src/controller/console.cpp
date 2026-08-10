@@ -118,12 +118,18 @@ void console::draw(ldv::screen& screen, int /*fps*/) {
 	}
 }
 
-void console::awake(dfw::input& input) {
+void console::awake(
+	dfw::input& input,
+	int
+) {
 	input().start_text_input();
 	input().clear_text_input();
 }
 
-void console::slumber(dfw::input& input) {
+void console::slumber(
+	dfw::input& input,
+	int
+) {
 	input().stop_text_input();
 }
 

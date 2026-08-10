@@ -99,11 +99,17 @@ void fps_test::draw(ldv::screen& screen, int fps) {
 	txt.draw(screen);
 }
 
-void fps_test::awake(dfw::input& /*input*/) {
+void fps_test::awake(
+	dfw::input& /*input*/,
+	int
+) {
 
 }
 
-void fps_test::slumber(dfw::input& /*input*/) {
+void fps_test::slumber(
+	dfw::input& /*input*/, 
+	int 
+) {
 
 }
 

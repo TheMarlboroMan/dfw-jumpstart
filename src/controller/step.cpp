@@ -19,7 +19,10 @@ step::step(app::shared_resources& sr)
 	data.elapsed=0.f;
 }
 
-void step::awake(dfw::input&) {
+void step::awake(
+	dfw::input&,
+	int
+) {
 	data.chrono.start();
 }
 

@@ -36,8 +36,8 @@ class menu:
 								menu(app::shared_resources&, dfw::signal_dispatcher&, dfwimpl::config&);
 	virtual void 				loop(dfw::input& input, const dfw::loop_iteration_data&);
 	virtual void 				draw(ldv::screen& screen, int);
-	virtual void 				awake(dfw::input&) {}
-	virtual void 				slumber(dfw::input&) {}
+	virtual void 				awake(dfw::input&, int=-1) {}
+	virtual void 				slumber(dfw::input&, int) {}
 	virtual bool				can_leave_state() const {return true;}
 	
 	void					set_continue_state(int v) {continue_state=v;}
